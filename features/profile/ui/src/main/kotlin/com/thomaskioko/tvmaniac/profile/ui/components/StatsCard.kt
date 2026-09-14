@@ -28,7 +28,8 @@ import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_statistics_open
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_statistics_open
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
@@ -52,7 +53,7 @@ internal fun StatsCard(
         title = labels.statsTitle,
         modifier = modifier,
         showMore = true,
-        moreContentDescription = cd_statistics_open.resolve(context),
+        moreContentDescription = MR.strings.cd_statistics_open.resolve(context),
         onMoreClick = onViewStatistics,
         moreTestTag = ProfileTestTags.STATISTICS_ROW_TEST_TAG,
     ) {

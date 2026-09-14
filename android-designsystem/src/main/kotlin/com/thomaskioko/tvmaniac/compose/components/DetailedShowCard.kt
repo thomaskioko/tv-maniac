@@ -24,7 +24,8 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_show_poster
 
 private val BackdropAspect = 16f / 9f
 private val ScrimHeight = 96.dp
@@ -71,7 +72,7 @@ public fun DetailedShowCard(
 
             AsyncImageComposable(
                 model = imageUrl,
-                contentDescription = stringResource(cd_show_poster.resourceId, title),
+                contentDescription = stringResource(MR.strings.cd_show_poster.resourceId, title),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()

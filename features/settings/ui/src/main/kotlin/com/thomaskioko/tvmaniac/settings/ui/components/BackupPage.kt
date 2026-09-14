@@ -49,6 +49,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.tvManiacTextFieldColors
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_dismiss
 import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupLocationClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleSelected
 import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupSettings

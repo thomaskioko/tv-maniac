@@ -15,7 +15,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_upnext_sort_air_date
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextChangeSortOption
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
@@ -94,7 +95,7 @@ class UpNextScrollPositionTest {
             .performScrollToNode(hasTestTag(UpNextTestTags.episodeRow(LAST_SHOW_ID)))
 
         composeTestRule
-            .onNodeWithText(label_upnext_sort_air_date.resolve(composeTestRule.activity))
+            .onNodeWithText(MR.strings.label_upnext_sort_air_date.resolve(composeTestRule.activity))
             .performClick()
         composeTestRule.waitForIdle()
 

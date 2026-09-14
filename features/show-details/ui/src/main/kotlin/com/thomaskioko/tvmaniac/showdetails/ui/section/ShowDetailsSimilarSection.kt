@@ -26,8 +26,9 @@ import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.title_similar
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.similar.ShowDetailsSimilarAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.similar.ShowDetailsSimilarPresenter
@@ -71,7 +72,7 @@ private fun SimilarShowsContent(
                 Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
                 HorizontalRowContent(
-                    title = title_similar.resolve(LocalContext.current),
+                    title = MR.strings.title_similar.resolve(LocalContext.current),
                     items = similarShows,
                     onShowClicked = onShowClicked,
                 )

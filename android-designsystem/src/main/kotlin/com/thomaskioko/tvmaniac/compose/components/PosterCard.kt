@@ -31,7 +31,8 @@ import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_show_poster
 
 @Composable
 public fun PosterCard(
@@ -71,7 +72,7 @@ public fun PosterCard(
                     contentScale = contentScale,
                     contentDescription = title?.let {
                         stringResource(
-                            cd_show_poster.resourceId,
+                            MR.strings.cd_show_poster.resourceId,
                             title,
                         )
                     },

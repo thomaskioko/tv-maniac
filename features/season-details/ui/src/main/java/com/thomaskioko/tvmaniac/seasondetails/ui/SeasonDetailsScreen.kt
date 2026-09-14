@@ -78,31 +78,32 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_images_count
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_just_this
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_just_this_season
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_mark_all
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_mark_all_seasons
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_no
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_yes
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_episode_unwatched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_mark_previous
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_mark_previous_seasons
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_unwatched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_episode_unwatched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous_seasons
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_unwatched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_overview
-import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_navigate_back
+import com.thomaskioko.tvmaniac.i18n.cd_show_images
+import com.thomaskioko.tvmaniac.i18n.dialog_button_just_this
+import com.thomaskioko.tvmaniac.i18n.dialog_button_just_this_season
+import com.thomaskioko.tvmaniac.i18n.dialog_button_mark_all
+import com.thomaskioko.tvmaniac.i18n.dialog_button_mark_all_seasons
+import com.thomaskioko.tvmaniac.i18n.dialog_button_no
+import com.thomaskioko.tvmaniac.i18n.dialog_button_yes
+import com.thomaskioko.tvmaniac.i18n.dialog_message_episode_unwatched
+import com.thomaskioko.tvmaniac.i18n.dialog_message_mark_previous
+import com.thomaskioko.tvmaniac.i18n.dialog_message_mark_previous_seasons
+import com.thomaskioko.tvmaniac.i18n.dialog_message_unwatched
+import com.thomaskioko.tvmaniac.i18n.dialog_message_watched
+import com.thomaskioko.tvmaniac.i18n.dialog_title_episode_unwatched
+import com.thomaskioko.tvmaniac.i18n.dialog_title_mark_previous
+import com.thomaskioko.tvmaniac.i18n.dialog_title_mark_previous_seasons
+import com.thomaskioko.tvmaniac.i18n.dialog_title_unwatched
+import com.thomaskioko.tvmaniac.i18n.dialog_title_watched
+import com.thomaskioko.tvmaniac.i18n.generic_retry
+import com.thomaskioko.tvmaniac.i18n.label_action_rate
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.season_images_count
+import com.thomaskioko.tvmaniac.i18n.title_casts
+import com.thomaskioko.tvmaniac.i18n.title_season_overview
+import com.thomaskioko.tvmaniac.i18n.unexpected_error_retry
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ConfirmDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.DismissDialog
 import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeClicked
@@ -155,7 +156,7 @@ internal fun SeasonDetailsScreen(
         sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
         onDismissBottomSheet = { onAction(DismissDialog) },
         sheetDragHandle = {
-            val title = stringResource(cd_show_images.resourceId, state.seasonName)
+            val title = stringResource(MR.strings.cd_show_images.resourceId, state.seasonName)
             SheetDragHandle(
                 title = title,
                 imageVector = Icons.Outlined.KeyboardArrowDown,
@@ -167,8 +168,8 @@ internal fun SeasonDetailsScreen(
                 if (state.showError) {
                     EmptyStateView(
                         imageVector = Icons.Outlined.ErrorOutline,
-                        title = state.message?.message ?: unexpected_error_retry.resolve(LocalContext.current),
-                        buttonText = generic_retry.resolve(LocalContext.current),
+                        title = state.message?.message ?: MR.strings.unexpected_error_retry.resolve(LocalContext.current),
+                        buttonText = MR.strings.generic_retry.resolve(LocalContext.current),
                         onClick = { onAction(ReloadSeasonDetails) },
                     )
                 } else {
@@ -202,7 +203,7 @@ internal fun SeasonDetailsScreen(
                         navigationIcon = {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                                contentDescription = MR.strings.cd_navigate_back.resolve(LocalContext.current),
                                 tint = MaterialTheme.colorScheme.onBackground,
                             )
                         },
@@ -389,7 +390,7 @@ private fun HeaderContent(
         ) {
             HorizontalOutlinedButton(
                 text = resources.getQuantityString(
-                    season_images_count.resourceId,
+                    MR.plurals.season_images_count.resourceId,
                     imagesCount,
                     imagesCount,
                 ),
@@ -400,14 +401,14 @@ private fun HeaderContent(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.PhotoLibrary,
-                        contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                        contentDescription = MR.strings.cd_navigate_back.resolve(LocalContext.current),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 },
             )
 
             HorizontalOutlinedButton(
-                text = label_action_rate.resolve(LocalContext.current),
+                text = MR.strings.label_action_rate.resolve(LocalContext.current),
                 onClick = { onAction(SeasonRatingClicked) },
                 modifier = Modifier.testTag(SeasonDetailsTestTags.RATE_BUTTON_TEST_TAG),
                 shape = CircleShape,
@@ -457,7 +458,7 @@ private fun BodyContent(
         modifier = modifier.fillMaxSize(),
     ) {
         Text(
-            text = title_season_overview.resolve(LocalContext.current),
+            text = MR.strings.title_season_overview.resolve(LocalContext.current),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(TvManiacSpacing.medium),
@@ -502,7 +503,7 @@ private fun CastContent(
     if (castList.isEmpty()) return
     Column {
         Text(
-            text = title_casts.resolve(LocalContext.current),
+            text = MR.strings.title_casts.resolve(LocalContext.current),
             modifier = Modifier
                 .padding(TvManiacSpacing.medium)
                 .fillMaxWidth(),
@@ -546,22 +547,22 @@ private fun SeasonsWatchDialog(
     val context = LocalContext.current
 
     val title = if (isWatched) {
-        dialog_title_unwatched.resolve(context)
+        MR.strings.dialog_title_unwatched.resolve(context)
     } else {
-        dialog_title_watched.resolve(context)
+        MR.strings.dialog_title_watched.resolve(context)
     }
 
     val message = if (isWatched) {
-        dialog_message_unwatched.resolve(context)
+        MR.strings.dialog_message_unwatched.resolve(context)
     } else {
-        dialog_message_watched.resolve(context)
+        MR.strings.dialog_message_watched.resolve(context)
     }
 
     TvManiacAlertDialog(
         title = title,
         message = message,
-        confirmButtonText = dialog_button_yes.resolve(context),
-        dismissButtonText = dialog_button_no.resolve(context),
+        confirmButtonText = MR.strings.dialog_button_yes.resolve(context),
+        dismissButtonText = MR.strings.dialog_button_no.resolve(context),
         onConfirm = { onAction(ConfirmDialogAction) },
         onDismiss = { onAction(DismissDialog) },
         confirmButtonTestTag = if (isWatched) {
@@ -586,10 +587,10 @@ private fun MarkPreviousEpisodesDialog(
     val context = LocalContext.current
 
     TvManiacAlertDialog(
-        title = dialog_title_mark_previous.resolve(context),
-        message = dialog_message_mark_previous.resolve(context),
-        confirmButtonText = dialog_button_mark_all.resolve(context),
-        dismissButtonText = dialog_button_just_this.resolve(context),
+        title = MR.strings.dialog_title_mark_previous.resolve(context),
+        message = MR.strings.dialog_message_mark_previous.resolve(context),
+        confirmButtonText = MR.strings.dialog_button_mark_all.resolve(context),
+        dismissButtonText = MR.strings.dialog_button_just_this.resolve(context),
         onConfirm = onMarkAll,
         onDismiss = onMarkJustThis,
         confirmButtonTestTag = SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG,
@@ -605,10 +606,10 @@ private fun MarkEpisodeUnwatchedDialog(
     val context = LocalContext.current
 
     TvManiacAlertDialog(
-        title = dialog_title_episode_unwatched.resolve(context),
-        message = dialog_message_episode_unwatched.resolve(context),
-        confirmButtonText = dialog_button_yes.resolve(context),
-        dismissButtonText = dialog_button_no.resolve(context),
+        title = MR.strings.dialog_title_episode_unwatched.resolve(context),
+        message = MR.strings.dialog_message_episode_unwatched.resolve(context),
+        confirmButtonText = MR.strings.dialog_button_yes.resolve(context),
+        dismissButtonText = MR.strings.dialog_button_no.resolve(context),
         onConfirm = onConfirm,
         onDismiss = onDismiss,
         confirmButtonTestTag = SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG,
@@ -625,10 +626,10 @@ private fun MarkPreviousSeasonsDialog(
     val context = LocalContext.current
 
     TvManiacAlertDialog(
-        title = dialog_title_mark_previous_seasons.resolve(context),
-        message = dialog_message_mark_previous_seasons.resolve(context),
-        confirmButtonText = dialog_button_mark_all_seasons.resolve(context),
-        dismissButtonText = dialog_button_just_this_season.resolve(context),
+        title = MR.strings.dialog_title_mark_previous_seasons.resolve(context),
+        message = MR.strings.dialog_message_mark_previous_seasons.resolve(context),
+        confirmButtonText = MR.strings.dialog_button_mark_all_seasons.resolve(context),
+        dismissButtonText = MR.strings.dialog_button_just_this_season.resolve(context),
         onConfirm = onMarkAll,
         onDismiss = onMarkJustThis,
         confirmButtonTestTag = SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG,

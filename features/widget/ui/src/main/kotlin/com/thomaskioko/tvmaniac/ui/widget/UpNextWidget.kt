@@ -18,10 +18,11 @@ import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkUrls
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
-import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_empty_watchlist
-import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_season_episode
-import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_up_next_name
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.widget_empty_watchlist
+import com.thomaskioko.tvmaniac.i18n.widget_season_episode
+import com.thomaskioko.tvmaniac.i18n.widget_up_next_name
 import com.thomaskioko.tvmaniac.ui.widget.di.widgetGraph
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
@@ -75,8 +76,8 @@ private fun WidgetBody(
 ) {
     WidgetTheme(theme) {
         UpNextWidgetContent(
-            title = widget_up_next_name.resolve(context),
-            emptyMessage = widget_empty_watchlist.resolve(context),
+            title = MR.strings.widget_up_next_name.resolve(context),
+            emptyMessage = MR.strings.widget_empty_watchlist.resolve(context),
             items = items,
             openApp = context.openAppAction(),
             itemAction = { item -> context.openItemAction(item) },
@@ -102,7 +103,7 @@ private suspend fun WidgetShow.toWidgetItem(context: Context, urls: DeepLinkUrls
     )
 
 internal fun Context.seasonEpisodeLabel(seasonNumber: Long, episodeNumber: Long): String =
-    widget_season_episode.resolve(this).format(
+    MR.strings.widget_season_episode.resolve(this).format(
         seasonNumber.toString().padStart(2, '0'),
         episodeNumber.toString().padStart(2, '0'),
     )

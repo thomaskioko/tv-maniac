@@ -11,9 +11,10 @@ import com.thomaskioko.tvmaniac.compose.components.BannerStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBanner
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_dismiss
-import com.thomaskioko.tvmaniac.i18n.MR.strings.status_connected
-import com.thomaskioko.tvmaniac.i18n.MR.strings.status_no_connection
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_dismiss
+import com.thomaskioko.tvmaniac.i18n.status_connected
+import com.thomaskioko.tvmaniac.i18n.status_no_connection
 import com.thomaskioko.tvmaniac.presenter.root.model.ConnectivityBannerState
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -30,12 +31,12 @@ internal fun OfflineBanner(
     val backOnline = displayState == ConnectivityBannerState.BackOnline
 
     TvManiacBanner(
-        message = stringResource(if (backOnline) status_connected else status_no_connection),
+        message = stringResource(if (backOnline) MR.strings.status_connected else MR.strings.status_no_connection),
         onDismiss = onDismiss,
         modifier = modifier,
         visible = state != ConnectivityBannerState.Hidden,
         style = if (backOnline) BannerStyle.Success else BannerStyle.Warning,
-        dismissContentDescription = stringResource(cd_dismiss),
+        dismissContentDescription = stringResource(MR.strings.cd_dismiss),
     )
 }
 

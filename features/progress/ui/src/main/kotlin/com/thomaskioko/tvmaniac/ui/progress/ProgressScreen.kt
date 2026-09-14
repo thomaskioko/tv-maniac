@@ -38,10 +38,11 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_calendar
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_discover_up_next
+import com.thomaskioko.tvmaniac.i18n.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.title_calendar
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarDateGroup
@@ -72,8 +73,8 @@ public fun ProgressScreen(
 
     val tabs = remember(context) {
         persistentListOf(
-            label_discover_up_next.resolve(context),
-            title_calendar.resolve(context),
+            MR.strings.label_discover_up_next.resolve(context),
+            MR.strings.title_calendar.resolve(context),
         )
     }
 
@@ -163,7 +164,7 @@ internal fun ProgressScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = menu_item_progress.resolve(LocalContext.current),
+                            text = MR.strings.menu_item_progress.resolve(LocalContext.current),
                             modifier = Modifier.testTag(ProgressTestTags.PROGRESS_TITLE),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface,

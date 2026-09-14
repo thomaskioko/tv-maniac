@@ -36,8 +36,9 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_less
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_more
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_library_filter_show_less
+import com.thomaskioko.tvmaniac.i18n.label_library_filter_show_more
 import com.thomaskioko.tvmaniac.i18n.resolve
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -91,8 +92,8 @@ public fun <T> FilterChipSection(
             Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
             ShowMoreToggle(
                 isExpanded = isExpanded,
-                showMoreText = label_library_filter_show_more.resolve(context),
-                showLessText = label_library_filter_show_less.resolve(context),
+                showMoreText = MR.strings.label_library_filter_show_more.resolve(context),
+                showLessText = MR.strings.label_library_filter_show_less.resolve(context),
                 onToggle = { isExpanded = !isExpanded },
             )
         }

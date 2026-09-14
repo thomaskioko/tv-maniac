@@ -31,10 +31,11 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_enable
-import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_not_now
-import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_title
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.notification_rationale_enable
+import com.thomaskioko.tvmaniac.i18n.notification_rationale_message
+import com.thomaskioko.tvmaniac.i18n.notification_rationale_not_now
+import com.thomaskioko.tvmaniac.i18n.notification_rationale_title
 import com.thomaskioko.tvmaniac.testtags.notifications.NotificationRationaleTestTags
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -61,7 +62,7 @@ public fun NotificationRationaleContent(
         Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         Text(
-            text = stringResource(notification_rationale_title),
+            text = stringResource(MR.strings.notification_rationale_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -69,7 +70,7 @@ public fun NotificationRationaleContent(
         Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
-            text = stringResource(notification_rationale_message),
+            text = stringResource(MR.strings.notification_rationale_message),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -92,7 +93,7 @@ public fun NotificationRationaleContent(
             ),
             shape = MaterialTheme.shapes.small,
         ) {
-            Text(text = stringResource(notification_rationale_enable))
+            Text(text = stringResource(MR.strings.notification_rationale_enable))
         }
 
         TextButton(
@@ -104,7 +105,7 @@ public fun NotificationRationaleContent(
                 contentColor = MaterialTheme.colorScheme.secondary,
             ),
         ) {
-            Text(text = stringResource(notification_rationale_not_now))
+            Text(text = stringResource(MR.strings.notification_rationale_not_now))
         }
 
         Spacer(modifier = Modifier.height(TvManiacSpacing.medium))

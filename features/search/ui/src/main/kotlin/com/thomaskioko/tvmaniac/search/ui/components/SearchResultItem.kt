@@ -33,7 +33,8 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
@@ -112,7 +113,7 @@ internal fun SearchResultItem(
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 imageVector = Icons.Outlined.StarOutline,
-                                contentDescription = cd_clear_text.resolve(LocalContext.current),
+                                contentDescription = MR.strings.cd_clear_text.resolve(LocalContext.current),
                                 tint = MaterialTheme.colorScheme.secondary,
                             )
                             withStyle(tagStyle) { append("$it") }

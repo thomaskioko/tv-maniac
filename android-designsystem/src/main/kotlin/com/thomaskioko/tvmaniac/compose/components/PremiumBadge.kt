@@ -17,7 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_locked
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_locked
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
@@ -39,7 +40,7 @@ public fun PremiumBadge(
         ) {
             Icon(
                 imageVector = Icons.Filled.Lock,
-                contentDescription = cd_locked.resolve(context),
+                contentDescription = MR.strings.cd_locked.resolve(context),
                 tint = MaterialTheme.colorScheme.background,
                 modifier = Modifier.size(12.dp),
             )

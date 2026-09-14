@@ -25,7 +25,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.Layout
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_start_watching_empty
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_start_watching_empty
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.startwatching.presenter.RefreshStartWatching
 import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingAction
@@ -57,7 +58,7 @@ public fun StartWatchingScreen(
                 )
 
                 state.isEmpty -> EmptyStateView(
-                    title = label_start_watching_empty.resolve(LocalContext.current),
+                    title = MR.strings.label_start_watching_empty.resolve(LocalContext.current),
                     modifier = Modifier
                         .fillMaxSize()
                         .testTag(StartWatchingTestTags.EMPTY_STATE),
