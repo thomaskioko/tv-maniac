@@ -3,6 +3,10 @@ name: Compare Screenshot
 on:
   pull_request:
 
+concurrency:
+  group: compare-screenshot-${{ github.head_ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 env:
