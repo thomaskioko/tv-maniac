@@ -21,6 +21,7 @@ kotlin {
                 api(libs.ktor.core)
                 api(projects.api.simkl.api)
                 api(projects.core.appconfig.api)
+                api(projects.core.connectivity.api)
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
                 api(projects.data.accountManager.api)

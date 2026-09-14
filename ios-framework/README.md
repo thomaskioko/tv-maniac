@@ -462,6 +462,7 @@ graph TB
   :api:simkl:implementation --> :api:simkl:api
   :api:simkl:implementation --> :core:appconfig:api
   :api:simkl:implementation -.-> :core:base
+  :api:simkl:implementation --> :core:connectivity:api
   :api:simkl:implementation --> :core:logger:api
   :api:simkl:implementation --> :core:network-util:api
   :api:simkl:implementation --> :data:account-manager:api
