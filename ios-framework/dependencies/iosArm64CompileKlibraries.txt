@@ -56,10 +56,10 @@ dev.icerock.moko:resources-iosarm64:0.27.0
 dev.icerock.moko:resources:0.27.0
 dev.zacsweers.metro:runtime-iosarm64:1.4.3
 dev.zacsweers.metro:runtime:1.4.3
-io.github.thomaskioko.gradle.plugins:codegen-annotations-iosarm64:0.8.5
-io.github.thomaskioko.gradle.plugins:codegen-annotations:0.8.5
-io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations-iosarm64:0.8.5
-io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations:0.8.5
+io.github.thomaskioko.gradle.plugins:codegen-annotations-iosarm64:0.8.6
+io.github.thomaskioko.gradle.plugins:codegen-annotations:0.8.6
+io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations-iosarm64:0.8.6
+io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations:0.8.6
 io.ktor:ktor-client-auth-iosarm64:3.5.2
 io.ktor:ktor-client-auth:3.5.2
 io.ktor:ktor-client-content-negotiation-iosarm64:3.5.2
