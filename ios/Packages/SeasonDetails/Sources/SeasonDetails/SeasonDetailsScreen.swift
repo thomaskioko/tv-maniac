@@ -162,6 +162,8 @@ public struct SeasonDetailsScreen: View {
                         alignment: .top
                     )
                     .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
+                    .scrollEdgeEffectHidden(showGlass == 0, for: .top)
+                    .scrollEdgeEffectHidden(for: .bottom)
                     .ignoresSafeArea(edges: .top)
             },
             legacy: { view in
