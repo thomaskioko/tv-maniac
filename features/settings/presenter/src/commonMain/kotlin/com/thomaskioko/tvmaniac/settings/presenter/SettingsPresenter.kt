@@ -146,7 +146,7 @@ public class SettingsPresenter internal constructor(
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
         observePremiumAccessInteractor.flow,
-        observeRewatchSupportInteractor.flow,
+        observeRewatchSupportInteractor.flow.onStart { emit(true) },
         observeAutoBackupInteractor.flow,
     ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount,
         preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch,
