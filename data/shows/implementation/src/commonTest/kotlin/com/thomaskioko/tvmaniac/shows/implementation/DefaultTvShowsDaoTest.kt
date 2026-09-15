@@ -98,10 +98,45 @@ internal class DefaultTvShowsDaoTest : BaseDatabaseTest() {
         dao.getTmdbIdForLocalShowId(UNKNOWN_LOCAL_SHOW_ID).shouldBeNull()
     }
 
+    @Test
+    fun `should write simkl external id given the show already exists`() = runTest(testDispatcher) {
+        dao.upsert(
+            ShowToPersist(
+                showId = null,
+                tmdbId = Id<TmdbId>(TMDB_ID),
+                name = SHOW_NAME,
+                overview = "An overview",
+                ratings = 8.0,
+                voteCount = 1000L,
+            ),
+        )
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(TMDB_ID)).executeAsOne()
+
+        dao.upsertExternalId(tmdbId = TMDB_ID, provider = Provider.SIMKL, externalId = SIMKL_ID.toString())
+
+        val externalId = database.tvshowExternalIdQueries.showIdForExternalId(
+            provider = Provider.SIMKL,
+            externalId = SIMKL_ID.toString(),
+        ).executeAsOneOrNull()
+        externalId shouldBe showId
+    }
+
+    @Test
+    fun `should skip writing external id given the show does not exist`() = runTest(testDispatcher) {
+        dao.upsertExternalId(tmdbId = UNKNOWN_LOCAL_SHOW_ID, provider = Provider.SIMKL, externalId = SIMKL_ID.toString())
+
+        val externalId = database.tvshowExternalIdQueries.showIdForExternalId(
+            provider = Provider.SIMKL,
+            externalId = SIMKL_ID.toString(),
+        ).executeAsOneOrNull()
+        externalId.shouldBeNull()
+    }
+
     private companion object {
         private const val TMDB_ID = 5500L
         private const val TRAKT_ID = 7700L
         private const val SHOW_NAME = "Simkl Only Show"
         private const val UNKNOWN_LOCAL_SHOW_ID = 999L
+        private const val SIMKL_ID = 39687L
     }
 }

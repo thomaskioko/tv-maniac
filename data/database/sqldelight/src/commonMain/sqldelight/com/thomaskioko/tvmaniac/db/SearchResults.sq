@@ -1,0 +1,43 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+CREATE TABLE IF NOT EXISTS search_results (
+    query TEXT NOT NULL,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    position INTEGER NOT NULL DEFAULT 0,
+    score REAL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (query, show_id)
+);
+
+upsert:
+INSERT OR REPLACE INTO search_results (query, show_id, position, score)
+VALUES (?, ?, ?, ?);
+
+resultsByQuery:
+SELECT
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.overview,
+    tvshow.status,
+    tvshow.ratings,
+    tvshow.year,
+    tvshow.episode_numbers,
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    search_results
+INNER JOIN tvshow ON search_results.show_id = tvshow.id
+LEFT OUTER JOIN
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
+WHERE
+    search_results.query = ?
+ORDER BY
+    search_results.position ASC;
+
+deleteByQuery:
+DELETE FROM search_results WHERE query = ?;
+
+deleteAll:
+DELETE FROM search_results;

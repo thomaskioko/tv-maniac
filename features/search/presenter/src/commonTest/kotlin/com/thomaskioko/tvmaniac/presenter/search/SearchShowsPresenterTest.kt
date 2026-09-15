@@ -132,7 +132,7 @@ internal class SearchShowsPresenterTest {
             )
 
             presenter.dispatch(QueryChanged("test"))
-            fakeSearchRepository.setSearchResult(emptyList())
+            fakeSearchRepository.setSearchResult("test", emptyList())
             skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(
@@ -180,7 +180,7 @@ internal class SearchShowsPresenterTest {
                 genreRows = genreRowModelList(),
             )
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -200,7 +200,7 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe settledState()
 
             presenter.dispatch(QueryChanged("test"))
-            fakeSearchRepository.setSearchResult(emptyList())
+            fakeSearchRepository.setSearchResult("test", emptyList())
             skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(query = "test")
@@ -234,7 +234,7 @@ internal class SearchShowsPresenterTest {
 
             awaitItem() shouldBe settledState(query = "abc")
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("abc", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "abc",
@@ -262,7 +262,7 @@ internal class SearchShowsPresenterTest {
 
             awaitItem() shouldBe settledState(query = "test")
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -297,7 +297,7 @@ internal class SearchShowsPresenterTest {
                 genreRows = genreRowModelList(),
             )
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -322,7 +322,7 @@ internal class SearchShowsPresenterTest {
             setGenreRows(createGenreWithShowsList())
 
             presenter.dispatch(QueryChanged("test"))
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
             advanceUntilIdle()
             expectMostRecentItem() shouldBe settledState(
                 query = "test",

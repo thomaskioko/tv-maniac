@@ -165,5 +165,8 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         list_showsAdapter = List_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),
         ),
+        search_resultsAdapter = Search_results.Adapter(
+            show_idAdapter = IdAdapter(),
+        ),
     )
 }

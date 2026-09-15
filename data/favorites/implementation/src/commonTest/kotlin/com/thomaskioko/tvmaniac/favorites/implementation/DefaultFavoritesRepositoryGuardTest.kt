@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
 import com.thomaskioko.tvmaniac.favorites.api.FavoritesDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -133,9 +134,8 @@ private object NoOpFavDao : FavoritesDao {
 private object NoOpTvShowsDao : TvShowsDao {
     override fun upsert(show: ShowToPersist) {}
     override fun upsert(list: List<ShowToPersist>) {}
-    override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> = flowOf(emptyList())
-    override fun observeQueryCount(query: String): Flow<Long> = flowOf(0L)
-    override suspend fun getQueryCount(query: String): Long = 0L
+    override fun upsertExternalId(tmdbId: Long, provider: Provider, externalId: String) {}
+    override fun getTmdbIdsWithPoster(tmdbIds: List<Long>): Set<Long> = emptySet()
     override fun deleteTvShows() {}
     override fun upsertMerging(show: ShowToPersist) {}
     override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> = emptyList()
