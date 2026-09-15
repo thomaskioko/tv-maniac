@@ -47,4 +47,14 @@ class DefaultTraktShowsRemoteDataSourceTest {
             query["extended"] shouldBe "full"
         }
     }
+
+    @Test
+    fun `should send page and limit given search is requested`() = runTest {
+        dataSource.searchShows(query = "breaking bad", page = 1, limit = 30)
+
+        capturedQueries.size shouldBe 1
+        capturedQueries.first()["page"] shouldBe "1"
+        capturedQueries.first()["limit"] shouldBe "30"
+        capturedQueries.first()["extended"] shouldBe "full"
+    }
 }
