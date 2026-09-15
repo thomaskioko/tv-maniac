@@ -971,7 +971,7 @@ graph TB
   :data:search:implementation -.-> :core:network-util:api
   :data:search:implementation --> :core:util:api
   :data:search:implementation --> :data:account-manager:api
-  :data:search:implementation -.-> :data:database:sqldelight
+  :data:search:implementation --> :data:database:sqldelight
   :data:search:implementation --> :data:request-manager:api
   :data:search:implementation --> :data:search:api
   :data:seasondetails:api --> :data:database:sqldelight

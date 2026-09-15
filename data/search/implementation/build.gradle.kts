@@ -27,7 +27,7 @@ kotlin {
                 api(projects.data.search.api)
 
                 implementation(projects.core.networkUtil.api)
-                implementation(projects.data.database.sqldelight)
+                api(projects.data.database.sqldelight)
                 implementation(libs.sqldelight.extensions)
             }
         }
