@@ -1,15 +1,13 @@
 package com.thomaskioko.tvmaniac.shows.testing
 
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.mergeShows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 
 public class FakeTvShowsDao : TvShowsDao {
 
@@ -18,6 +16,9 @@ public class FakeTvShowsDao : TvShowsDao {
     private val localShowIdByTmdbId = MutableStateFlow<Map<Long, Long>>(emptyMap())
     private val traktIdByTmdbId = MutableStateFlow<Map<Long, Long>>(emptyMap())
     private val tmdbIdByTraktId = MutableStateFlow<Map<Long, Long>>(emptyMap())
+    private val externalIds = MutableStateFlow<Map<Pair<Long, Provider>, String>>(emptyMap())
+
+    public fun externalId(tmdbId: Long, provider: Provider): String? = externalIds.value[tmdbId to provider]
 
     public fun entries(): List<Tvshow> = state.value.values.toList()
 
@@ -50,19 +51,21 @@ public class FakeTvShowsDao : TvShowsDao {
         recordTraktId(merged)
     }
 
+    override fun upsertExternalId(tmdbId: Long, provider: Provider, externalId: String) {
+        if (tmdbId !in state.value) return
+        externalIds.value += ((tmdbId to provider) to externalId)
+    }
+
     private fun recordTraktId(show: ShowToPersist) {
         val traktId = show.showId?.id ?: return
         traktIdByTmdbId.value += (show.tmdbId.id to traktId)
         tmdbIdByTraktId.value += (traktId to show.tmdbId.id)
     }
 
-    override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> =
-        state.asStateFlow().map { emptyList() }
-
-    override fun observeQueryCount(query: String): Flow<Long> =
-        state.asStateFlow().map { 0L }
-
-    override suspend fun getQueryCount(query: String): Long = 0L
+    override fun getTmdbIdsWithPoster(tmdbIds: List<Long>): Set<Long> =
+        state.value.filterKeys { it in tmdbIds }
+            .filterValues { !it.poster_path.isNullOrBlank() }
+            .keys
 
     override fun deleteTvShows() {
         state.value = emptyMap()
