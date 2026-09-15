@@ -31,6 +31,7 @@ kotlin {
                 api(projects.data.library.api)
                 api(projects.data.ratings.api)
                 api(projects.data.rewatch.api)
+                api(projects.data.search.api)
                 api(projects.data.startWatching.api)
                 api(projects.data.user.api)
                 api(projects.data.oauth.api)
