@@ -31,6 +31,7 @@ public class Mapper(
                 voteAverage = it.voteAverage?.let { vote -> formatterUtil.formatDouble(vote, 1) },
                 year = it.year,
                 overview = it.overview,
+                episodeCount = it.episodeCount,
             )
         }.toImmutableList()
 
