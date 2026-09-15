@@ -85,12 +85,6 @@ public extension TvManiac.DiscoverShow {
     }
 }
 
-public extension TvManiac.ShowGenre {
-    func toSwift() -> SwiftShowGenre {
-        .init(showId: id, tmdbId: id, name: name, imageUrl: posterUrl)
-    }
-}
-
 public extension TvManiac.GenreRowModel {
     func toSwift() -> SwiftGenreRow {
         .init(
