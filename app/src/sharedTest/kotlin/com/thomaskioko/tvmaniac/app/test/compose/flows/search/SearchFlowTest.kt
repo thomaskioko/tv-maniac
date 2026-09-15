@@ -26,6 +26,7 @@ internal class SearchFlowTest : BaseAppFlowTest() {
             .enterSearchQuery(query)
             .assertSearchQueryDisplayed(query)
             .assertResultItemDisplayed(tmdbId)
+            .assertResultCountEquals(1)
             .assertResultTitleDisplayed("Breaking Bad")
             // 2. Click Result -> Show Details
             .clickResultItem(tmdbId)
@@ -35,6 +36,31 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         // 3. Back -> Search Screen restored
         searchRobot
             .assertSearchScreenDisplayed()
+            .assertResultItemDisplayed(tmdbId)
+    }
+
+    @Test
+    fun givenSearchResults_whenSearchKeyPressed_thenFetchesAgain() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        val query = "Breaking Bad"
+        val tmdbId = 1396L
+        scenarios.search.stubSearch(query)
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .enterSearchQuery(query)
+            .assertResultItemDisplayed(tmdbId)
+
+        scenarios.search.stubSearchError(query)
+
+        searchRobot
+            .pressImeSearchAction()
+            .assertTextDisplayed("Access forbidden.", substring = true)
             .assertResultItemDisplayed(tmdbId)
     }
 
