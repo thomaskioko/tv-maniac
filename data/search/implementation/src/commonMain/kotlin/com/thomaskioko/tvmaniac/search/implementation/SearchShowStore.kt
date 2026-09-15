@@ -45,7 +45,8 @@ public class SearchShowStore(
 ) : Store<SearchKey, List<ShowEntity>> by storeBuilder(
     fetcher = Fetcher.of { key: SearchKey ->
         coroutineScope {
-            val source = searchRemoteDataSources.first { it.provider == key.provider }
+            val source = searchRemoteDataSources.firstOrNull { it.provider == key.provider }
+                ?: error("No search source for provider ${key.provider}")
 
             val remoteShows = source.searchShows(query = key.query, limit = SEARCH_LIMIT).getOrThrow()
             val withTmdbId = remoteShows.withIndex().mapNotNull { (index, show) ->

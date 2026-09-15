@@ -44,6 +44,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.seconds
 
 internal class SearchShowsPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
@@ -421,6 +422,27 @@ internal class SearchShowsPresenterTest {
             advanceUntilIdle()
             fakeSearchRepository.searchCalls shouldBe listOf("loki" to false, "loki" to true)
             expectMostRecentItem().uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+        }
+    }
+
+    @Test
+    fun `should discard a submitted fetch given the query is cleared before it completes`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+
+            fakeSearchRepository.setSearchDelay(1.seconds)
+            presenter.dispatch(SearchSubmitted)
+            advanceTimeBy(100)
+            presenter.dispatch(ClearQuery)
+            advanceUntilIdle()
+
+            expectMostRecentItem() shouldBe settledState(genreRows = genreRowModelList())
         }
     }
 

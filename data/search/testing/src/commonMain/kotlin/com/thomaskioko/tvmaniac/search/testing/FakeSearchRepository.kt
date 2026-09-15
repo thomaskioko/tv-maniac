@@ -2,15 +2,18 @@ package com.thomaskioko.tvmaniac.search.testing
 
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlin.time.Duration
 
 public class FakeSearchRepository : SearchRepository {
     private val resultsByQuery = MutableStateFlow<Map<String, List<ShowEntity>>>(emptyMap())
     private val recentSearches = MutableStateFlow<List<String>>(emptyList())
     private var searchError: Throwable? = null
+    private var searchDelay: Duration = Duration.ZERO
 
     private val _searchCalls = mutableListOf<Pair<String, Boolean>>()
     public val searchCalls: List<Pair<String, Boolean>> get() = _searchCalls
@@ -23,12 +26,17 @@ public class FakeSearchRepository : SearchRepository {
         searchError = error
     }
 
+    public fun setSearchDelay(delay: Duration) {
+        searchDelay = delay
+    }
+
     public fun setRecentSearches(queries: List<String>) {
         recentSearches.value = queries
     }
 
     override suspend fun search(query: String, forceRefresh: Boolean) {
         _searchCalls += (query to forceRefresh)
+        delay(searchDelay)
         searchError?.let { throw it }
     }
 

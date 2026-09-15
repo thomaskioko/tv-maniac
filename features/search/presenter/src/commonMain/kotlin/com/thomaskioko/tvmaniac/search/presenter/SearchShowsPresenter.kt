@@ -27,6 +27,7 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -114,6 +115,7 @@ public class SearchShowsPresenter(
             )
 
         private var resultsQuery: String = ""
+        private var submitJob: Job? = null
 
         private val queryFlow = MutableSharedFlow<String>(
             replay = 1,
@@ -228,10 +230,12 @@ public class SearchShowsPresenter(
         private fun submitQuery() {
             val query = state.value.query
             if (!query.isSearchable()) return
-            coroutineScope.launch { searchNetwork(query, forceRefresh = true).collect() }
+            submitJob?.cancel()
+            submitJob = coroutineScope.launch { searchNetwork(query, forceRefresh = true).collect() }
         }
 
         private fun handleQueryChange(query: String) {
+            submitJob?.cancel()
             coroutineScope.launch {
                 if (query.isSearchable()) {
                     _state.update { it.copy(query = query, isUpdating = true) }
@@ -243,6 +247,7 @@ public class SearchShowsPresenter(
         }
 
         private suspend fun resetSearch(query: String = "") {
+            submitJob?.cancel()
             state.value.message
                 ?.takeIf { it.sourceId == SEARCH_SOURCE_ID }
                 ?.let { uiMessageManager.clearMessage(it.id) }
