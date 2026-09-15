@@ -78,6 +78,7 @@ import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchSubmitted
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.BrowsingGenres
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.Error
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.InitialLoading
@@ -308,6 +309,7 @@ private fun SearchScreenHeader(
             textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
             onClearQuery = { onAction(ClearQuery) },
             onQueryChanged = { onAction(QueryChanged(it)) },
+            onSubmit = { onAction(SearchSubmitted) },
         )
     }
 }

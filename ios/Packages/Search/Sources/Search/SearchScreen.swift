@@ -54,6 +54,7 @@ public struct SearchScreen: View {
     private let onRetry: () -> Void
     private let onBack: () -> Void
     private let onCategoryChanged: (String) -> Void
+    private let onSubmit: () -> Void
 
     @FocusState private var isSearchFocused: Bool
     @SwiftUI.State private var glassQuery: String = ""
@@ -65,7 +66,8 @@ public struct SearchScreen: View {
         onShowClicked: @escaping (Int64) -> Void,
         onRetry: @escaping () -> Void,
         onBack: @escaping () -> Void,
-        onCategoryChanged: @escaping (String) -> Void = { _ in }
+        onCategoryChanged: @escaping (String) -> Void = { _ in },
+        onSubmit: @escaping () -> Void = {}
     ) {
         self.state = state
         _query = query
@@ -73,6 +75,7 @@ public struct SearchScreen: View {
         self.onRetry = onRetry
         self.onBack = onBack
         self.onCategoryChanged = onCategoryChanged
+        self.onSubmit = onSubmit
     }
 
     private var isBrowsingGenres: Bool {
@@ -97,6 +100,7 @@ public struct SearchScreen: View {
                     .toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
                     .searchable(text: $glassQuery, prompt: state.searchPlaceholder)
                     .searchFocused($isSearchFocused)
+                    .onSubmit(of: .search) { onSubmit() }
                     .onChange(of: glassQuery) { _, newValue in
                         if newValue != query {
                             query = newValue
@@ -215,6 +219,7 @@ public struct SearchScreen: View {
                 .textStyle(theme.typography.bodyMedium)
                 .focused($isSearchFocused)
                 .submitLabel(.search)
+                .onSubmit { onSubmit() }
 
             if !query.isEmpty {
                 Button {

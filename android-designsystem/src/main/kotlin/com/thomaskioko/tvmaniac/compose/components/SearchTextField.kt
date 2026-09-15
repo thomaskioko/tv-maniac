@@ -50,6 +50,7 @@ public fun SearchTextContainer(
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
+    onSubmit: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -98,7 +99,7 @@ public fun SearchTextContainer(
         },
         onSubmit = {
             coroutineScope.launch {
-                onQueryChanged(textState.value.text)
+                onSubmit()
                 keyboardController?.hide()
                 focusManager.clearFocus()
             }

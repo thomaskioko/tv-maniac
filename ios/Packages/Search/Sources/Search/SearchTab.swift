@@ -34,7 +34,8 @@ public struct SearchTab: View {
                 if let item = categoryLabels.first(where: { $0.label == label }) {
                     presenter.dispatch(action: CategoryChanged(category: item.category))
                 }
-            }
+            },
+            onSubmit: { presenter.dispatch(action: SearchSubmitted()) }
         )
     }
 }
