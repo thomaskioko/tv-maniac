@@ -165,6 +165,10 @@ graph TB
     :data:rewatch:api[api]:::multiplatform
     :data:rewatch:implementation[implementation]:::multiplatform
   end
+  subgraph :data:search
+    direction TB
+    :data:search:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -329,6 +333,7 @@ graph TB
   :api:simkl:implementation --> :data:oauth:api
   :api:simkl:implementation --> :data:ratings:api
   :api:simkl:implementation --> :data:rewatch:api
+  :api:simkl:implementation --> :data:search:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -354,6 +359,7 @@ graph TB
   :api:trakt:implementation --> :data:oauth:api
   :api:trakt:implementation --> :data:ratings:api
   :api:trakt:implementation --> :data:rewatch:api
+  :api:trakt:implementation --> :data:search:api
   :api:trakt:implementation --> :data:start-watching:api
   :api:trakt:implementation --> :data:sync-activity:api
   :api:trakt:implementation --> :data:user:api
@@ -597,6 +603,9 @@ graph TB
   :data:rewatch:implementation --> :data:database:sqldelight
   :data:rewatch:implementation --> :data:rewatch:api
   :data:rewatch:implementation --> :data:shows:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
+  :data:search:api --> :data:shows:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasondetails:implementation --> :api:tmdb:api
   :data:seasondetails:implementation --> :core:base

@@ -473,6 +473,7 @@ graph TB
   :api:simkl:implementation --> :data:oauth:api
   :api:simkl:implementation --> :data:ratings:api
   :api:simkl:implementation --> :data:rewatch:api
+  :api:simkl:implementation --> :data:search:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -498,6 +499,7 @@ graph TB
   :api:trakt:implementation --> :data:oauth:api
   :api:trakt:implementation --> :data:ratings:api
   :api:trakt:implementation --> :data:rewatch:api
+  :api:trakt:implementation --> :data:search:api
   :api:trakt:implementation --> :data:start-watching:api
   :api:trakt:implementation --> :data:sync-activity:api
   :api:trakt:implementation --> :data:user:api
@@ -744,13 +746,17 @@ graph TB
   :data:rewatch:implementation --> :data:database:sqldelight
   :data:rewatch:implementation --> :data:rewatch:api
   :data:rewatch:implementation --> :data:shows:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
   :data:search:api --> :data:shows:api
   :data:search:implementation --> :api:tmdb:api
   :data:search:implementation --> :api:trakt:api
   :data:search:implementation --> :core:base
   :data:search:implementation -.-> :core:network-util:api
   :data:search:implementation --> :core:util:api
+  :data:search:implementation --> :data:account-manager:api
   :data:search:implementation -.-> :data:database:sqldelight
+  :data:search:implementation --> :data:request-manager:api
   :data:search:implementation --> :data:search:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasondetails:implementation --> :api:tmdb:api

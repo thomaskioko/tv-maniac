@@ -10,9 +10,17 @@ graph TB
     :core:base[base]:::multiplatform
     :core:view[view]:::multiplatform
   end
+  subgraph :core:connectivity
+    direction TB
+    :core:connectivity:api[api]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
+  end
+  subgraph :core:network-util
+    direction TB
+    :core:network-util:api[api]:::multiplatform
   end
   subgraph :core:util
     direction TB
@@ -63,11 +71,15 @@ graph TB
 
   :core:base --> :core:logger:api
   :core:base --> :core:view
+  :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:genre:api --> :data:database:sqldelight
   :data:genre:api --> :data:shows:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
   :data:search:api --> :data:shows:api
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
