@@ -28,7 +28,7 @@ public class DefaultSearchRepository(
     override suspend fun search(query: String, forceRefresh: Boolean) {
         val key = searchKey(query)
         val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = key.hashCode().toLong(),
+            entityId = key.cacheKey.hashCode().toLong(),
             requestType = SEARCH_RESULTS.name,
             threshold = SEARCH_RESULTS.duration,
         )
@@ -39,7 +39,7 @@ public class DefaultSearchRepository(
     }
 
     override fun observeSearchResults(query: String): Flow<List<ShowEntity>> =
-        searchDao.observeResults(searchKey(query))
+        searchDao.observeResults(searchKey(query).cacheKey)
 
     override fun observeRecentSearches(): Flow<List<String>> = searchDao.observeRecentSearches()
 
@@ -57,8 +57,8 @@ public class DefaultSearchRepository(
         searchDao.deleteAllRecentSearches()
     }
 
-    private fun searchKey(query: String): String {
-        val activeProvider = accountManager.getActiveProvider() ?: SyncProviderSource.TRAKT
-        return "${activeProvider.name.lowercase()}:${query.trim().lowercase()}"
-    }
+    private fun searchKey(query: String): SearchKey = SearchKey(
+        provider = accountManager.getActiveProvider() ?: SyncProviderSource.TRAKT,
+        query = query.trim(),
+    )
 }

@@ -30,26 +30,24 @@ import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import dev.zacsweers.metro.Provider as MetroProvider
 
 @Inject
 public class SearchShowStore(
     private val searchDao: SearchDao,
     private val tvShowsDao: TvShowsDao,
-    private val activeSearchRemoteDataSource: MetroProvider<SearchRemoteDataSource>,
+    private val searchRemoteDataSources: Set<SearchRemoteDataSource>,
     private val tmdbDetailsDataSource: TmdbShowDetailsNetworkDataSource,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<String, List<ShowEntity>> by storeBuilder(
-    fetcher = Fetcher.of { key: String ->
+) : Store<SearchKey, List<ShowEntity>> by storeBuilder(
+    fetcher = Fetcher.of { key: SearchKey ->
         coroutineScope {
-            val activeSource = activeSearchRemoteDataSource()
-            val query = key.substringAfter(':')
+            val source = searchRemoteDataSources.first { it.provider == key.provider }
 
-            val remoteShows = activeSource.searchShows(query = query, limit = SEARCH_LIMIT).getOrThrow()
+            val remoteShows = source.searchShows(query = key.query, limit = SEARCH_LIMIT).getOrThrow()
             val withTmdbId = remoteShows.withIndex().mapNotNull { (index, show) ->
                 val tmdbId = show.tmdbId ?: return@mapNotNull null
                 Triple(index, show, tmdbId)
@@ -72,18 +70,18 @@ public class SearchShowStore(
                         tmdbId = tmdbId,
                         tmdbDetails = tmdbDetails,
                         position = index,
-                        provider = activeSource.provider,
+                        provider = key.provider,
                     )
                 }
             }.awaitAll()
         }
     },
-    sourceOfTruth = SourceOfTruth.of<String, List<SearchFetchResult>, List<ShowEntity>>(
-        reader = { key -> searchDao.observeResults(key) },
+    sourceOfTruth = SourceOfTruth.of<SearchKey, List<SearchFetchResult>, List<ShowEntity>>(
+        reader = { key -> searchDao.observeResults(key.cacheKey) },
         writer = { key, results ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
-                    searchDao.deleteResults(key)
+                    searchDao.deleteResults(key.cacheKey)
 
                     results.forEach { result ->
                         tvShowsDao.upsertMerging(result.toShowToPersist(formatterUtil, dateTimeProvider))
@@ -93,7 +91,7 @@ public class SearchShowStore(
                             externalId = result.remoteShow.providerShowId,
                         )
                         searchDao.upsertResult(
-                            query = key,
+                            query = key.cacheKey,
                             tmdbId = result.tmdbId,
                             position = result.position.toLong(),
                             score = result.remoteShow.score,
@@ -101,13 +99,13 @@ public class SearchShowStore(
                     }
 
                     requestManagerRepository.upsert(
-                        entityId = key.hashCode().toLong(),
+                        entityId = key.cacheKey.hashCode().toLong(),
                         requestType = SEARCH_RESULTS.name,
                     )
                 }
             }
         },
-        delete = { key -> searchDao.deleteResults(key) },
+        delete = { key -> searchDao.deleteResults(key.cacheKey) },
         deleteAll = { searchDao.deleteAllResults() },
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,

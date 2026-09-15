@@ -21,7 +21,6 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.VideosResponse
 import com.thomaskioko.tvmaniac.tmdb.testing.FakeTmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
-import dev.zacsweers.metro.providerOf
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -77,7 +76,7 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
         )
         val store = buildStore(source)
 
-        fetch(store, key = "trakt:breaking")
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "breaking"))
 
         val results = database.searchResultsQueries.resultsByQuery("trakt:breaking").executeAsList()
         results.map { it.name } shouldBe listOf("First", "Second", "Third")
@@ -90,11 +89,11 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
         source.setSearchResult("two", listOf(buildRemoteShow(providerShowId = "2", tmdbId = 200L, title = "Two")))
         val store = buildStore(source)
 
-        fetch(store, key = "trakt:one")
-        fetch(store, key = "trakt:two")
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "one"))
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "two"))
 
         source.setSearchResult("one", listOf(buildRemoteShow(providerShowId = "3", tmdbId = 300L, title = "One Updated")))
-        fetch(store, key = "trakt:one")
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "one"))
 
         val one = database.searchResultsQueries.resultsByQuery("trakt:one").executeAsList()
         val two = database.searchResultsQueries.resultsByQuery("trakt:two").executeAsList()
@@ -122,7 +121,7 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
         )
         val store = buildStore(source)
 
-        fetch(store, key = "trakt:shows")
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "shows"))
 
         database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(100L)).executeAsOne().poster_path shouldBe "/existing.jpg"
         database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(200L)).executeAsOne().poster_path shouldBe ""
@@ -135,7 +134,7 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
         source.setSearchResult("existing", listOf(buildRemoteShow(providerShowId = "1", tmdbId = 100L, title = "Existing")))
         val store = buildStore(source)
 
-        fetch(store, key = "trakt:existing")
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "existing"))
 
         database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(100L)).executeAsOne().season_numbers shouldBe "1,2,3"
     }
@@ -146,7 +145,7 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
         source.setSearchResult("query", listOf(buildRemoteShow(providerShowId = "1", tmdbId = 100L, title = "Show")))
         val store = buildStore(source)
 
-        fetch(store, key = "trakt:query")
+        fetch(store, key = SearchKey(SyncProviderSource.TRAKT, "query"))
 
         requestManager.upsertCalled shouldBe true
     }
@@ -157,14 +156,14 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
         source.setSearchResult("query", listOf(buildRemoteShow(providerShowId = "9999", tmdbId = 100L, title = "Show")))
         val store = buildStore(source)
 
-        fetch(store, key = "simkl:query")
+        fetch(store, key = SearchKey(SyncProviderSource.SIMKL, "query"))
 
         val showId = database.tvShowQueries.getShowIdByTmdbId(Id(100L)).executeAsOne()
         database.tvshowExternalIdQueries.externalIdForShow(showId, Provider.SIMKL).executeAsOneOrNull() shouldBe "9999"
         database.tvshowExternalIdQueries.externalIdForShow(showId, Provider.TRAKT).executeAsOneOrNull() shouldBe null
     }
 
-    private suspend fun fetch(store: SearchShowStore, key: String) {
+    private suspend fun fetch(store: SearchShowStore, key: SearchKey) {
         store.stream(StoreReadRequest.fresh(key)).test {
             awaitItem()
             awaitItem()
@@ -175,7 +174,7 @@ internal class SearchShowStoreTest : BaseDatabaseTest() {
     private fun buildStore(source: FakeSearchRemoteDataSource): SearchShowStore = SearchShowStore(
         searchDao = searchDao,
         tvShowsDao = tvShowsDao,
-        activeSearchRemoteDataSource = providerOf(source),
+        searchRemoteDataSources = setOf(source),
         tmdbDetailsDataSource = tmdbSource,
         formatterUtil = FakeFormatterUtil(),
         dateTimeProvider = FakeDateTimeProvider(),
