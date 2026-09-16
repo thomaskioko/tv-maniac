@@ -1474,6 +1474,7 @@ graph TB
   :features:genre-shows:ui --> :core:base
   :features:genre-shows:ui -.-> :core:test-tags
   :features:genre-shows:ui --> :features:genre-shows:presenter
+  :features:genre-shows:ui -.-> :i18n:generator
   :features:genre-shows:ui --> :navigation:api
   :features:genre-shows:ui --> :navigation:ui
   :features:home:nav --> :navigation:api
