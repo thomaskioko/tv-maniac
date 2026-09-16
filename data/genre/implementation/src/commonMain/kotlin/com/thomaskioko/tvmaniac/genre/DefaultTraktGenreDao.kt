@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.genre
 
+import androidx.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
@@ -42,13 +45,14 @@ public class DefaultTraktGenreDao(
         genreQueries.deleteAll()
     }
 
-    override fun upsertGenreShow(genreSlug: String, showId: Long, pageOrder: Long, category: String) {
+    override fun upsertGenreShow(genreSlug: String, showId: Long, pageOrder: Long, category: String, page: Long) {
         val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         genreShowsQueries.upsert(
             genre_slug = genreSlug,
             show_id = internalShowId,
             page_order = pageOrder,
             category = category,
+            page = Id(page),
         )
     }
 
@@ -69,8 +73,8 @@ public class DefaultTraktGenreDao(
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun observeShowsByGenreSlugAndCategory(slug: String, category: String): Flow<List<ShowEntity>> =
-        genreShowsQueries.showsByGenreSlugAndCategory(slug, category) { showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
+    override fun observeShowsByGenreSlugCategoryAndPage(slug: String, category: String, page: Long): Flow<List<ShowEntity>> =
+        genreShowsQueries.showsByGenreSlugCategoryAndPage(slug, category, Id(page)) { showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
                 showId = showId.id,
                 tmdbId = tmdbId.id,
@@ -116,8 +120,34 @@ public class DefaultTraktGenreDao(
                     }
             }
 
+    override fun getPagedShowsByGenreSlugAndCategory(slug: String, category: String): PagingSource<Int, ShowEntity> =
+        QueryPagingSource(
+            countQuery = genreShowsQueries.countByGenreSlugAndCategory(slug, category),
+            transacter = genreShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                genreShowsQueries.pagedShowsByGenreSlugAndCategory(slug, category, limit, offset) { showId, tmdbId, page, name, posterPath, inLibrary ->
+                    ShowEntity(
+                        showId = showId.id,
+                        tmdbId = tmdbId.id,
+                        page = page.id,
+                        title = name ?: "",
+                        posterPath = posterPath,
+                        inLibrary = inLibrary == 1L,
+                    )
+                }
+            },
+        )
+
+    override fun pageExists(slug: String, category: String, page: Long): Boolean =
+        genreShowsQueries.pageExists(slug, category, Id(page)).executeAsOne()
+
     override fun deleteShowsByGenreSlugAndCategory(slug: String, category: String) {
         genreShowsQueries.deleteByGenreSlugAndCategory(slug, category)
+    }
+
+    override fun deleteShowsByGenreSlugCategoryAndPage(slug: String, category: String, page: Long) {
+        genreShowsQueries.deleteByGenreSlugCategoryAndPage(slug, category, Id(page))
     }
 
     override fun deleteShowsByGenreSlug(slug: String) {

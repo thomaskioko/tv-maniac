@@ -45,18 +45,18 @@ public class GenreShowsStore(
         coroutineScope {
             val traktShows: List<TraktShowResponse> = when (key.category) {
                 GenreShowCategory.POPULAR ->
-                    traktRemoteDataSource.getPopularShows(page = 1, limit = 10, genres = key.genreSlug)
+                    traktRemoteDataSource.getPopularShows(page = key.page.toInt(), limit = GENRE_PAGE_SIZE, genres = key.genreSlug)
                         .getOrThrow()
                 GenreShowCategory.TRENDING ->
-                    traktRemoteDataSource.getTrendingShows(page = 1, limit = 10, genres = key.genreSlug)
+                    traktRemoteDataSource.getTrendingShows(page = key.page.toInt(), limit = GENRE_PAGE_SIZE, genres = key.genreSlug)
                         .getOrThrow()
                         .map { it.show }
                 GenreShowCategory.TOP_RATED ->
-                    traktRemoteDataSource.getFavoritedShows(page = 1, limit = 10, genres = key.genreSlug)
+                    traktRemoteDataSource.getFavoritedShows(page = key.page.toInt(), limit = GENRE_PAGE_SIZE, genres = key.genreSlug)
                         .getOrThrow()
                         .map { it.show }
                 GenreShowCategory.MOST_WATCHED ->
-                    traktRemoteDataSource.getMostWatchedShows(page = 1, limit = 10, genres = key.genreSlug)
+                    traktRemoteDataSource.getMostWatchedShows(page = key.page.toInt(), limit = GENRE_PAGE_SIZE, genres = key.genreSlug)
                         .getOrThrow()
                         .map { it.show }
             }
@@ -91,13 +91,17 @@ public class GenreShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<GenreShowsStoreKey, List<GenreShowWithImages>, List<ShowEntity>>(
-        reader = { key -> traktGenreDao.observeShowsByGenreSlugAndCategory(key.genreSlug, key.category.name) },
+        reader = { key -> traktGenreDao.observeShowsByGenreSlugCategoryAndPage(key.genreSlug, key.category.name, key.page) },
         writer = { key, response ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
-                    traktGenreDao.deleteShowsByGenreSlugAndCategory(key.genreSlug, key.category.name)
+                    if (key.page == 1L) {
+                        traktGenreDao.deleteShowsByGenreSlugAndCategory(key.genreSlug, key.category.name)
+                    } else {
+                        traktGenreDao.deleteShowsByGenreSlugCategoryAndPage(key.genreSlug, key.category.name, key.page)
+                    }
                     requestManagerRepository.upsert(
-                        entityId = "${key.genreSlug}_${key.category.name}".hashCode().toLong(),
+                        entityId = genreShowsRequestId(key.genreSlug, key.category, key.page),
                         requestType = GENRE_SHOWS.name,
                     )
 
@@ -121,6 +125,7 @@ public class GenreShowsStore(
                             showId = tmdbId,
                             pageOrder = showWithImages.pageOrder.toLong(),
                             category = key.category.name,
+                            page = key.page,
                         )
                     }
                 }
