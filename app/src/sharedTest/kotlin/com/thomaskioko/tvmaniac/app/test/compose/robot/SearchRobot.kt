@@ -59,6 +59,31 @@ internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot<SearchRobot>(co
         assertDisplayed(SearchTestTags.ERROR_STATE_TEST_TAG)
     }
 
+    fun clearSearchQuery() = apply {
+        replaceText(tag = SearchTestTags.SEARCH_BAR_TEST_TAG, text = "")
+        waitForIdle()
+    }
+
+    fun assertRecentSearchesSectionDisplayed() = apply {
+        assertDisplayed(SearchTestTags.RECENT_SEARCHES_SECTION_TEST_TAG)
+    }
+
+    fun assertRecentSearchesSectionNotDisplayed() = apply {
+        assertDoesNotExist(SearchTestTags.RECENT_SEARCHES_SECTION_TEST_TAG)
+    }
+
+    fun assertRecentSearchChipDisplayed(query: String) = apply {
+        assertDisplayed(SearchTestTags.recentSearchChip(query))
+    }
+
+    fun clickRecentSearchChip(query: String) = apply {
+        click(SearchTestTags.recentSearchChip(query))
+    }
+
+    fun clickClearRecentSearches() = apply {
+        click(SearchTestTags.CLEAR_RECENT_SEARCHES_TEST_TAG)
+    }
+
     fun clickResultItem(traktId: Long): ShowDetailsRobot {
         click(SearchTestTags.resultItem(traktId))
         return ShowDetailsRobot(composeUi)

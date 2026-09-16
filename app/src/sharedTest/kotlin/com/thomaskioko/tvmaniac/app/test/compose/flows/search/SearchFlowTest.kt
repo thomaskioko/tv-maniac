@@ -40,6 +40,41 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    fun searchRecentSearchesJourney() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        val query = "Breaking Bad"
+        val tmdbId = 1396L
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
+
+        scenarios.search.stubSearch(query)
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .enterSearchQuery(query)
+            .assertResultItemDisplayed(tmdbId)
+            .clickResultItem(tmdbId)
+            .assertShowDetailsDisplayed()
+            .pressBack()
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .clearSearchQuery()
+            .assertRecentSearchChipDisplayed(query)
+            .clickRecentSearchChip(query)
+            .assertResultItemDisplayed(tmdbId)
+
+        searchRobot
+            .clearSearchQuery()
+            .assertRecentSearchesSectionDisplayed()
+            .clickClearRecentSearches()
+            .assertRecentSearchesSectionNotDisplayed()
+    }
+
+    @Test
     fun givenSearchResults_whenSearchKeyPressed_thenFetchesAgain() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
