@@ -18,11 +18,12 @@
     <string name="label_continue_watching">Continuer à regarder</string>
     <string name="label_start_watching_empty">Aucune série dans votre liste de suivi</string>
     <string name="label_discover_title">Découvrir</string>
-    <string name="label_tab_search">Rechercher</string>
     <string name="label_search_title">Rechercher</string>
-    <string name="label_search_placeholder">Entrez le titre de l'émission</string>
-    <string name="label_search_by_genre">Parcourir par genre</string>
+    <string name="label_search_placeholder">Rechercher des séries…</string>
     <string name="label_search_empty_results">Aucun résultat trouvé. Essayez un autre mot-clé !</string>
+    <string name="label_search_recent">Recherches récentes</string>
+    <string name="btn_search_clear_recent">Effacer</string>
+    <string name="cd_search_recent_remove">Retirer des recherches récentes</string>
 
     <string name="label_season_overview">Aperçu de la saison</string>
 
@@ -199,7 +200,7 @@
     <string name="error_empty_library">Votre bibliothèque semble être vide</string>
     <string name="empty_list">Impossible de charger les saisons.</string>
     <string name="msg_empty_category">Impossible de charger les données de catégorie d'émission !</string>
-    <string name="msg_search_show_hint">Entrez le titre de l'émission</string>
+    <string name="msg_search_show_hint">Rechercher des séries…</string>
     <string name="generic_error_message">Oups ! Quelque chose s'est mal passé !</string>
     <string name="generic_empty_content">Votre réserve semble être vide</string>
     <string name="generic_fetching_data">Veuillez patienter pendant que nous récupérons votre contenu</string>
@@ -207,7 +208,7 @@
         l'aurez configurée, vous pourrez vous perdre dans le vaste monde de la collection Tmdb.
     </string>
     <string name="generic_retry">Réessayer</string>
-    <string name="search_no_results">Aucun résultat trouvé. Essayez un autre mot-clé</string>
+    <string name="search_no_results">Aucun résultat trouvé. Essayez un autre mot-clé !</string>
 
     <string name="str_more">Plus</string>
     <string name="str_more_trailers">Plus de bandes-annonces</string>

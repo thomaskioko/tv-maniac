@@ -72,4 +72,8 @@
         <item quantity="one">%d show skipped</item>
         <item quantity="other">%d shows skipped</item>
     </plurals>
+    <plurals name="plurals_search_episode_count">
+        <item quantity="one">%d ep.</item>
+        <item quantity="other">%d eps.</item>
+    </plurals>
 </resources>

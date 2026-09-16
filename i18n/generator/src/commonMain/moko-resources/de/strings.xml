@@ -18,11 +18,12 @@
     <string name="label_continue_watching">Weiterschauen</string>
     <string name="label_start_watching_empty">Keine Sendungen in Ihrer Merkliste</string>
     <string name="label_discover_title">Entdecken</string>
-    <string name="label_tab_search">Suchen</string>
     <string name="label_search_title">Suchen</string>
-    <string name="label_search_placeholder">Sendungstitel eingeben</string>
-    <string name="label_search_by_genre">Nach Genre durchsuchen</string>
+    <string name="label_search_placeholder">Serien suchen…</string>
     <string name="label_search_empty_results">Keine Ergebnisse gefunden. Versuchen Sie ein anderes Stichwort!</string>
+    <string name="label_search_recent">Letzte Suchen</string>
+    <string name="btn_search_clear_recent">Löschen</string>
+    <string name="cd_search_recent_remove">Aus den letzten Suchen entfernen</string>
 
     <string name="label_season_overview">Staffelübersicht</string>
 
@@ -201,7 +202,7 @@
     <string name="error_empty_library">Ihre Bibliothek scheint leer zu sein</string>
     <string name="empty_list">Staffeln konnten nicht geladen werden.</string>
     <string name="msg_empty_category">Sendungskategoriedaten konnten nicht geladen werden!</string>
-    <string name="msg_search_show_hint">Sendungstitel eingeben</string>
+    <string name="msg_search_show_hint">Serien suchen…</string>
     <string name="generic_error_message">Hoppla! Etwas ist schiefgelaufen!</string>
     <string name="generic_empty_content">Ihr Speicher scheint leer zu sein</string>
     <string name="generic_fetching_data">Bitte warten Sie, während wir Ihre Inhalte abrufen</string>
@@ -209,7 +210,7 @@
         das eingerichtet haben, können Sie sich in der riesigen Welt der Tmdb-Sammlung verlieren.
     </string>
     <string name="generic_retry">Wiederholen</string>
-    <string name="search_no_results">Keine Ergebnisse gefunden. Versuchen Sie ein anderes Stichwort</string>
+    <string name="search_no_results">Keine Ergebnisse gefunden. Versuchen Sie ein anderes Stichwort!</string>
 
     <string name="str_more">Mehr</string>
     <string name="str_more_trailers">Mehr Trailer</string>

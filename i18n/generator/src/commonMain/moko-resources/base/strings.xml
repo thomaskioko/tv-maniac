@@ -9,7 +9,6 @@
     <string name="label_cancel">Cancel</string>
 
     <string name="label_tab_discover">Discover</string>
-    <string name="label_tab_search">Search</string>
     <string name="label_tab_my_shows">My Shows</string>
     <string name="label_tab_settings">Settings</string>
 
@@ -26,9 +25,11 @@
     <string name="label_discover_title">Discover</string>
 
     <string name="label_search_title">Search</string>
-    <string name="label_search_placeholder">Enter Show Title</string>
-    <string name="label_search_by_genre">Browse by Genre</string>
+    <string name="label_search_placeholder">Search shows…</string>
     <string name="label_search_empty_results">No results found. Try a different keyword!</string>
+    <string name="label_search_recent">Recent searches</string>
+    <string name="btn_search_clear_recent">Clear</string>
+    <string name="cd_search_recent_remove">Remove from recent searches</string>
 
     <string name="label_season_overview">Season Overview</string>
 
@@ -248,13 +249,13 @@
     <string name="error_empty_library">Looks like your library is empty</string>
     <string name="empty_list">Could\'nt load seasons.</string>
     <string name="msg_empty_category">Could not load show category data!</string>
-    <string name="msg_search_show_hint">Enter Show Title</string>
+    <string name="msg_search_show_hint">Search shows…</string>
     <string name="generic_error_message">Oops! Something went wrong!</string>
     <string name="generic_empty_content">Looks like your stash is empty</string>
     <string name="generic_fetching_data">Please wait while we get your content</string>
     <string name="missing_api_key">Could be that you forgot to add your TMDB API Key. Once you set that up, you can get lost in the vast world of Tmdb\'s collection.</string>
     <string name="generic_retry">Retry</string>
-    <string name="search_no_results">No results found. Try a different keyword</string>
+    <string name="search_no_results">No results found. Try a different keyword!</string>
 
     <string name="str_more">More</string>
     <string name="str_more_trailers">More Trailers</string>
