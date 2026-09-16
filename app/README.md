@@ -355,6 +355,12 @@ graph TB
     :features:feature-flags:presenter[presenter]:::multiplatform
     :features:feature-flags:ui[ui]:::android-library
   end
+  subgraph :features:genre-shows
+    direction TB
+    :features:genre-shows:nav[nav]:::multiplatform
+    :features:genre-shows:presenter[presenter]:::multiplatform
+    :features:genre-shows:ui[ui]:::android-library
+  end
   subgraph :features:home
     direction TB
     :features:home:nav[nav]:::multiplatform
@@ -667,6 +673,9 @@ graph TB
   :app -.-> :features:feature-flags:nav
   :app -.-> :features:feature-flags:presenter
   :app -.-> :features:feature-flags:ui
+  :app -.-> :features:genre-shows:nav
+  :app -.-> :features:genre-shows:presenter
+  :app -.-> :features:genre-shows:ui
   :app -.-> :features:home:nav
   :app -.-> :features:home:presenter
   :app -.-> :features:library:nav
@@ -1452,6 +1461,21 @@ graph TB
   :features:feature-flags:ui -.-> :i18n:generator
   :features:feature-flags:ui --> :navigation:api
   :features:feature-flags:ui --> :navigation:ui
+  :features:genre-shows:nav --> :data:genre:api
+  :features:genre-shows:nav --> :navigation:api
+  :features:genre-shows:presenter --> :core:base
+  :features:genre-shows:presenter --> :core:view
+  :features:genre-shows:presenter --> :data:genre:api
+  :features:genre-shows:presenter -.-> :data:shows:api
+  :features:genre-shows:presenter --> :features:genre-shows:nav
+  :features:genre-shows:presenter -.-> :features:show-details:nav
+  :features:genre-shows:presenter --> :navigation:api
+  :features:genre-shows:ui -.-> :android-designsystem
+  :features:genre-shows:ui --> :core:base
+  :features:genre-shows:ui -.-> :core:test-tags
+  :features:genre-shows:ui --> :features:genre-shows:presenter
+  :features:genre-shows:ui --> :navigation:api
+  :features:genre-shows:ui --> :navigation:ui
   :features:home:nav --> :navigation:api
   :features:home:presenter --> :core:base
   :features:home:presenter --> :domain:user
@@ -1660,6 +1684,7 @@ graph TB
   :features:search:presenter --> :data:genre:api
   :features:search:presenter --> :data:search:api
   :features:search:presenter --> :domain:genre
+  :features:search:presenter -.-> :features:genre-shows:nav
   :features:search:presenter --> :features:search:nav
   :features:search:presenter -.-> :features:show-details:nav
   :features:search:presenter --> :i18n:api

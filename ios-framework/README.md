@@ -353,6 +353,11 @@ graph TB
     :features:feature-flags:nav[nav]:::multiplatform
     :features:feature-flags:presenter[presenter]:::multiplatform
   end
+  subgraph :features:genre-shows
+    direction TB
+    :features:genre-shows:nav[nav]:::multiplatform
+    :features:genre-shows:presenter[presenter]:::multiplatform
+  end
   subgraph :features:home
     direction TB
     :features:home:nav[nav]:::multiplatform
@@ -1192,6 +1197,15 @@ graph TB
   :features:feature-flags:presenter --> :i18n:api
   :features:feature-flags:presenter -.-> :i18n:generator
   :features:feature-flags:presenter --> :navigation:api
+  :features:genre-shows:nav --> :data:genre:api
+  :features:genre-shows:nav --> :navigation:api
+  :features:genre-shows:presenter --> :core:base
+  :features:genre-shows:presenter --> :core:view
+  :features:genre-shows:presenter --> :data:genre:api
+  :features:genre-shows:presenter -.-> :data:shows:api
+  :features:genre-shows:presenter --> :features:genre-shows:nav
+  :features:genre-shows:presenter -.-> :features:show-details:nav
+  :features:genre-shows:presenter --> :navigation:api
   :features:home:nav --> :navigation:api
   :features:home:presenter --> :core:base
   :features:home:presenter --> :domain:user
@@ -1314,6 +1328,7 @@ graph TB
   :features:search:presenter --> :data:genre:api
   :features:search:presenter --> :data:search:api
   :features:search:presenter --> :domain:genre
+  :features:search:presenter -.-> :features:genre-shows:nav
   :features:search:presenter --> :features:search:nav
   :features:search:presenter -.-> :features:show-details:nav
   :features:search:presenter --> :i18n:api
@@ -1603,6 +1618,7 @@ graph TB
   :ios-framework --> :features:episode-sheet:presenter
   :ios-framework -.-> :features:feature-flags:nav
   :ios-framework --> :features:feature-flags:presenter
+  :ios-framework --> :features:genre-shows:presenter
   :ios-framework --> :features:home:nav
   :ios-framework --> :features:home:presenter
   :ios-framework -.-> :features:library:nav
