@@ -29,6 +29,7 @@
 		D6FEA700000000000001AA09 /* Debug in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA09 /* Debug */; };
 		D6FEA700000000000001AA10 /* FeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA10 /* FeatureFlags */; };
 		D6FEA700000000000001AA11 /* MoreShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA11 /* MoreShows */; };
+		D6FEA700000000000001AA16 /* GenreShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA16 /* GenreShows */; };
 		D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA12 /* SeasonDetails */; };
 		D6FEA700000000000001AA13 /* Calendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA13 /* Calendar */; };
 		D6FEA700000000000001AA14 /* Root in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA14 /* Root */; };
@@ -126,6 +127,7 @@
 				D6FEA700000000000001AA09 /* Debug in Frameworks */,
 				D6FEA700000000000001AA10 /* FeatureFlags in Frameworks */,
 				D6FEA700000000000001AA11 /* MoreShows in Frameworks */,
+				D6FEA700000000000001AA16 /* GenreShows in Frameworks */,
 				D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */,
 				D6FEA700000000000001AA13 /* Calendar in Frameworks */,
 				D6FEA700000000000001AA14 /* Root in Frameworks */,
@@ -240,6 +242,7 @@
 				D6FEA700000000000002AA09 /* Debug */,
 				D6FEA700000000000002AA10 /* FeatureFlags */,
 				D6FEA700000000000002AA11 /* MoreShows */,
+				D6FEA700000000000002AA16 /* GenreShows */,
 				D6FEA700000000000002AA12 /* SeasonDetails */,
 				D6FEA700000000000002AA13 /* Calendar */,
 				D6FEA700000000000002AA14 /* Root */,
@@ -926,6 +929,10 @@
 		D6FEA700000000000002AA11 /* MoreShows */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MoreShows;
+		};
+		D6FEA700000000000002AA16 /* GenreShows */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GenreShows;
 		};
 		D6FEA700000000000002AA12 /* SeasonDetails */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -37,7 +37,10 @@ public struct SearchTab: View {
             },
             onSubmit: { presenter.dispatch(action: SearchSubmitted()) },
             onRecentSearchSelected: { query in presenter.dispatch(action: RecentSearchClicked(query: query)) },
-            onClearRecentSearches: { presenter.dispatch(action: ClearRecentSearches()) }
+            onClearRecentSearches: { presenter.dispatch(action: ClearRecentSearches()) },
+            onGenreMoreClicked: { slug, name in
+                presenter.dispatch(action: GenreMoreClicked(slug: slug, name: name))
+            }
         )
     }
 }

@@ -63,6 +63,7 @@ public struct SearchScreen: View {
     private let onSubmit: () -> Void
     private let onRecentSearchSelected: (String) -> Void
     private let onClearRecentSearches: () -> Void
+    private let onGenreMoreClicked: (String, String) -> Void
 
     @FocusState private var isSearchFocused: Bool
     @SwiftUI.State private var glassQuery: String = ""
@@ -77,7 +78,8 @@ public struct SearchScreen: View {
         onCategoryChanged: @escaping (String) -> Void = { _ in },
         onSubmit: @escaping () -> Void = {},
         onRecentSearchSelected: @escaping (String) -> Void = { _ in },
-        onClearRecentSearches: @escaping () -> Void = {}
+        onClearRecentSearches: @escaping () -> Void = {},
+        onGenreMoreClicked: @escaping (String, String) -> Void = { _, _ in }
     ) {
         self.state = state
         _query = query
@@ -88,6 +90,7 @@ public struct SearchScreen: View {
         self.onSubmit = onSubmit
         self.onRecentSearchSelected = onRecentSearchSelected
         self.onClearRecentSearches = onClearRecentSearches
+        self.onGenreMoreClicked = onGenreMoreClicked
     }
 
     private var isBrowsingGenres: Bool {
@@ -333,9 +336,13 @@ public struct SearchScreen: View {
                 HorizontalShowContentView(
                     title: genreRow.name,
                     subtitle: genreRow.subtitle,
+                    chevronStyle: .chevronOnly,
                     items: genreRow.shows,
                     onClick: { id in
                         onShowClicked(id)
+                    },
+                    onMoreClicked: {
+                        onGenreMoreClicked(genreRow.id, genreRow.name)
                     }
                 )
             }
