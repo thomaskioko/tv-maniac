@@ -88,4 +88,14 @@ internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot<SearchRobot>(co
         click(SearchTestTags.resultItem(traktId))
         return ShowDetailsRobot(composeUi)
     }
+
+    fun clickGenreMoreButton(slug: String): GenreShowsRobot {
+        scrollToListTag(
+            listTag = SearchTestTags.GENRE_ROWS_LIST_TEST_TAG,
+            itemTag = SearchTestTags.genreMoreButton(slug),
+            useUnmergedTree = true,
+        )
+        click(SearchTestTags.genreMoreButton(slug), useUnmergedTree = true)
+        return GenreShowsRobot(composeUi)
+    }
 }

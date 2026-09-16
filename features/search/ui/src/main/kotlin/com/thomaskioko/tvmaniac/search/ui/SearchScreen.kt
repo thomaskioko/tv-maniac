@@ -77,6 +77,7 @@ import com.thomaskioko.tvmaniac.search.presenter.BackClicked
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.ClearRecentSearches
+import com.thomaskioko.tvmaniac.search.presenter.GenreMoreClicked
 import com.thomaskioko.tvmaniac.search.presenter.MessageShown
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.RecentSearchClicked
@@ -302,6 +303,7 @@ private fun SearchScreenBody(
                 onShowClicked = { onAction(SearchShowClicked(it)) },
                 onRecentSearchClicked = { onAction(RecentSearchClicked(it)) },
                 onClearRecentSearches = { onAction(ClearRecentSearches) },
+                onMoreClicked = { slug, name -> onAction(GenreMoreClicked(slug, name)) },
             )
 
             is Error -> {
@@ -355,6 +357,7 @@ private fun GenreRowsContent(
     onShowClicked: (Long) -> Unit,
     onRecentSearchClicked: (String) -> Unit,
     onClearRecentSearches: () -> Unit,
+    onMoreClicked: (slug: String, name: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -364,7 +367,9 @@ private fun GenreRowsContent(
     ) {
         if (genreRows.isEmpty()) return
 
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.testTag(SearchTestTags.GENRE_ROWS_LIST_TEST_TAG),
+        ) {
             if (recentSearches.isNotEmpty()) {
                 item(key = "recent_searches", contentType = "RecentSearches") {
                     RecentSearchesSection(
@@ -386,7 +391,9 @@ private fun GenreRowsContent(
                     title = genreRow.name,
                     description = genreRow.subtitle,
                     tvShows = genreRow.shows,
+                    slug = genreRow.slug,
                     onItemClicked = onShowClicked,
+                    onMoreClicked = { onMoreClicked(genreRow.slug, genreRow.name) },
                 )
 
                 Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
