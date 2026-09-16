@@ -97,6 +97,13 @@ public struct SearchScreen: View {
         return false
     }
 
+    private var isSearchUpdating: Bool {
+        if case let .searchResults(_, isUpdating) = state.screenState {
+            return isUpdating
+        }
+        return false
+    }
+
     public var body: some View {
         ScrollView(showsIndicators: false) {
             contentView
@@ -223,8 +230,15 @@ public struct SearchScreen: View {
 
     private var searchBar: some View {
         HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.appOnSurfaceVariant)
+            if isSearchUpdating {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .foregroundStyle(.appOnSurfaceVariant)
+                    .frame(width: 16, height: 16)
+            } else {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.appOnSurfaceVariant)
+            }
 
             TextField(state.searchPlaceholder, text: $query)
                 .testTag(SearchTestTags.shared.SEARCH_BAR_TEST_TAG)
@@ -319,7 +333,6 @@ public struct SearchScreen: View {
                 HorizontalShowContentView(
                     title: genreRow.name,
                     subtitle: genreRow.subtitle,
-                    chevronStyle: .chevronOnly,
                     items: genreRow.shows,
                     onClick: { id in
                         onShowClicked(id)
@@ -335,7 +348,7 @@ public struct SearchScreen: View {
                 LoadingIndicatorView()
             }
 
-            SearchResultListView(
+            SearchResultsGridView(
                 items: results,
                 onClick: { id in
                     onShowClicked(id)

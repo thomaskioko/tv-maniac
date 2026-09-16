@@ -1,15 +1,18 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
@@ -40,16 +44,19 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 import kotlinx.coroutines.launch
 
+private val LeadingIconSize = 24.dp
+
 @Composable
 public fun SearchTextContainer(
     query: String,
     hint: String,
-    lazyListState: LazyListState,
+    scrollableState: ScrollableState,
     onQueryChanged: (String) -> Unit,
     onClearQuery: () -> Unit,
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
+    isLoading: Boolean = false,
     onSubmit: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -62,8 +69,8 @@ public fun SearchTextContainer(
     }
     val hasFocus = remember { mutableStateOf(false) }
 
-    LaunchedEffect(lazyListState) {
-        snapshotFlow { lazyListState.isScrollInProgress }
+    LaunchedEffect(scrollableState) {
+        snapshotFlow { scrollableState.isScrollInProgress }
             .collect { isScrolling ->
                 if (isScrolling) {
                     keyboardController?.hide()
@@ -86,6 +93,7 @@ public fun SearchTextContainer(
         textFieldValue = textState.value,
         hint = hint,
         keyboardType = keyboardType,
+        isLoading = isLoading,
         onTextChanged = { newValue ->
             textState.value = newValue
             onQueryChanged(newValue.text)
@@ -119,6 +127,7 @@ private fun SearchTextFieldContent(
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     Column(modifier = modifier) {
@@ -130,6 +139,7 @@ private fun SearchTextFieldContent(
             onTextChanged = onTextChanged,
             hint = hint,
             keyboardType = keyboardType,
+            isLoading = isLoading,
             onSubmit = onSubmit,
             onClearClick = onClearClick,
         )
@@ -148,6 +158,7 @@ private fun SearchTextField(
     onSubmit: () -> Unit,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     shape: Shape = MaterialTheme.shapes.medium,
 ) {
     OutlinedTextField(
@@ -173,11 +184,19 @@ private fun SearchTextField(
             onSearch = { onSubmit() },
         ),
         leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(LeadingIconSize),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                )
+            }
         },
         trailingIcon = {
             IconButton(onClick = onClearClick) {
@@ -200,7 +219,22 @@ private fun SearchTextFieldPreview() {
     SearchTextContainer(
         hint = "Enter Show Title",
         query = "",
-        lazyListState = remember { LazyListState() },
+        scrollableState = remember { LazyListState() },
+        onClearQuery = {},
+        onQueryChanged = {},
+        content = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun SearchTextFieldLoadingPreview() {
+    SearchTextContainer(
+        hint = "Enter Show Title",
+        query = "loki",
+        scrollableState = remember { LazyListState() },
+        isLoading = true,
         onClearQuery = {},
         onQueryChanged = {},
         content = {},
