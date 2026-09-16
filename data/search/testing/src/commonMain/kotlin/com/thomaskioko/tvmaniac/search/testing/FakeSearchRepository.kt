@@ -51,10 +51,6 @@ public class FakeSearchRepository : SearchRepository {
         recentSearches.value = listOf(trimmed) + recentSearches.value
     }
 
-    override suspend fun removeRecentSearch(query: String) {
-        recentSearches.value = recentSearches.value.filterNot { it == query }
-    }
-
     override suspend fun clearRecentSearches() {
         recentSearches.value = emptyList()
     }

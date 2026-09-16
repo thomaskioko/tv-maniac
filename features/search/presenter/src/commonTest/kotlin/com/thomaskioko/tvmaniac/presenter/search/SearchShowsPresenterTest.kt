@@ -17,8 +17,11 @@ import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
+import com.thomaskioko.tvmaniac.search.presenter.ClearRecentSearches
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
+import com.thomaskioko.tvmaniac.search.presenter.RecentSearchClicked
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.search.presenter.SearchSubmitted
@@ -442,7 +445,86 @@ internal class SearchShowsPresenterTest {
             presenter.dispatch(ClearQuery)
             advanceUntilIdle()
 
-            expectMostRecentItem() shouldBe settledState(genreRows = genreRowModelList())
+            expectMostRecentItem() shouldBe settledState(genreRows = genreRowModelList(), recentSearches = persistentListOf("loki"))
+        }
+    }
+
+    @Test
+    fun `should expose the repository recent searches while browsing genres`() = runTest {
+        fakeSearchRepository.setRecentSearches(listOf("loki", "dark"))
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            advanceUntilIdle()
+
+            val uiState = expectMostRecentItem().uiState.shouldBeInstanceOf<SearchUiState.BrowsingGenres>()
+            uiState.recentSearches shouldBe persistentListOf("loki", "dark")
+        }
+    }
+
+    @Test
+    fun `should save the query given a result is opened`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+            presenter.dispatch(SearchShowClicked(84958))
+            advanceUntilIdle()
+
+            expectMostRecentItem().recentSearches shouldBe persistentListOf("loki")
+        }
+    }
+
+    @Test
+    fun `should save the query given search is submitted and not on every keystroke`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+
+            presenter.dispatch(QueryChanged("lo"))
+            presenter.dispatch(QueryChanged("lok"))
+            advanceUntilIdle()
+            expectMostRecentItem().recentSearches shouldBe persistentListOf()
+
+            presenter.dispatch(SearchSubmitted)
+            advanceUntilIdle()
+            expectMostRecentItem().recentSearches shouldBe persistentListOf("lok")
+        }
+    }
+
+    @Test
+    fun `should search again given a recent search is clicked`() = runTest {
+        fakeSearchRepository.setRecentSearches(listOf("loki"))
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(RecentSearchClicked("loki"))
+            advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.query shouldBe "loki"
+            state.uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+            fakeSearchRepository.searchCalls shouldBe listOf("loki" to false)
+        }
+    }
+
+    @Test
+    fun `should empty the recent searches given clear is clicked`() = runTest {
+        fakeSearchRepository.setRecentSearches(listOf("loki", "dark"))
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            advanceUntilIdle()
+
+            presenter.dispatch(ClearRecentSearches)
+            advanceUntilIdle()
+
+            expectMostRecentItem().recentSearches shouldBe persistentListOf()
         }
     }
 
@@ -532,11 +614,13 @@ internal class SearchShowsPresenterTest {
         genreRows: kotlinx.collections.immutable.ImmutableList<GenreRowModel> = persistentListOf(),
         searchResults: kotlinx.collections.immutable.ImmutableList<ShowItem> = persistentListOf(),
         selectedCategory: GenreShowCategory = GenreShowCategory.POPULAR,
+        recentSearches: kotlinx.collections.immutable.ImmutableList<String> = persistentListOf(),
     ) = SearchShowState(
         query = query,
         isRefreshing = false,
         genreRows = genreRows,
         searchResults = searchResults,
+        recentSearches = recentSearches,
         selectedCategory = selectedCategory,
         categoryTitle = expectedCategoryTitle,
         categories = expectedCategories,

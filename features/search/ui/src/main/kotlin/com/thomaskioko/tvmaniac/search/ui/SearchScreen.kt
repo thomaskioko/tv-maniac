@@ -63,21 +63,24 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_empty_results
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_placeholder
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
-import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
-import com.thomaskioko.tvmaniac.i18n.MR.strings.search_no_results
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.search.presenter.BackClicked
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
+import com.thomaskioko.tvmaniac.search.presenter.ClearRecentSearches
 import com.thomaskioko.tvmaniac.search.presenter.MessageShown
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
+import com.thomaskioko.tvmaniac.search.presenter.RecentSearchClicked
 import com.thomaskioko.tvmaniac.search.presenter.ReloadShowContent
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchSubmitted
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.BrowsingGenres
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.Error
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.InitialLoading
@@ -87,6 +90,7 @@ import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.SearchResults
 import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.HorizontalShowContentRow
+import com.thomaskioko.tvmaniac.search.ui.components.RecentSearchesSection
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultsShimmer
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
@@ -253,7 +257,7 @@ private fun SearchScreenContent(
                 EmptyStateView(
                     modifier = Modifier.testTag(SearchTestTags.EMPTY_STATE_TEST_TAG),
                     imageVector = Icons.Filled.SearchOff,
-                    title = search_no_results.resolve(LocalContext.current),
+                    title = label_search_empty_results.resolve(LocalContext.current),
                 )
             }
 
@@ -267,7 +271,10 @@ private fun SearchScreenContent(
 
             is BrowsingGenres -> GenreRowsContent(
                 genreRows = uiState.genreRows,
+                recentSearches = uiState.recentSearches,
                 onShowClicked = { onAction(SearchShowClicked(it)) },
+                onRecentSearchClicked = { onAction(RecentSearchClicked(it)) },
+                onClearRecentSearches = { onAction(ClearRecentSearches) },
             )
 
             is Error -> {
@@ -302,12 +309,13 @@ private fun SearchScreenHeader(
     ) {
         SearchTextContainer(
             query = query,
-            hint = msg_search_show_hint.resolve(LocalContext.current),
+            hint = label_search_placeholder.resolve(LocalContext.current),
             lazyListState = lazyListState,
             content = content,
             textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
             onClearQuery = { onAction(ClearQuery) },
             onQueryChanged = { onAction(QueryChanged(it)) },
+            onSubmit = { onAction(SearchSubmitted) },
         )
     }
 }
@@ -361,7 +369,10 @@ private fun SearchResultsContent(
 @Composable
 private fun GenreRowsContent(
     genreRows: ImmutableList<GenreRowModel>,
+    recentSearches: ImmutableList<String>,
     onShowClicked: (Long) -> Unit,
+    onRecentSearchClicked: (String) -> Unit,
+    onClearRecentSearches: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -372,6 +383,18 @@ private fun GenreRowsContent(
         if (genreRows.isEmpty()) return
 
         LazyColumn {
+            if (recentSearches.isNotEmpty()) {
+                item(key = "recent_searches", contentType = "RecentSearches") {
+                    RecentSearchesSection(
+                        recentSearches = recentSearches,
+                        onRecentSearchClicked = onRecentSearchClicked,
+                        onClearRecentSearches = onClearRecentSearches,
+                    )
+
+                    Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
+                }
+            }
+
             items(
                 items = genreRows,
                 key = { it.slug },

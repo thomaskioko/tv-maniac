@@ -28,6 +28,14 @@ internal class SearchPreviewParameterProvider : PreviewParameterProvider<SearchS
                     categories = previewCategories(),
                 ),
                 SearchShowState(
+                    isRefreshing = false,
+                    genreRows = createGenreRowList(),
+                    recentSearches = createRecentSearchesList(),
+                    selectedCategory = GenreShowCategory.POPULAR,
+                    categoryTitle = "Category",
+                    categories = previewCategories(),
+                ),
+                SearchShowState(
                     query = "loki",
                     isRefreshing = false,
                     searchResults = createDiscoverShowList(),
@@ -91,6 +99,12 @@ internal fun createGenreRowList() = listOf(
             )
         }.toImmutableList(),
     ),
+).toImmutableList()
+
+internal fun createRecentSearchesList() = listOf(
+    "Breaking Bad",
+    "Loki",
+    "The Bear",
 ).toImmutableList()
 
 internal fun previewCategories() = listOf(

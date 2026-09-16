@@ -12,7 +12,5 @@ public interface SearchRepository {
 
     public suspend fun saveRecentSearch(query: String)
 
-    public suspend fun removeRecentSearch(query: String)
-
     public suspend fun clearRecentSearches()
 }

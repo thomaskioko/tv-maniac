@@ -9,7 +9,7 @@ public enum SearchScreenState {
     case searchLoading
     case empty
     case searchResults(results: [SwiftSearchShow], isUpdating: Bool)
-    case browsingGenres(genres: [SwiftGenreRow], isRefreshing: Bool)
+    case browsingGenres(genres: [SwiftGenreRow], recentSearches: [String] = [], isRefreshing: Bool)
     case error(message: String)
 }
 
@@ -23,6 +23,8 @@ public struct SearchScreen: View {
         public let selectedCategory: String
         public let categories: [String]
         public let categoryTitle: String
+        public let recentSearchesTitle: String
+        public let clearRecentSearchesText: String
 
         public init(
             title: String,
@@ -32,7 +34,9 @@ public struct SearchScreen: View {
             retryButtonText: String,
             selectedCategory: String = "",
             categories: [String] = [],
-            categoryTitle: String = "Category"
+            categoryTitle: String = "Category",
+            recentSearchesTitle: String = "Recent searches",
+            clearRecentSearchesText: String = "Clear"
         ) {
             self.title = title
             self.screenState = screenState
@@ -42,6 +46,8 @@ public struct SearchScreen: View {
             self.selectedCategory = selectedCategory
             self.categories = categories
             self.categoryTitle = categoryTitle
+            self.recentSearchesTitle = recentSearchesTitle
+            self.clearRecentSearchesText = clearRecentSearchesText
         }
     }
 
@@ -54,6 +60,9 @@ public struct SearchScreen: View {
     private let onRetry: () -> Void
     private let onBack: () -> Void
     private let onCategoryChanged: (String) -> Void
+    private let onSubmit: () -> Void
+    private let onRecentSearchSelected: (String) -> Void
+    private let onClearRecentSearches: () -> Void
 
     @FocusState private var isSearchFocused: Bool
     @SwiftUI.State private var glassQuery: String = ""
@@ -65,7 +74,10 @@ public struct SearchScreen: View {
         onShowClicked: @escaping (Int64) -> Void,
         onRetry: @escaping () -> Void,
         onBack: @escaping () -> Void,
-        onCategoryChanged: @escaping (String) -> Void = { _ in }
+        onCategoryChanged: @escaping (String) -> Void = { _ in },
+        onSubmit: @escaping () -> Void = {},
+        onRecentSearchSelected: @escaping (String) -> Void = { _ in },
+        onClearRecentSearches: @escaping () -> Void = {}
     ) {
         self.state = state
         _query = query
@@ -73,6 +85,9 @@ public struct SearchScreen: View {
         self.onRetry = onRetry
         self.onBack = onBack
         self.onCategoryChanged = onCategoryChanged
+        self.onSubmit = onSubmit
+        self.onRecentSearchSelected = onRecentSearchSelected
+        self.onClearRecentSearches = onClearRecentSearches
     }
 
     private var isBrowsingGenres: Bool {
@@ -97,6 +112,7 @@ public struct SearchScreen: View {
                     .toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
                     .searchable(text: $glassQuery, prompt: state.searchPlaceholder)
                     .searchFocused($isSearchFocused)
+                    .onSubmit(of: .search) { onSubmit() }
                     .onChange(of: glassQuery) { _, newValue in
                         if newValue != query {
                             query = newValue
@@ -215,6 +231,7 @@ public struct SearchScreen: View {
                 .textStyle(theme.typography.bodyMedium)
                 .focused($isSearchFocused)
                 .submitLabel(.search)
+                .onSubmit { onSubmit() }
 
             if !query.isEmpty {
                 Button {
@@ -269,15 +286,15 @@ public struct SearchScreen: View {
         case let .searchResults(results, isUpdating):
             searchResultsView(results: results, isUpdating: isUpdating)
                 .transition(.opacity)
-        case let .browsingGenres(genres, isRefreshing):
-            genreRowsSection(genreRows: genres, isUpdating: isRefreshing)
+        case let .browsingGenres(genres, recentSearches, isRefreshing):
+            genreRowsSection(genreRows: genres, recentSearches: recentSearches, isUpdating: isRefreshing)
         case let .error(message):
             errorView(message: message)
                 .transition(.opacity)
         }
     }
 
-    private func genreRowsSection(genreRows: [SwiftGenreRow], isUpdating: Bool) -> some View {
+    private func genreRowsSection(genreRows: [SwiftGenreRow], recentSearches: [String], isUpdating: Bool) -> some View {
         VStack(spacing: 0) {
             if isUpdating {
                 ProgressView()
@@ -286,6 +303,16 @@ public struct SearchScreen: View {
                     .tint(theme.colors.accent)
                     .padding(.horizontal)
                     .padding(.bottom, theme.spacing.xSmall)
+            }
+
+            if !recentSearches.isEmpty {
+                RecentSearchesSectionView(
+                    title: state.recentSearchesTitle,
+                    clearButtonText: state.clearRecentSearchesText,
+                    recentSearches: recentSearches,
+                    onRecentSearchSelected: onRecentSearchSelected,
+                    onClearRecentSearches: onClearRecentSearches
+                )
             }
 
             ForEach(genreRows, id: \.id) { genreRow in

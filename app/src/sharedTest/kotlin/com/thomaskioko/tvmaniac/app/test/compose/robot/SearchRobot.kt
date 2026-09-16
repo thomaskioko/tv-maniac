@@ -1,7 +1,13 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.performImeAction
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 
@@ -17,16 +23,24 @@ internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot<SearchRobot>(co
         waitForIdle()
     }
 
+    fun pressImeSearchAction() = apply {
+        awaitTagOnce(SearchTestTags.SEARCH_BAR_TEST_TAG)
+        composeUi.onNode(hasTestTag(SearchTestTags.SEARCH_BAR_TEST_TAG)).performImeAction()
+        waitForIdle()
+    }
+
     fun assertSearchQueryDisplayed(query: String) = apply {
         assertTextContains(SearchTestTags.SEARCH_BAR_TEST_TAG, query)
     }
 
     fun assertResultCountEquals(count: Int) = apply {
-        assertCountEquals(
-            SearchTestTags.SCREEN_TEST_TAG,
-            "search_result_item_",
-            count,
-        )
+        waitForIdle()
+        val resultItemPrefix = "${SearchTestTags.RESULT_ITEM_TEST_TAG}_"
+        composeUi.onAllNodes(
+            matcher = SemanticsMatcher("testTag starts with $resultItemPrefix") { node ->
+                node.config.getOrNull(SemanticsProperties.TestTag)?.startsWith(resultItemPrefix) == true
+            },
+        ).assertCountEquals(count)
     }
 
     fun assertResultItemDisplayed(traktId: Long) = apply {
@@ -43,6 +57,31 @@ internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot<SearchRobot>(co
 
     fun assertErrorStateDisplayed() = apply {
         assertDisplayed(SearchTestTags.ERROR_STATE_TEST_TAG)
+    }
+
+    fun clearSearchQuery() = apply {
+        replaceText(tag = SearchTestTags.SEARCH_BAR_TEST_TAG, text = "")
+        waitForIdle()
+    }
+
+    fun assertRecentSearchesSectionDisplayed() = apply {
+        assertDisplayed(SearchTestTags.RECENT_SEARCHES_SECTION_TEST_TAG)
+    }
+
+    fun assertRecentSearchesSectionNotDisplayed() = apply {
+        assertDoesNotExist(SearchTestTags.RECENT_SEARCHES_SECTION_TEST_TAG)
+    }
+
+    fun assertRecentSearchChipDisplayed(query: String) = apply {
+        assertDisplayed(SearchTestTags.recentSearchChip(query))
+    }
+
+    fun clickRecentSearchChip(query: String) = apply {
+        click(SearchTestTags.recentSearchChip(query))
+    }
+
+    fun clickClearRecentSearches() = apply {
+        click(SearchTestTags.CLEAR_RECENT_SEARCHES_TEST_TAG)
     }
 
     fun clickResultItem(traktId: Long): ShowDetailsRobot {
