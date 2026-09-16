@@ -14,3 +14,4 @@ public data class RecentSearchClicked(val query: String) : SearchShowAction
 public data object ClearRecentSearches : SearchShowAction
 public data class SearchShowClicked(val showId: Long) : SearchShowAction
 public data class CategoryChanged(val category: GenreShowCategory) : SearchShowAction
+public data class GenreMoreClicked(val slug: String, val name: String) : SearchShowAction

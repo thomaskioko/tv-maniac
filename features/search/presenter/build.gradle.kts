@@ -30,6 +30,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                implementation(projects.features.genreShows.nav)
                 implementation(projects.features.showDetails.nav)
             }
         }
