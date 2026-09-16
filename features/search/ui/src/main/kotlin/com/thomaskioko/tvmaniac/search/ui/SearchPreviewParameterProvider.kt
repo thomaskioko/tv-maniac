@@ -56,7 +56,9 @@ internal fun createDiscoverShowList(size: Int = 5) = List(size) { index ->
     discoverShow.copy(
         tmdbId = discoverShow.tmdbId + index.toLong(),
         showId = discoverShow.showId + index.toLong(),
-        inLibrary = index % 2 == 0,
+        inLibrary = index == 0,
+        year = if (index == 1) null else discoverShow.year,
+        episodeCount = discoverShow.episodeCount?.plus(index),
     )
 }.toImmutableList()
 
@@ -67,6 +69,8 @@ internal val discoverShow = ShowItem(
     posterImageUrl = null,
     overview = "After stealing the Tesseract during the events of Avengers: Endgame, an ",
     status = "Ended",
+    year = "2019",
+    episodeCount = 62,
     inLibrary = false,
 )
 
