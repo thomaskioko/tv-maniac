@@ -23,7 +23,6 @@
     <string name="label_search_empty_results">Keine Ergebnisse gefunden. Versuchen Sie ein anderes Stichwort!</string>
     <string name="label_search_recent">Letzte Suchen</string>
     <string name="btn_search_clear_recent">Löschen</string>
-    <string name="cd_search_recent_remove">Aus den letzten Suchen entfernen</string>
 
     <string name="label_season_overview">Staffelübersicht</string>
 
@@ -210,7 +209,6 @@
         das eingerichtet haben, können Sie sich in der riesigen Welt der Tmdb-Sammlung verlieren.
     </string>
     <string name="generic_retry">Wiederholen</string>
-    <string name="search_no_results">Keine Ergebnisse gefunden. Versuchen Sie ein anderes Stichwort!</string>
 
     <string name="str_more">Mehr</string>
     <string name="str_more_trailers">Mehr Trailer</string>

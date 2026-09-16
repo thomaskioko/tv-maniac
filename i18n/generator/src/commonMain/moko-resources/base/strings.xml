@@ -29,7 +29,6 @@
     <string name="label_search_empty_results">No results found. Try a different keyword!</string>
     <string name="label_search_recent">Recent searches</string>
     <string name="btn_search_clear_recent">Clear</string>
-    <string name="cd_search_recent_remove">Remove from recent searches</string>
 
     <string name="label_season_overview">Season Overview</string>
 
@@ -255,7 +254,6 @@
     <string name="generic_fetching_data">Please wait while we get your content</string>
     <string name="missing_api_key">Could be that you forgot to add your TMDB API Key. Once you set that up, you can get lost in the vast world of Tmdb\'s collection.</string>
     <string name="generic_retry">Retry</string>
-    <string name="search_no_results">No results found. Try a different keyword!</string>
 
     <string name="str_more">More</string>
     <string name="str_more_trailers">More Trailers</string>
