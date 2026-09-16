@@ -16,6 +16,7 @@ graph TB
   subgraph :core
     direction TB
     :core:base[base]:::multiplatform
+    :core:paging[paging]:::multiplatform
     :core:view[view]:::multiplatform
   end
   subgraph :core:connectivity
@@ -70,6 +71,8 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:network-util:api --> :core:logger:api
+  :core:paging --> :core:logger:api
+  :core:paging -.-> :data:shows:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
@@ -79,7 +82,9 @@ graph TB
   :data:genre:implementation --> :api:tmdb:api
   :data:genre:implementation --> :api:trakt:api
   :data:genre:implementation --> :core:base
+  :data:genre:implementation --> :core:logger:api
   :data:genre:implementation -.-> :core:network-util:api
+  :data:genre:implementation --> :core:paging
   :data:genre:implementation --> :core:util:api
   :data:genre:implementation --> :data:database:sqldelight
   :data:genre:implementation --> :data:datastore:api

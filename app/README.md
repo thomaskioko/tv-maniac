@@ -865,7 +865,9 @@ graph TB
   :data:genre:implementation --> :api:tmdb:api
   :data:genre:implementation --> :api:trakt:api
   :data:genre:implementation --> :core:base
+  :data:genre:implementation --> :core:logger:api
   :data:genre:implementation -.-> :core:network-util:api
+  :data:genre:implementation --> :core:paging
   :data:genre:implementation --> :core:util:api
   :data:genre:implementation --> :data:database:sqldelight
   :data:genre:implementation --> :data:datastore:api
