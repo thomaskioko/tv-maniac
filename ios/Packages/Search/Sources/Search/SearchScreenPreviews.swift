@@ -8,7 +8,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .loading,
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -26,7 +26,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .searchLoading,
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -66,11 +66,56 @@ import SwiftUI
                 ],
                 isRefreshing: false
             ),
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry",
             selectedCategory: "Popular",
             categories: ["Popular", "Trending", "Top Rated"]
+        ),
+        query: .constant(""),
+        onShowClicked: { _ in },
+        onRetry: {},
+        onBack: {}
+    )
+    .appPreview()
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Browsing Genres With Recent Searches") {
+    SearchScreen(
+        state: SearchScreen.State(
+            title: "Search",
+            screenState: .browsingGenres(
+                genres: [
+                    SwiftGenreRow(
+                        id: "action",
+                        name: "Action",
+                        subtitle: "High-octane thrills",
+                        shows: [
+                            .init(showId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                        ]
+                    ),
+                    SwiftGenreRow(
+                        id: "drama",
+                        name: "Drama",
+                        subtitle: "Compelling stories",
+                        shows: [
+                            .init(showId: 3, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 4, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                        ]
+                    ),
+                ],
+                recentSearches: ["Arcane", "The Penguin", "Kaos", "One Piece"],
+                isRefreshing: false
+            ),
+            searchPlaceholder: "Search shows…",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            selectedCategory: "Popular",
+            categories: ["Popular", "Trending", "Top Rated"],
+            recentSearchesTitle: "Recent searches",
+            clearRecentSearchesText: "Clear"
         ),
         query: .constant(""),
         onShowClicked: { _ in },
@@ -104,7 +149,7 @@ import SwiftUI
                 ],
                 isUpdating: false
             ),
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -122,7 +167,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .empty,
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -140,7 +185,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .error(message: "Something went wrong. Please try again."),
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),

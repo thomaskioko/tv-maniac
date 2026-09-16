@@ -64,6 +64,23 @@ class SearchScreenTest: SnapshotTestCase {
         view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, settleSystemSearch: true, testName: "SearchScreen_BrowsingGenres_Refreshing")
     }
 
+    func test_SearchScreen_BrowsingGenres_RecentSearches() {
+        let view = makeScreen(
+            state: .browsingGenres(
+                genres: sampleGenres,
+                recentSearches: ["Arcane", "The Penguin", "Kaos", "One Piece"],
+                isRefreshing: false
+            )
+        )
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres_RecentSearches")
+        view.assertSnapshot(
+            layout: .defaultDevice,
+            liquidGlass: true,
+            settleSystemSearch: true,
+            testName: "SearchScreen_BrowsingGenres_RecentSearches"
+        )
+    }
+
     func test_SearchScreen_SearchResults() {
         let view = makeScreen(state: .searchResults(results: sampleResults, isUpdating: false), query: "penguin")
         view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_SearchResults")
@@ -98,7 +115,7 @@ class SearchScreenTest: SnapshotTestCase {
             state: SearchScreen.State(
                 title: "Search",
                 screenState: screenState,
-                searchPlaceholder: "Enter Show Title",
+                searchPlaceholder: "Search shows…",
                 emptyResultsMessage: "No results found",
                 retryButtonText: "Retry",
                 selectedCategory: selectedCategory,

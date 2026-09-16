@@ -35,7 +35,9 @@ public struct SearchTab: View {
                     presenter.dispatch(action: CategoryChanged(category: item.category))
                 }
             },
-            onSubmit: { presenter.dispatch(action: SearchSubmitted()) }
+            onSubmit: { presenter.dispatch(action: SearchSubmitted()) },
+            onRecentSearchSelected: { query in presenter.dispatch(action: RecentSearchClicked(query: query)) },
+            onClearRecentSearches: { presenter.dispatch(action: ClearRecentSearches()) }
         )
     }
 }
@@ -50,7 +52,9 @@ private extension SearchShowState {
             retryButtonText: String(\.button_error_retry),
             selectedCategory: categoryLabels.first { $0.category == selectedCategory }?.label ?? "",
             categories: categoryLabels.map(\.label),
-            categoryTitle: categoryTitle
+            categoryTitle: categoryTitle,
+            recentSearchesTitle: String(\.label_search_recent),
+            clearRecentSearchesText: String(\.btn_search_clear_recent)
         )
     }
 }
@@ -72,6 +76,7 @@ private extension SearchUiState {
         case let state as SearchUiStateBrowsingGenres:
             .browsingGenres(
                 genres: Array(state.genreRows).map { $0.toSwift() },
+                recentSearches: Array(state.recentSearches),
                 isRefreshing: state.isRefreshing
             )
         case let state as SearchUiStateError:
