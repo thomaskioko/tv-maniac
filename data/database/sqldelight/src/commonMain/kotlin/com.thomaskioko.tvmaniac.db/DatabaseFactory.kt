@@ -67,6 +67,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         genre_showsAdapter = Genre_shows.Adapter(
             show_idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
         ),
         genresAdapter = Genres.Adapter(
             idAdapter = IdAdapter(),
