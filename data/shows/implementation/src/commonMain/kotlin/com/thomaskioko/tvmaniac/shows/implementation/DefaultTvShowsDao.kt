@@ -1,11 +1,9 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Provider
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -14,7 +12,6 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
@@ -43,6 +40,15 @@ public class DefaultTvShowsDao(
         }
     }
 
+    override fun upsertExternalId(tmdbId: Long, provider: Provider, externalId: String) {
+        val showId = tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOneOrNull() ?: return
+        externalIdQueries.insert(
+            showId = showId,
+            provider = provider,
+            externalId = externalId,
+        )
+    }
+
     private fun upsertShowWithGenres(show: ShowToPersist) {
         tvShowQueries.upsert(
             tmdb_id = show.tmdbId,
@@ -69,45 +75,14 @@ public class DefaultTvShowsDao(
         }
     }
 
-    override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> {
-        return tvShowQueries
-            .searchShows(
-                // Parameters for WHERE clause
-                query,
-                query,
-                query,
-                query,
-                // Parameters for ORDER BY clause
-                query,
-                query,
-                query,
-            ) { showId, tmdbId, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
-                ShowEntity(
-                    showId = showId.id,
-                    tmdbId = tmdbId.id,
-                    title = title,
-                    posterPath = imageUrl,
-                    inLibrary = inLibrary == 1L,
-                    overview = overview,
-                    status = status,
-                    voteAverage = voteAverage,
-                    year = year,
-                )
-            }
-            .asFlow()
-            .mapToList(dispatchers.io)
-    }
+    override fun getTmdbIdsWithPoster(tmdbIds: List<Long>): Set<Long> {
+        if (tmdbIds.isEmpty()) return emptySet()
 
-    override fun observeQueryCount(query: String): Flow<Long> {
-        return tvShowQueries.searchShowsCount(query, query, query, query)
-            .asFlow()
-            .mapToOne(dispatchers.io)
+        return tvShowQueries.tmdbIdsWithPoster(tmdbIds.map { Id<TmdbId>(it) })
+            .executeAsList()
+            .map { it.id }
+            .toSet()
     }
-
-    override suspend fun getQueryCount(query: String): Long =
-        withContext(dispatchers.io) {
-            tvShowQueries.searchShowsCount(query, query, query, query).executeAsOne()
-        }
 
     override fun deleteTvShows() {
         tvShowQueries.transaction { tvShowQueries.deleteAll() }

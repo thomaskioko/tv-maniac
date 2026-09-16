@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchSubmitted
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState
 import com.thomaskioko.tvmaniac.search.presenter.model.CategoryItem
 import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
@@ -28,12 +29,14 @@ import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -41,6 +44,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.seconds
 
 internal class SearchShowsPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
@@ -132,7 +136,7 @@ internal class SearchShowsPresenterTest {
             )
 
             presenter.dispatch(QueryChanged("test"))
-            fakeSearchRepository.setSearchResult(emptyList())
+            fakeSearchRepository.setSearchResult("test", emptyList())
             skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(
@@ -180,7 +184,7 @@ internal class SearchShowsPresenterTest {
                 genreRows = genreRowModelList(),
             )
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -200,7 +204,7 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe settledState()
 
             presenter.dispatch(QueryChanged("test"))
-            fakeSearchRepository.setSearchResult(emptyList())
+            fakeSearchRepository.setSearchResult("test", emptyList())
             skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(query = "test")
@@ -234,7 +238,7 @@ internal class SearchShowsPresenterTest {
 
             awaitItem() shouldBe settledState(query = "abc")
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("abc", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "abc",
@@ -262,7 +266,7 @@ internal class SearchShowsPresenterTest {
 
             awaitItem() shouldBe settledState(query = "test")
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -297,7 +301,7 @@ internal class SearchShowsPresenterTest {
                 genreRows = genreRowModelList(),
             )
 
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -322,7 +326,7 @@ internal class SearchShowsPresenterTest {
             setGenreRows(createGenreWithShowsList())
 
             presenter.dispatch(QueryChanged("test"))
-            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            fakeSearchRepository.setSearchResult("test", createDiscoverShowList())
             advanceUntilIdle()
             expectMostRecentItem() shouldBe settledState(
                 query = "test",
@@ -400,6 +404,126 @@ internal class SearchShowsPresenterTest {
                 selectedCategory = GenreShowCategory.TRENDING,
                 genreRows = toExpectedGenreRowModels("Breaking Bad", 1388),
             )
+        }
+    }
+
+    @Test
+    fun `should force a refresh given search is submitted`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+            fakeSearchRepository.searchCalls shouldBe listOf("loki" to false)
+
+            presenter.dispatch(SearchSubmitted)
+            advanceUntilIdle()
+            fakeSearchRepository.searchCalls shouldBe listOf("loki" to false, "loki" to true)
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+        }
+    }
+
+    @Test
+    fun `should discard a submitted fetch given the query is cleared before it completes`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+
+            fakeSearchRepository.setSearchDelay(1.seconds)
+            presenter.dispatch(SearchSubmitted)
+            advanceTimeBy(100)
+            presenter.dispatch(ClearQuery)
+            advanceUntilIdle()
+
+            expectMostRecentItem() shouldBe settledState(genreRows = genreRowModelList())
+        }
+    }
+
+    @Test
+    fun `should ignore submit given query is below minimum length`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+
+            presenter.dispatch(QueryChanged("l"))
+            presenter.dispatch(SearchSubmitted)
+            advanceUntilIdle()
+
+            fakeSearchRepository.searchCalls shouldBe emptyList()
+            expectMostRecentItem() shouldBe settledState(query = "l", genreRows = genreRowModelList())
+        }
+    }
+
+    @Test
+    fun `should keep previous results while the next query is loading`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+
+            presenter.dispatch(QueryChanged("loki s"))
+            advanceTimeBy(SearchShowState.LOCAL_SUGGESTION_DEBOUNCE.inWholeMilliseconds + 50)
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = true)
+
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchEmpty
+        }
+    }
+
+    @Test
+    fun `should show empty state only after the fetch completes given no results`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+
+            presenter.dispatch(QueryChanged("nothing"))
+            advanceTimeBy(SearchShowState.LOCAL_SUGGESTION_DEBOUNCE.inWholeMilliseconds + 50)
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchLoading
+
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchEmpty
+        }
+    }
+
+    @Test
+    fun `should keep results and surface a message given the fetch fails with results present`() = runTest {
+        fakeSearchRepository.setSearchError(IllegalStateException("Network error"))
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList())
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.uiState shouldBe SearchUiState.SearchResults(uiModelList(), isUpdating = false)
+            state.message.shouldNotBeNull().message shouldBe "Network error"
+        }
+    }
+
+    @Test
+    fun `should map episode count given the entity carries one`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            fakeSearchRepository.setSearchResult("loki", createDiscoverShowList(size = 1).map { it.copy(episodeCount = 12) })
+
+            presenter.dispatch(QueryChanged("loki"))
+            advanceUntilIdle()
+
+            expectMostRecentItem().searchResults.single().episodeCount shouldBe 12
         }
     }
 

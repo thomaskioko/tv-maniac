@@ -5,9 +5,17 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :core:connectivity
+    direction TB
+    :core:connectivity:api[api]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
+  end
+  subgraph :core:network-util
+    direction TB
+    :core:network-util:api[api]:::multiplatform
   end
   subgraph :data:account-manager
     direction TB
@@ -26,8 +34,12 @@ graph TB
     :data:shows:api[api]:::multiplatform
   end
 
+  :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
   :data:search:api --> :data:shows:api
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight

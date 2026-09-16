@@ -83,6 +83,18 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubEndpoint(Endpoints.Trakt.calendar(weekStart, days), status)
     }
 
+    public fun stubSimklSearch() {
+        mockHandler.stubEndpoint(Endpoints.Simkl.Search)
+    }
+
+    public fun stubSimklSearchEmpty() {
+        mockHandler.stubFixture(path = Endpoints.Simkl.Search.path, fixturePath = EMPTY_ARRAY_FIXTURE, host = Endpoints.Simkl.Search.host)
+    }
+
+    public fun stubSimklSearchError(status: HttpStatusCode = HttpStatusCode.NotFound) {
+        mockHandler.stubEndpoint(Endpoints.Simkl.Search, status)
+    }
+
     public fun stubSimklCalendarFeed() {
         mockHandler.stubEndpoint(Endpoints.Simkl.CalendarTvFeed)
     }
