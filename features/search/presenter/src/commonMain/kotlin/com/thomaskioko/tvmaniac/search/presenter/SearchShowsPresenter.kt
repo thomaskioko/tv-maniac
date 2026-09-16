@@ -27,6 +27,7 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -131,6 +132,7 @@ public class SearchShowsPresenter(
                 launch { observeCategoryChanges() }
                 launch { observeLocalResults() }
                 launch { fetchSearchQuery() }
+                launch { observeRecentSearches() }
             }
         }
 
@@ -159,8 +161,24 @@ public class SearchShowsPresenter(
 
                 is QueryChanged -> handleQueryChange(action.query)
                 SearchSubmitted -> submitQuery()
-                is SearchShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
+                is RecentSearchClicked -> handleQueryChange(action.query)
+                ClearRecentSearches -> coroutineScope.launch { searchRepository.clearRecentSearches() }
+                is SearchShowClicked -> {
+                    coroutineScope.launch { saveRecentSearch() }
+                    navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
+                }
             }
+        }
+
+        private suspend fun observeRecentSearches() {
+            searchRepository.observeRecentSearches().collect { queries ->
+                _state.update { it.copy(recentSearches = queries.toImmutableList()) }
+            }
+        }
+
+        private suspend fun saveRecentSearch() {
+            val query = state.value.query
+            if (query.isSearchable()) searchRepository.saveRecentSearch(query)
         }
 
         private suspend fun observeCategoryChanges() {
@@ -231,7 +249,10 @@ public class SearchShowsPresenter(
             val query = state.value.query
             if (!query.isSearchable()) return
             submitJob?.cancel()
-            submitJob = coroutineScope.launch { searchNetwork(query, forceRefresh = true).collect() }
+            submitJob = coroutineScope.launch {
+                saveRecentSearch()
+                searchNetwork(query, forceRefresh = true).collect()
+            }
         }
 
         private fun handleQueryChange(query: String) {
