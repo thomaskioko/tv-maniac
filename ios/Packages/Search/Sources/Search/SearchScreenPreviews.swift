@@ -137,14 +137,21 @@ import SwiftUI
                         overview: "Follow Oswald Oz Cobb's quest for control.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg",
-                        year: "2024", voteAverage: 8.5, inLibrary: true
+                        year: "2019", voteAverage: 8.5, inLibrary: true, captionComponents: ["2019", "62 eps."]
                     ),
                     .init(
                         tmdbId: 1234, showId: 1234, title: "Kaos",
                         overview: "A renegade fighter battles a powerful robot.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
-                        year: "2024", voteAverage: 7.2
+                        year: "2024", voteAverage: 7.2, captionComponents: ["2024", "8 eps."]
+                    ),
+                    .init(
+                        tmdbId: 5678, showId: 5678, title: "Arcane",
+                        overview: nil,
+                        status: "Ended",
+                        imageUrl: nil,
+                        year: nil, voteAverage: 8.9, captionComponents: ["18 eps."]
                     ),
                 ],
                 isUpdating: false
