@@ -10,8 +10,6 @@ VALUES (?, ?);
 recent:
 SELECT query FROM search_history ORDER BY searched_at DESC LIMIT 10;
 
-delete:
-DELETE FROM search_history WHERE query = ?;
 
 deleteAll:
 DELETE FROM search_history;

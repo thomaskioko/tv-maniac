@@ -16,7 +16,5 @@ public interface SearchDao {
 
     public fun observeRecentSearches(): Flow<List<String>>
 
-    public fun deleteRecentSearch(query: String)
-
     public fun deleteAllRecentSearches()
 }

@@ -49,10 +49,6 @@ public class DefaultSearchRepository(
         searchDao.upsertRecentSearch(query = trimmed, searchedAt = dateTimeProvider.nowMillis())
     }
 
-    override suspend fun removeRecentSearch(query: String) {
-        searchDao.deleteRecentSearch(query)
-    }
-
     override suspend fun clearRecentSearches() {
         searchDao.deleteAllRecentSearches()
     }

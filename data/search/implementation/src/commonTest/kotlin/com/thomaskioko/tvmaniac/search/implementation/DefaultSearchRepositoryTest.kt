@@ -171,15 +171,6 @@ internal class DefaultSearchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should remove a recent search`() = runTest(testDispatcher) {
-        repository.saveRecentSearch("query")
-
-        repository.removeRecentSearch("query")
-
-        repository.observeRecentSearches().first().shouldBeEmpty()
-    }
-
-    @Test
     fun `should clear recent searches`() = runTest(testDispatcher) {
         repository.saveRecentSearch("one")
         repository.saveRecentSearch("two")

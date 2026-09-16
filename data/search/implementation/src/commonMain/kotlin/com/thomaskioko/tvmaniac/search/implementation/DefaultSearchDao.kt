@@ -68,10 +68,6 @@ public class DefaultSearchDao(
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun deleteRecentSearch(query: String) {
-        searchHistoryQueries.delete(query)
-    }
-
     override fun deleteAllRecentSearches() {
         searchHistoryQueries.deleteAll()
     }
