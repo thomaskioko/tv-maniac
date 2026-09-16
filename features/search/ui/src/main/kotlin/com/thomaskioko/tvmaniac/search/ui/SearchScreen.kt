@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.search.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -64,6 +61,7 @@ import com.thomaskioko.tvmaniac.compose.components.SearchTextContainer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -207,23 +205,6 @@ internal fun SearchScreen(
                 ),
             )
         },
-        bottomBar = {
-            SearchTextContainer(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .navigationBarsPadding()
-                    .imePadding(),
-                query = state.query,
-                hint = label_search_placeholder.resolve(context),
-                scrollableState = gridState,
-                isLoading = isSearchUpdating,
-                textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
-                onClearQuery = { onAction(ClearQuery) },
-                onQueryChanged = { onAction(QueryChanged(it)) },
-                onSubmit = { onAction(SearchSubmitted) },
-                content = {},
-            )
-        },
         content = { paddingValues ->
             SearchScreenContent(
                 state = state,
@@ -231,6 +212,7 @@ internal fun SearchScreen(
                 scrollBehavior = scrollBehavior,
                 onAction = onAction,
                 gridState = gridState,
+                isLoading = isSearchUpdating,
             )
         },
     )
@@ -266,13 +248,37 @@ private fun SearchScreenContent(
     scrollBehavior: TopAppBarScrollBehavior,
     onAction: (SearchShowAction) -> Unit,
     gridState: LazyGridState,
+    isLoading: Boolean,
 ) {
-    Box(
+    val context = LocalContext.current
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(paddingValues),
+            .padding(paddingValues.copy(copyBottom = false)),
     ) {
+        SearchTextContainer(
+            query = state.query,
+            hint = label_search_placeholder.resolve(context),
+            scrollableState = gridState,
+            isLoading = isLoading,
+            textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
+            onClearQuery = { onAction(ClearQuery) },
+            onQueryChanged = { onAction(QueryChanged(it)) },
+            onSubmit = { onAction(SearchSubmitted) },
+        ) {
+            SearchScreenBody(state = state, gridState = gridState, onAction = onAction)
+        }
+    }
+}
+
+@Composable
+private fun SearchScreenBody(
+    state: SearchShowState,
+    gridState: LazyGridState,
+    onAction: (SearchShowAction) -> Unit,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
         when (val uiState = state.uiState) {
             InitialLoading -> LoadingIndicator()
             SearchLoading -> SearchResultsShimmer()
