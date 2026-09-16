@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.search.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,26 +47,27 @@ internal fun RecentSearchesSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = TvManiacSpacing.xSmall)
             .testTag(SearchTestTags.RECENT_SEARCHES_SECTION_TEST_TAG),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
+                .padding(horizontal = TvManiacSpacing.medium),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BoxTextItems(title = label_search_recent.resolve(context))
 
-            TextButton(
-                onClick = onClearRecentSearches,
-                modifier = Modifier.testTag(SearchTestTags.CLEAR_RECENT_SEARCHES_TEST_TAG),
-            ) {
-                Text(
-                    text = btn_search_clear_recent.resolve(context),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
+            Text(
+                text = btn_search_clear_recent.resolve(context),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .clickable(role = Role.Button, onClick = onClearRecentSearches)
+                    .testTag(SearchTestTags.CLEAR_RECENT_SEARCHES_TEST_TAG),
+            )
         }
 
         LazyRow(
