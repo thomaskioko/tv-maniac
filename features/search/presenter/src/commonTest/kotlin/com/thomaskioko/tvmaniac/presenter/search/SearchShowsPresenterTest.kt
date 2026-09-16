@@ -450,7 +450,7 @@ internal class SearchShowsPresenterTest {
     }
 
     @Test
-    fun `should expose recent searches newest first while browsing genres`() = runTest {
+    fun `should expose the repository recent searches while browsing genres`() = runTest {
         fakeSearchRepository.setRecentSearches(listOf("loki", "dark"))
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
