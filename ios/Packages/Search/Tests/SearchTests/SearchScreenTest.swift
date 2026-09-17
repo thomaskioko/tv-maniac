@@ -133,7 +133,8 @@ class SearchScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onRetry: {},
             onBack: {},
-            onCategoryChanged: { _ in }
+            onCategoryChanged: { _ in },
+            onGenreMoreClicked: { _, _ in }
         )
         .appPreview()
     }

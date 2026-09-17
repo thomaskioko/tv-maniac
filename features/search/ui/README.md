@@ -53,6 +53,10 @@ graph TB
     :domain:genre[genre]:::multiplatform
     :domain:theme[theme]:::multiplatform
   end
+  subgraph :features:genre-shows
+    direction TB
+    :features:genre-shows:nav[nav]:::multiplatform
+  end
   subgraph :features:search
     direction TB
     :features:search:nav[nav]:::multiplatform
@@ -94,6 +98,8 @@ graph TB
   :domain:genre --> :core:base
   :domain:genre --> :data:genre:api
   :domain:theme --> :i18n:generator
+  :features:genre-shows:nav --> :data:genre:api
+  :features:genre-shows:nav --> :navigation:api
   :features:search:nav --> :navigation:api
   :features:search:presenter --> :core:base
   :features:search:presenter --> :core:logger:api
@@ -102,6 +108,7 @@ graph TB
   :features:search:presenter --> :data:genre:api
   :features:search:presenter --> :data:search:api
   :features:search:presenter --> :domain:genre
+  :features:search:presenter -.-> :features:genre-shows:nav
   :features:search:presenter --> :features:search:nav
   :features:search:presenter -.-> :features:show-details:nav
   :features:search:presenter --> :i18n:api

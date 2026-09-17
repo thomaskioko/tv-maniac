@@ -17,6 +17,8 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
+import com.thomaskioko.tvmaniac.genreshows.nav.model.GenreShowsParam
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
@@ -167,6 +169,9 @@ public class SearchShowsPresenter(
                     coroutineScope.launch { saveRecentSearch() }
                     navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
                 }
+                is GenreMoreClicked -> navigator.navigateTo(
+                    GenreShowsRoute(GenreShowsParam(slug = action.slug, name = action.name, category = state.value.selectedCategory)),
+                )
             }
         }
 

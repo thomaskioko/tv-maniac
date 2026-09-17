@@ -75,7 +75,8 @@ import SwiftUI
         query: .constant(""),
         onShowClicked: { _ in },
         onRetry: {},
-        onBack: {}
+        onBack: {},
+        onGenreMoreClicked: { _, _ in }
     )
     .appPreview()
     .preferredColorScheme(.dark)
@@ -120,7 +121,8 @@ import SwiftUI
         query: .constant(""),
         onShowClicked: { _ in },
         onRetry: {},
-        onBack: {}
+        onBack: {},
+        onGenreMoreClicked: { _, _ in }
     )
     .appPreview()
     .preferredColorScheme(.dark)

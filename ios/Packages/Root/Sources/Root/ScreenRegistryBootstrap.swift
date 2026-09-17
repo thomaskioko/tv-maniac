@@ -13,6 +13,7 @@
 #endif
 import DesignSystem
 import EpisodeDetail
+import GenreShows
 import Lists
 import MoreShows
 import RatingSheet
@@ -46,6 +47,7 @@ public enum ScreenRegistryBootstrap {
             registry.registerScreen(for: FeatureFlagsPresenter.self) { FeatureFlagsView(presenter: $0) }
         #endif
         registry.registerScreen(for: MoreShowsPresenter.self) { MoreShowsView(presenter: $0) }
+        registry.registerScreen(for: GenreShowsPresenter.self) { GenreShowsView(presenter: $0) }
         registry.registerScreen(for: TrailersPresenter.self) { TrailersView(presenter: $0) }
         registry.registerScreen(for: StatisticsPresenter.self) { StatisticsView(presenter: $0) }
         registry.registerScreen(for: ListsPresenter.self) { ListsView(presenter: $0) }

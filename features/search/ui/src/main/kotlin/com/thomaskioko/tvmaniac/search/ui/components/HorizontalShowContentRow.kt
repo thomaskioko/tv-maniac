@@ -12,13 +12,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
+import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -26,9 +31,11 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun HorizontalShowContentRow(
     title: String,
     tvShows: ImmutableList<ShowItem>?,
+    slug: String,
     modifier: Modifier = Modifier,
     description: String? = null,
     onItemClicked: (Long) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -37,6 +44,9 @@ internal fun HorizontalShowContentRow(
         BoxTextItems(
             title = title,
             subtitle = description,
+            label = str_more.resolve(LocalContext.current),
+            onMoreClicked = onMoreClicked,
+            moreModifier = Modifier.testTag(SearchTestTags.genreMoreButton(slug)),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
@@ -80,7 +90,9 @@ private fun HorizontalRowContentPreview() {
             )
         }.toImmutableList(),
         onItemClicked = {},
+        onMoreClicked = {},
         title = "Being watched",
         description = "Non-stop thrill and action",
+        slug = "action",
     )
 }

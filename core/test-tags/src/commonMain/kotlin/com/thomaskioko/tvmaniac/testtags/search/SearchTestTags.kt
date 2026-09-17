@@ -8,6 +8,8 @@ public object SearchTestTags {
     public const val RESULT_ITEM_TEST_TAG: String = "search_result_item"
     public const val RECENT_SEARCHES_SECTION_TEST_TAG: String = "search_recent_searches_section"
     public const val CLEAR_RECENT_SEARCHES_TEST_TAG: String = "search_clear_recent_searches"
+    public const val GENRE_ROWS_LIST_TEST_TAG: String = "search_genre_rows_list"
     public fun resultItem(traktId: Long): String = "search_result_item_$traktId"
     public fun recentSearchChip(query: String): String = "search_recent_search_chip_$query"
+    public fun genreMoreButton(slug: String): String = "search_genre_more_button_$slug"
 }

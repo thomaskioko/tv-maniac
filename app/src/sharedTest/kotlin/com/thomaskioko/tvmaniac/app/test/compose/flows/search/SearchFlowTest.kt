@@ -114,4 +114,38 @@ internal class SearchFlowTest : BaseAppFlowTest() {
             .assertTextDisplayed("Access forbidden.", substring = true)
             .assertErrorStateDisplayed()
     }
+
+    @Test
+    fun searchGenreMoreJourney() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        val firstFetchedGenreSlug = "action"
+        val firstFetchedGenreName = "Action"
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
+
+        // 1. Tap More on a genre row -> Genre Shows screen titled with the genre name
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .clickGenreMoreButton(firstFetchedGenreSlug)
+
+        genreShowsRobot
+            .assertGenreShowsScreenDisplayed()
+            .assertTitleDisplayed(firstFetchedGenreName)
+            .assertAnyShowCardDisplayed()
+            // 2. Tap a poster -> Show Details
+            .clickFirstShowCard()
+            .assertShowDetailsDisplayed()
+            // 3. Back -> Genre Shows screen restored
+            .pressBack()
+
+        genreShowsRobot
+            .assertGenreShowsScreenDisplayed()
+            // 4. Back -> Search screen restored
+            .pressBack()
+
+        searchRobot.assertSearchScreenDisplayed()
+    }
 }

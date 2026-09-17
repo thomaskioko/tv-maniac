@@ -12,12 +12,18 @@ import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
 import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
 import com.thomaskioko.tvmaniac.genre.model.TraktGenreEntity
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
+import com.thomaskioko.tvmaniac.genreshows.nav.model.GenreShowsParam
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.test
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.ClearRecentSearches
+import com.thomaskioko.tvmaniac.search.presenter.GenreMoreClicked
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.RecentSearchClicked
@@ -388,6 +394,29 @@ internal class SearchShowsPresenterTest {
     }
 
     @Test
+    fun `should navigate to genre shows with the selected category given a genre more is clicked`() = runTest {
+        val testNavigator = TestNavigator()
+        val genreMorePresenter = buildPresenter(navigator = testNavigator)
+        genreRepository.setGenreShowCategory(GenreShowCategory.TRENDING)
+
+        genreMorePresenter.state.test {
+            var state = awaitItem()
+            while (state.selectedCategory != GenreShowCategory.TRENDING) {
+                state = awaitItem()
+            }
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        testNavigator.test {
+            genreMorePresenter.dispatch(GenreMoreClicked(slug = "drama", name = "Drama"))
+
+            awaitNavigateTo(
+                GenreShowsRoute(GenreShowsParam(slug = "drama", name = "Drama", category = GenreShowCategory.TRENDING)),
+            )
+        }
+    }
+
+    @Test
     fun `should display category-specific genre rows when filter changes`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
@@ -628,9 +657,10 @@ internal class SearchShowsPresenterTest {
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
+        navigator: Navigator = NoOpNavigator(),
     ): SearchShowsPresenter = SearchShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        navigator = NoOpNavigator(),
+        navigator = navigator,
         searchRepository = fakeSearchRepository,
         genreRepository = genreRepository,
         fetchGenreContentInteractor = FetchGenreContentInteractor(
