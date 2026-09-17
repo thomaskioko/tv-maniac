@@ -1,4 +1,5 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.PageId;
 import com.thomaskioko.tvmaniac.db.ShowId;
 
 CREATE TABLE IF NOT EXISTS genre_shows (
@@ -6,6 +7,7 @@ CREATE TABLE IF NOT EXISTS genre_shows (
     show_id INTEGER AS Id<ShowId> NOT NULL,
     page_order INTEGER NOT NULL DEFAULT 0,
     category TEXT NOT NULL DEFAULT 'POPULAR',
+    page INTEGER AS Id<PageId> NOT NULL DEFAULT 1,
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (genre_slug, show_id, category)
 );
@@ -14,8 +16,8 @@ CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug ON genre_shows(genre_slug)
 CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug_category ON genre_shows(genre_slug, category);
 
 upsert:
-INSERT OR REPLACE INTO genre_shows (genre_slug, show_id, page_order, category)
-VALUES (?, ?, ?, ?);
+INSERT OR REPLACE INTO genre_shows (genre_slug, show_id, page_order, category, page)
+VALUES (?, ?, ?, ?, ?);
 
 showsByGenreSlug:
 SELECT
@@ -33,7 +35,7 @@ INNER JOIN tvshow s ON gs.show_id = s.id
 WHERE gs.genre_slug = ?
 ORDER BY gs.page_order ASC;
 
-showsByGenreSlugAndCategory:
+showsByGenreSlugCategoryAndPage:
 SELECT
     s.tmdb_id AS show_id,
     s.tmdb_id,
@@ -46,7 +48,7 @@ SELECT
     gs.page_order
 FROM genre_shows gs
 INNER JOIN tvshow s ON gs.show_id = s.id
-WHERE gs.genre_slug = ? AND gs.category = ?
+WHERE gs.genre_slug = :slug AND gs.category = :category AND gs.page = :page
 ORDER BY gs.page_order ASC;
 
 genresWithShowsByCategory:
@@ -65,8 +67,35 @@ SELECT
 FROM trakt_genres g
 INNER JOIN genre_shows gs ON g.slug = gs.genre_slug
 INNER JOIN tvshow s ON gs.show_id = s.id
-WHERE gs.category = ?
+WHERE gs.category = ? AND gs.page = 1
 ORDER BY g.slug, gs.page_order ASC;
+
+pagedShowsByGenreSlugAndCategory:
+SELECT
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id,
+    gs.page,
+    tvshow.name,
+    tvshow.poster_path,
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM genre_shows gs
+INNER JOIN tvshow ON tvshow.id = gs.show_id
+LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
+WHERE gs.genre_slug = :slug AND gs.category = :category
+ORDER BY gs.page ASC, gs.page_order ASC
+LIMIT :limit OFFSET :offset;
+
+countByGenreSlugAndCategory:
+SELECT count(*)
+FROM genre_shows gs
+INNER JOIN tvshow ON tvshow.id = gs.show_id
+WHERE gs.genre_slug = :slug AND gs.category = :category;
+
+pageExists:
+SELECT EXISTS(SELECT 1 FROM genre_shows WHERE genre_slug = :slug AND category = :category AND page = :page LIMIT 1);
+
+deleteByGenreSlugCategoryAndPage:
+DELETE FROM genre_shows WHERE genre_slug = :slug AND category = :category AND page = :page;
 
 deleteByGenreSlugAndCategory:
 DELETE FROM genre_shows WHERE genre_slug = ? AND category = ?;

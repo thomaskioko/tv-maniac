@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.genre
 
+import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
 import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 public interface GenreRepository {
@@ -40,4 +42,10 @@ public interface GenreRepository {
     )
 
     public fun observeGenresWithShowRows(): Flow<List<GenreWithShowsEntity>>
+
+    public fun getPagedGenreShows(
+        slug: String,
+        category: GenreShowCategory,
+        forceRefresh: Boolean = false,
+    ): Flow<PagingData<ShowEntity>>
 }
