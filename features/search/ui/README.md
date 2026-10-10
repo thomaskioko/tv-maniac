@@ -12,9 +12,17 @@ graph TB
     :core:test-tags[test-tags]:::multiplatform
     :core:view[view]:::multiplatform
   end
+  subgraph :core:connectivity
+    direction TB
+    :core:connectivity:api[api]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
+  end
+  subgraph :core:network-util
+    direction TB
+    :core:network-util:api[api]:::multiplatform
   end
   subgraph :core:util
     direction TB
@@ -45,6 +53,10 @@ graph TB
     :domain:genre[genre]:::multiplatform
     :domain:theme[theme]:::multiplatform
   end
+  subgraph :features:genre-shows
+    direction TB
+    :features:genre-shows:nav[nav]:::multiplatform
+  end
   subgraph :features:search
     direction TB
     :features:search:nav[nav]:::multiplatform
@@ -71,17 +83,23 @@ graph TB
   :android-designsystem -.-> :i18n:generator
   :core:base --> :core:logger:api
   :core:base --> :core:view
+  :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:genre:api --> :data:database:sqldelight
   :data:genre:api --> :data:shows:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
   :data:search:api --> :data:shows:api
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :domain:genre --> :core:base
   :domain:genre --> :data:genre:api
   :domain:theme --> :i18n:generator
+  :features:genre-shows:nav --> :data:genre:api
+  :features:genre-shows:nav --> :navigation:api
   :features:search:nav --> :navigation:api
   :features:search:presenter --> :core:base
   :features:search:presenter --> :core:logger:api
@@ -90,6 +108,7 @@ graph TB
   :features:search:presenter --> :data:genre:api
   :features:search:presenter --> :data:search:api
   :features:search:presenter --> :domain:genre
+  :features:search:presenter -.-> :features:genre-shows:nav
   :features:search:presenter --> :features:search:nav
   :features:search:presenter -.-> :features:show-details:nav
   :features:search:presenter --> :i18n:api

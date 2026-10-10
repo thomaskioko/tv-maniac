@@ -11,4 +11,5 @@ public data class ShowEntity(
     val voteAverage: Double? = null,
     val title: String,
     val page: Long = 0,
+    val episodeCount: Int? = null,
 )

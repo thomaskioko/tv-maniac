@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS search_results (
+    query TEXT NOT NULL,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    position INTEGER NOT NULL DEFAULT 0,
+    score REAL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (query, show_id)
+);
+
+CREATE TABLE IF NOT EXISTS search_history (
+    query TEXT NOT NULL PRIMARY KEY COLLATE NOCASE,
+    searched_at INTEGER NOT NULL
+);

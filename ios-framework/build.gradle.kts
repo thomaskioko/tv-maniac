@@ -1,10 +1,8 @@
 @file:OptIn(KotlinNativeCacheApi::class)
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
-import java.net.URI
 
 plugins {
     alias(libs.plugins.app.kmp)
@@ -25,12 +23,6 @@ scaffold {
             if (!debuggable) freeCompilerArgs += "-Xbinary=smallBinary=true"
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
-            disableNativeCache(
-                version = DisableCacheInKotlinVersion.`2_4_0`,
-                reason = "cache bug causes double runtime injection when linking multiple frameworks, see KT-42254",
-                issueUrl = URI("https://youtrack.jetbrains.com/issue/KT-42254"),
-            )
-
             export(projects.i18n.api)
             export(projects.i18n.generator)
             export(projects.core.appconfig.api)
@@ -49,6 +41,7 @@ scaffold {
             export(projects.features.myShows.presenter)
             export(projects.features.continueWatching.presenter)
             export(projects.features.startWatching.presenter)
+            export(projects.features.genreShows.presenter)
             export(projects.features.moreShows.presenter)
             export(projects.features.search.presenter)
             export(projects.features.seasonDetails.presenter)
@@ -108,6 +101,7 @@ kotlin {
                 api(projects.features.myShows.presenter)
                 api(projects.features.home.nav)
                 api(projects.features.home.presenter)
+                api(projects.features.genreShows.presenter)
                 api(projects.features.moreShows.presenter)
                 api(projects.features.search.presenter)
                 api(projects.features.seasonDetails.presenter)

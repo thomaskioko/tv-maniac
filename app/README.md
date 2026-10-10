@@ -355,6 +355,12 @@ graph TB
     :features:feature-flags:presenter[presenter]:::multiplatform
     :features:feature-flags:ui[ui]:::android-library
   end
+  subgraph :features:genre-shows
+    direction TB
+    :features:genre-shows:nav[nav]:::multiplatform
+    :features:genre-shows:presenter[presenter]:::multiplatform
+    :features:genre-shows:ui[ui]:::android-library
+  end
   subgraph :features:home
     direction TB
     :features:home:nav[nav]:::multiplatform
@@ -491,6 +497,7 @@ graph TB
   :api:simkl:implementation --> :api:simkl:api
   :api:simkl:implementation --> :core:appconfig:api
   :api:simkl:implementation -.-> :core:base
+  :api:simkl:implementation --> :core:connectivity:api
   :api:simkl:implementation --> :core:logger:api
   :api:simkl:implementation --> :core:network-util:api
   :api:simkl:implementation --> :data:account-manager:api
@@ -501,6 +508,7 @@ graph TB
   :api:simkl:implementation --> :data:oauth:api
   :api:simkl:implementation --> :data:ratings:api
   :api:simkl:implementation --> :data:rewatch:api
+  :api:simkl:implementation --> :data:search:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -526,6 +534,7 @@ graph TB
   :api:trakt:implementation --> :data:oauth:api
   :api:trakt:implementation --> :data:ratings:api
   :api:trakt:implementation --> :data:rewatch:api
+  :api:trakt:implementation --> :data:search:api
   :api:trakt:implementation --> :data:start-watching:api
   :api:trakt:implementation --> :data:sync-activity:api
   :api:trakt:implementation --> :data:user:api
@@ -664,6 +673,9 @@ graph TB
   :app -.-> :features:feature-flags:nav
   :app -.-> :features:feature-flags:presenter
   :app -.-> :features:feature-flags:ui
+  :app -.-> :features:genre-shows:nav
+  :app -.-> :features:genre-shows:presenter
+  :app -.-> :features:genre-shows:ui
   :app -.-> :features:home:nav
   :app -.-> :features:home:presenter
   :app -.-> :features:library:nav
@@ -862,7 +874,9 @@ graph TB
   :data:genre:implementation --> :api:tmdb:api
   :data:genre:implementation --> :api:trakt:api
   :data:genre:implementation --> :core:base
+  :data:genre:implementation --> :core:logger:api
   :data:genre:implementation -.-> :core:network-util:api
+  :data:genre:implementation --> :core:paging
   :data:genre:implementation --> :core:util:api
   :data:genre:implementation --> :data:database:sqldelight
   :data:genre:implementation --> :data:datastore:api
@@ -959,13 +973,17 @@ graph TB
   :data:rewatch:implementation --> :data:database:sqldelight
   :data:rewatch:implementation --> :data:rewatch:api
   :data:rewatch:implementation --> :data:shows:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
   :data:search:api --> :data:shows:api
   :data:search:implementation --> :api:tmdb:api
   :data:search:implementation --> :api:trakt:api
   :data:search:implementation --> :core:base
   :data:search:implementation -.-> :core:network-util:api
   :data:search:implementation --> :core:util:api
-  :data:search:implementation -.-> :data:database:sqldelight
+  :data:search:implementation --> :data:account-manager:api
+  :data:search:implementation --> :data:database:sqldelight
+  :data:search:implementation --> :data:request-manager:api
   :data:search:implementation --> :data:search:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasondetails:implementation --> :api:tmdb:api
@@ -1443,6 +1461,22 @@ graph TB
   :features:feature-flags:ui -.-> :i18n:generator
   :features:feature-flags:ui --> :navigation:api
   :features:feature-flags:ui --> :navigation:ui
+  :features:genre-shows:nav --> :data:genre:api
+  :features:genre-shows:nav --> :navigation:api
+  :features:genre-shows:presenter --> :core:base
+  :features:genre-shows:presenter --> :core:view
+  :features:genre-shows:presenter --> :data:genre:api
+  :features:genre-shows:presenter -.-> :data:shows:api
+  :features:genre-shows:presenter --> :features:genre-shows:nav
+  :features:genre-shows:presenter -.-> :features:show-details:nav
+  :features:genre-shows:presenter --> :navigation:api
+  :features:genre-shows:ui -.-> :android-designsystem
+  :features:genre-shows:ui --> :core:base
+  :features:genre-shows:ui -.-> :core:test-tags
+  :features:genre-shows:ui --> :features:genre-shows:presenter
+  :features:genre-shows:ui -.-> :i18n:generator
+  :features:genre-shows:ui --> :navigation:api
+  :features:genre-shows:ui --> :navigation:ui
   :features:home:nav --> :navigation:api
   :features:home:presenter --> :core:base
   :features:home:presenter --> :domain:user
@@ -1651,6 +1685,7 @@ graph TB
   :features:search:presenter --> :data:genre:api
   :features:search:presenter --> :data:search:api
   :features:search:presenter --> :domain:genre
+  :features:search:presenter -.-> :features:genre-shows:nav
   :features:search:presenter --> :features:search:nav
   :features:search:presenter -.-> :features:show-details:nav
   :features:search:presenter --> :i18n:api

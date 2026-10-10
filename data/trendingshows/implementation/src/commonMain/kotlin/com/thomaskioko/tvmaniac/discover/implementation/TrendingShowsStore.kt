@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_PAGE_SIZE
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
@@ -47,7 +48,7 @@ public class TrendingShowsStore(
 ) : Store<TrendingShowsParams, List<ShowEntity>> by storeBuilder(
     fetcher = Fetcher.of { params: TrendingShowsParams ->
         coroutineScope {
-            traktRemoteDataSource.getTrendingShows(page = params.page.toInt()).getOrThrow()
+            traktRemoteDataSource.getTrendingShows(page = params.page.toInt(), limit = DEFAULT_PAGE_SIZE).getOrThrow()
                 .withIndex()
                 .mapNotNull { (index, traktResponse) ->
                     val tmdbId = traktResponse.show.ids.tmdb ?: return@mapNotNull null

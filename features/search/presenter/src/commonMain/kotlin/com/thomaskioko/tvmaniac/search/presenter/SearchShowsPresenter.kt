@@ -17,6 +17,8 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
+import com.thomaskioko.tvmaniac.genreshows.nav.model.GenreShowsParam
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
@@ -27,6 +29,8 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,9 +43,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -111,6 +117,9 @@ public class SearchShowsPresenter(
                 initialValue = SearchShowState.Empty,
             )
 
+        private var resultsQuery: String = ""
+        private var submitJob: Job? = null
+
         private val queryFlow = MutableSharedFlow<String>(
             replay = 1,
             onBufferOverflow = BufferOverflow.DROP_OLDEST,
@@ -125,6 +134,7 @@ public class SearchShowsPresenter(
                 launch { observeCategoryChanges() }
                 launch { observeLocalResults() }
                 launch { fetchSearchQuery() }
+                launch { observeRecentSearches() }
             }
         }
 
@@ -152,8 +162,28 @@ public class SearchShowsPresenter(
                 }
 
                 is QueryChanged -> handleQueryChange(action.query)
-                is SearchShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
+                SearchSubmitted -> submitQuery()
+                is RecentSearchClicked -> handleQueryChange(action.query)
+                ClearRecentSearches -> coroutineScope.launch { searchRepository.clearRecentSearches() }
+                is SearchShowClicked -> {
+                    coroutineScope.launch { saveRecentSearch() }
+                    navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
+                }
+                is GenreMoreClicked -> navigator.navigateTo(
+                    GenreShowsRoute(GenreShowsParam(slug = action.slug, name = action.name, category = state.value.selectedCategory)),
+                )
             }
+        }
+
+        private suspend fun observeRecentSearches() {
+            searchRepository.observeRecentSearches().collect { queries ->
+                _state.update { it.copy(recentSearches = queries.toImmutableList()) }
+            }
+        }
+
+        private suspend fun saveRecentSearch() {
+            val query = state.value.query
+            if (query.isSearchable()) searchRepository.saveRecentSearch(query)
         }
 
         private suspend fun observeCategoryChanges() {
@@ -180,16 +210,16 @@ public class SearchShowsPresenter(
                 .debounce(SearchShowState.LOCAL_SUGGESTION_DEBOUNCE)
                 .flatMapLatest { query ->
                     if (query.isSearchable()) {
-                        searchRepository.observeSearchResults(query)
+                        searchRepository.observeSearchResults(query).map { query to it }
                     } else {
-                        flowOf(emptyList())
+                        flowOf(query to emptyList())
                     }
                 }
                 .catch { error ->
                     logger.error(LOG_TAG, "Search failed", error, mapOf(CrashReportKeys.SOURCE to SEARCH_SOURCE_ID))
                     uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = SEARCH_SOURCE_ID))
                 }
-                .collect { results -> handleSearchResults(results) }
+                .collect { (query, results) -> handleSearchResults(query, results) }
         }
 
         private suspend fun fetchSearchQuery() {
@@ -206,10 +236,12 @@ public class SearchShowsPresenter(
                 .collect()
         }
 
-        private fun searchNetwork(query: String): Flow<Unit> = flow {
+        private fun searchNetwork(query: String, forceRefresh: Boolean = false): Flow<Unit> = flow {
             _state.update { it.copy(isUpdating = true) }
-            searchRepository.search(query)
-            _state.update { it.copy(isUpdating = false) }
+            searchRepository.search(query, forceRefresh)
+            val results = searchRepository.observeSearchResults(query).first()
+            resultsQuery = query
+            _state.update { it.copy(isUpdating = false, searchResults = mapper.toShowList(results)) }
             emit(Unit)
         }
             .catch { error ->
@@ -218,7 +250,18 @@ public class SearchShowsPresenter(
                 uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = SEARCH_SOURCE_ID))
             }
 
+        private fun submitQuery() {
+            val query = state.value.query
+            if (!query.isSearchable()) return
+            submitJob?.cancel()
+            submitJob = coroutineScope.launch {
+                saveRecentSearch()
+                searchNetwork(query, forceRefresh = true).collect()
+            }
+        }
+
         private fun handleQueryChange(query: String) {
+            submitJob?.cancel()
             coroutineScope.launch {
                 if (query.isSearchable()) {
                     _state.update { it.copy(query = query, isUpdating = true) }
@@ -230,6 +273,7 @@ public class SearchShowsPresenter(
         }
 
         private suspend fun resetSearch(query: String = "") {
+            submitJob?.cancel()
             state.value.message
                 ?.takeIf { it.sourceId == SEARCH_SOURCE_ID }
                 ?.let { uiMessageManager.clearMessage(it.id) }
@@ -237,7 +281,10 @@ public class SearchShowsPresenter(
             queryFlow.emit(query)
         }
 
-        private fun handleSearchResults(shows: List<ShowEntity>) {
+        private fun handleSearchResults(query: String, shows: List<ShowEntity>) {
+            val keepPreviousResults = shows.isEmpty() && query != resultsQuery && state.value.isUpdating
+            if (keepPreviousResults) return
+            resultsQuery = query
             _state.update { it.copy(searchResults = mapper.toShowList(shows)) }
         }
     }

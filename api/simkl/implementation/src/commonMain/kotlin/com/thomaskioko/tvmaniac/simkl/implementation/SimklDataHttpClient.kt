@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.reportApiFailure
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -25,12 +27,17 @@ internal fun simklDataHttpClient(
     json: Json,
     httpClientEngine: HttpClientEngine,
     kermitLogger: KermitLogger,
+    internetConnectionChecker: InternetConnectionChecker,
 ): HttpClient = HttpClient(httpClientEngine) {
     install(ContentNegotiation) { json(json = json) }
 
     install(ApiErrorReportingPlugin) {
         provider = "simkl"
         onFailure = { failure, throwable -> kermitLogger.reportApiFailure("SimklApi", failure, throwable) }
+    }
+
+    install(InternetConnectionPlugin) {
+        this.internetConnectionChecker = internetConnectionChecker
     }
 
     install(HttpRequestRetry) {

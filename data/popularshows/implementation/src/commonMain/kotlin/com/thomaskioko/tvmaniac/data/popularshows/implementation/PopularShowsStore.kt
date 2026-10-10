@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.POPULAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_PAGE_SIZE
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
@@ -46,7 +47,7 @@ public class PopularShowsStore(
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
     fetcher = Fetcher.of { page: Long ->
         coroutineScope {
-            traktRemoteDataSource.getPopularShows(page = page.toInt()).getOrThrow()
+            traktRemoteDataSource.getPopularShows(page = page.toInt(), limit = DEFAULT_PAGE_SIZE).getOrThrow()
                 .withIndex()
                 .mapNotNull { (index, show) ->
                     val tmdbId = show.ids.tmdb ?: return@mapNotNull null

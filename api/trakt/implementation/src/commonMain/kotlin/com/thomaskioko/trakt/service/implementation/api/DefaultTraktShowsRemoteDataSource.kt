@@ -156,6 +156,8 @@ public class DefaultTraktShowsRemoteDataSource(
             }
             parameter("type", "show")
             parameter("query", query)
+            parameter("page", page)
+            parameter("limit", limit)
             parameter("extended", "full")
         }
 

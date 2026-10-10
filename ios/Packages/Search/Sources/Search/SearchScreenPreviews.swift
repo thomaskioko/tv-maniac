@@ -8,7 +8,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .loading,
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -26,7 +26,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .searchLoading,
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -66,7 +66,7 @@ import SwiftUI
                 ],
                 isRefreshing: false
             ),
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry",
             selectedCategory: "Popular",
@@ -75,7 +75,54 @@ import SwiftUI
         query: .constant(""),
         onShowClicked: { _ in },
         onRetry: {},
-        onBack: {}
+        onBack: {},
+        onGenreMoreClicked: { _, _ in }
+    )
+    .appPreview()
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Browsing Genres With Recent Searches") {
+    SearchScreen(
+        state: SearchScreen.State(
+            title: "Search",
+            screenState: .browsingGenres(
+                genres: [
+                    SwiftGenreRow(
+                        id: "action",
+                        name: "Action",
+                        subtitle: "High-octane thrills",
+                        shows: [
+                            .init(showId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                        ]
+                    ),
+                    SwiftGenreRow(
+                        id: "drama",
+                        name: "Drama",
+                        subtitle: "Compelling stories",
+                        shows: [
+                            .init(showId: 3, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 4, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                        ]
+                    ),
+                ],
+                recentSearches: ["Arcane", "The Penguin", "Kaos", "One Piece"],
+                isRefreshing: false
+            ),
+            searchPlaceholder: "Search shows…",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            selectedCategory: "Popular",
+            categories: ["Popular", "Trending", "Top Rated"],
+            recentSearchesTitle: "Recent searches",
+            clearRecentSearchesText: "Clear"
+        ),
+        query: .constant(""),
+        onShowClicked: { _ in },
+        onRetry: {},
+        onBack: {},
+        onGenreMoreClicked: { _, _ in }
     )
     .appPreview()
     .preferredColorScheme(.dark)
@@ -92,19 +139,26 @@ import SwiftUI
                         overview: "Follow Oswald Oz Cobb's quest for control.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg",
-                        year: "2024", voteAverage: 8.5, inLibrary: true
+                        year: "2019", voteAverage: 8.5, inLibrary: true, captionComponents: ["2019", "62 eps."]
                     ),
                     .init(
                         tmdbId: 1234, showId: 1234, title: "Kaos",
                         overview: "A renegade fighter battles a powerful robot.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
-                        year: "2024", voteAverage: 7.2
+                        year: "2024", voteAverage: 7.2, captionComponents: ["2024", "8 eps."]
+                    ),
+                    .init(
+                        tmdbId: 5678, showId: 5678, title: "Arcane",
+                        overview: nil,
+                        status: "Ended",
+                        imageUrl: nil,
+                        year: nil, voteAverage: 8.9, captionComponents: ["18 eps."]
                     ),
                 ],
                 isUpdating: false
             ),
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -122,7 +176,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .empty,
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),
@@ -140,7 +194,7 @@ import SwiftUI
         state: SearchScreen.State(
             title: "Search",
             screenState: .error(message: "Something went wrong. Please try again."),
-            searchPlaceholder: "Enter Show Title",
+            searchPlaceholder: "Search shows…",
             emptyResultsMessage: "No results found",
             retryButtonText: "Retry"
         ),

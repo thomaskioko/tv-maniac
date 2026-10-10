@@ -26,6 +26,7 @@ internal class SearchFlowTest : BaseAppFlowTest() {
             .enterSearchQuery(query)
             .assertSearchQueryDisplayed(query)
             .assertResultItemDisplayed(tmdbId)
+            .assertResultCountEquals(1)
             .assertResultTitleDisplayed("Breaking Bad")
             // 2. Click Result -> Show Details
             .clickResultItem(tmdbId)
@@ -35,6 +36,66 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         // 3. Back -> Search Screen restored
         searchRobot
             .assertSearchScreenDisplayed()
+            .assertResultItemDisplayed(tmdbId)
+    }
+
+    @Test
+    fun searchRecentSearchesJourney() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        val query = "Breaking Bad"
+        val tmdbId = 1396L
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
+
+        scenarios.search.stubSearch(query)
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .enterSearchQuery(query)
+            .assertResultItemDisplayed(tmdbId)
+            .clickResultItem(tmdbId)
+            .assertShowDetailsDisplayed()
+            .pressBack()
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .clearSearchQuery()
+            .assertRecentSearchChipDisplayed(query)
+            .clickRecentSearchChip(query)
+            .assertResultItemDisplayed(tmdbId)
+
+        searchRobot
+            .clearSearchQuery()
+            .assertRecentSearchesSectionDisplayed()
+            .clickClearRecentSearches()
+            .assertRecentSearchesSectionNotDisplayed()
+    }
+
+    @Test
+    fun givenSearchResults_whenSearchKeyPressed_thenFetchesAgain() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        val query = "Breaking Bad"
+        val tmdbId = 1396L
+        scenarios.search.stubSearch(query)
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .enterSearchQuery(query)
+            .assertResultItemDisplayed(tmdbId)
+
+        scenarios.search.stubSearchError(query)
+
+        searchRobot
+            .pressImeSearchAction()
+            .assertTextDisplayed("Access forbidden.", substring = true)
             .assertResultItemDisplayed(tmdbId)
     }
 
@@ -52,5 +113,39 @@ internal class SearchFlowTest : BaseAppFlowTest() {
             .enterSearchQuery(query)
             .assertTextDisplayed("Access forbidden.", substring = true)
             .assertErrorStateDisplayed()
+    }
+
+    @Test
+    fun searchGenreMoreJourney() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        val firstFetchedGenreSlug = "action"
+        val firstFetchedGenreName = "Action"
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
+
+        // 1. Tap More on a genre row -> Genre Shows screen titled with the genre name
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .clickGenreMoreButton(firstFetchedGenreSlug)
+
+        genreShowsRobot
+            .assertGenreShowsScreenDisplayed()
+            .assertTitleDisplayed(firstFetchedGenreName)
+            .assertAnyShowCardDisplayed()
+            // 2. Tap a poster -> Show Details
+            .clickFirstShowCard()
+            .assertShowDetailsDisplayed()
+            // 3. Back -> Genre Shows screen restored
+            .pressBack()
+
+        genreShowsRobot
+            .assertGenreShowsScreenDisplayed()
+            // 4. Back -> Search screen restored
+            .pressBack()
+
+        searchRobot.assertSearchScreenDisplayed()
     }
 }

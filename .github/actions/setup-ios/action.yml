@@ -48,12 +48,19 @@ runs:
         restore-keys: |
           ${{ runner.os }}-spm-
 
+    - name: 🔑 Resolve Kotlin version
+      id: kotlin
+      if: inputs.kotlin-tooling == 'true'
+      shell: bash
+      run: |
+        echo "version=$(sed -n 's/^kotlin = "\(.*\)"/\1/p' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+
     - name: 🗂️ Cache Kotlin/Native (konan)
       if: inputs.kotlin-tooling == 'true'
       uses: actions/cache@v6
       with:
         path: ~/.konan
-        key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+        key: ${{ runner.os }}-konan-${{ steps.kotlin.outputs.version }}
         restore-keys: |
           ${{ runner.os }}-konan-
 
@@ -62,3 +69,16 @@ runs:
       uses: ./.github/actions/setup-gradle
       with:
         gradle-cache-read-only: ${{ inputs.gradle-cache-read-only }}
+
+    - name: 🐘 Size Gradle for the macOS runner
+      if: inputs.kotlin-tooling == 'true'
+      shell: bash
+      run: |
+        GRADLE_HOME_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}"
+        mkdir -p "$GRADLE_HOME_DIR"
+        {
+          echo "org.gradle.jvmargs=-Dfile.encoding=UTF-8 -XX:+UseG1GC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseStringDeduplication -XX:MaxMetaspaceSize=1g -Xmx4g"
+          echo "kotlin.daemon.jvmargs=-Xmx1g"
+          echo "org.gradle.console=plain"
+        } >> "$GRADLE_HOME_DIR/gradle.properties"
+        cat "$GRADLE_HOME_DIR/gradle.properties"

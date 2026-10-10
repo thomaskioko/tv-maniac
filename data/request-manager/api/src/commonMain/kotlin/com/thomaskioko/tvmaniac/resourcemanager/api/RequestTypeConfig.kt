@@ -37,4 +37,5 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     START_WATCHING_SYNC(36, 6.hours),
     FAVORITES_SYNC(37, 6.hours),
     RATINGS_SYNC(38, 1.days),
+    SEARCH_RESULTS(39, 1.hours),
 }

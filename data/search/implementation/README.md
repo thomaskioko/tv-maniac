@@ -42,6 +42,10 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
+  subgraph :data:request-manager
+    direction TB
+    :data:request-manager:api[api]:::multiplatform
+  end
   subgraph :data:search
     direction TB
     :data:search:api[api]:::multiplatform
@@ -61,13 +65,17 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:search:api --> :core:network-util:api
+  :data:search:api --> :data:account-manager:api
   :data:search:api --> :data:shows:api
   :data:search:implementation --> :api:tmdb:api
   :data:search:implementation --> :api:trakt:api
   :data:search:implementation --> :core:base
   :data:search:implementation -.-> :core:network-util:api
   :data:search:implementation --> :core:util:api
-  :data:search:implementation -.-> :data:database:sqldelight
+  :data:search:implementation --> :data:account-manager:api
+  :data:search:implementation --> :data:database:sqldelight
+  :data:search:implementation --> :data:request-manager:api
   :data:search:implementation --> :data:search:api
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight

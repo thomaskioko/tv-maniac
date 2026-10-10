@@ -6,6 +6,9 @@ import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
+import com.thomaskioko.tvmaniac.genreshows.nav.model.GenreShowsParam
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
@@ -39,6 +42,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
                 param = SeasonDetailsUiParam(showId = 1L, seasonId = 1L, seasonNumber = 1L),
             ),
             MoreShowsRoute(categoryId = 1L),
+            GenreShowsRoute(GenreShowsParam(slug = "drama", name = "Drama", category = GenreShowCategory.POPULAR)),
             EpisodeSheetRoute(EpisodeSheetParam(episodeId = 1L, source = ScreenSource.DISCOVER)),
         )
 
@@ -82,6 +86,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             ShowDetailsRoute::class,
             SeasonDetailsRoute::class,
             MoreShowsRoute::class,
+            GenreShowsRoute::class,
             EpisodeSheetRoute::class,
         )
 

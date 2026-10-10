@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Breaking Bad",
+    "year": 2008,
+    "poster": "6c1kgpnw",
+    "ids": {
+      "simkl_id": 39687,
+      "slug": "breaking-bad",
+      "tmdb": "1396",
+      "imdb": "tt0903747",
+      "tvdb": "81189"
+    }
+  },
+  {
+    "title": "The Wire",
+    "year": 2002,
+    "poster": "8f2mdlqx",
+    "ids": {
+      "simkl_id": 12345,
+      "slug": "the-wire",
+      "tmdb": "1438",
+      "imdb": "tt0306414",
+      "tvdb": "79126"
+    }
+  }
+]

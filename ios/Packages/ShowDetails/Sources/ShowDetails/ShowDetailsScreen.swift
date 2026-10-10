@@ -128,6 +128,8 @@ public struct ShowDetailsScreen<Content: View>: View {
                             .tint(appTheme.colors.onSurface)
                         }
                     }
+                    .scrollEdgeEffectHidden(showGlass == 0, for: .top)
+                    .scrollEdgeEffectHidden(for: .bottom)
                     .ignoresSafeArea(edges: .top)
             },
             legacy: { view in

@@ -72,6 +72,17 @@ public extension TvManiac.TvShow {
     }
 }
 
+public extension TvManiac.GenreShow {
+    func toSwift() -> ShowPosterImage {
+        .init(
+            showId: showId,
+            title: title,
+            posterUrl: posterImageUrl,
+            inLibrary: inLibrary
+        )
+    }
+}
+
 public extension TvManiac.DiscoverShow {
     func toSwift() -> SwiftShow {
         .init(
@@ -82,12 +93,6 @@ public extension TvManiac.DiscoverShow {
             inLibrary: inLibrary,
             overview: overView
         )
-    }
-}
-
-public extension TvManiac.ShowGenre {
-    func toSwift() -> SwiftShowGenre {
-        .init(showId: id, tmdbId: id, name: name, imageUrl: posterUrl)
     }
 }
 

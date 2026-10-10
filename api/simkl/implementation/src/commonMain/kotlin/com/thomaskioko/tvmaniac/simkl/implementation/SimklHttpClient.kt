@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.reportApiFailure
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
@@ -39,6 +41,7 @@ internal fun simklHttpClient(
     httpClientEngine: HttpClientEngine,
     kermitLogger: KermitLogger,
     authStateHolder: AuthStateHolder,
+    internetConnectionChecker: InternetConnectionChecker,
 ): HttpClient {
     val client = HttpClient(httpClientEngine) {
         install(ContentNegotiation) { json(json = json) }
@@ -46,6 +49,10 @@ internal fun simklHttpClient(
         install(ApiErrorReportingPlugin) {
             provider = "simkl"
             onFailure = { failure, throwable -> kermitLogger.reportApiFailure("SimklApi", failure, throwable) }
+        }
+
+        install(InternetConnectionPlugin) {
+            this.internetConnectionChecker = internetConnectionChecker
         }
 
         install(HttpRequestRetry) {

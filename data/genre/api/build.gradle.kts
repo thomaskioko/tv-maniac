@@ -8,6 +8,7 @@ kotlin {
             dependencies {
                 api(projects.data.database.sqldelight)
                 api(projects.data.shows.api)
+                api(libs.androidx.paging.common)
                 api(libs.coroutines.core)
             }
         }

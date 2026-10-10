@@ -29,7 +29,7 @@ public interface TraktShowsRemoteDataSource {
      */
     public suspend fun getTrendingShows(
         page: Int = 1,
-        limit: Int = 20,
+        limit: Int,
         genres: String? = null,
     ): ApiResponse<List<TraktShowsResponse>>
 
@@ -54,7 +54,7 @@ public interface TraktShowsRemoteDataSource {
      */
     public suspend fun getPopularShows(
         page: Int = 1,
-        limit: Int = 20,
+        limit: Int,
         genres: String? = null,
     ): ApiResponse<List<TraktShowResponse>>
 
@@ -71,7 +71,7 @@ public interface TraktShowsRemoteDataSource {
      */
     public suspend fun getFavoritedShows(
         page: Int = 1,
-        limit: Int = 20,
+        limit: Int,
         period: TimePeriod = TimePeriod.WEEKLY,
         genres: String? = null,
     ): ApiResponse<List<TraktShowsResponse>>
@@ -89,7 +89,7 @@ public interface TraktShowsRemoteDataSource {
      */
     public suspend fun getMostWatchedShows(
         page: Int = 1,
-        limit: Int = 20,
+        limit: Int,
         period: TimePeriod = TimePeriod.WEEKLY,
         genres: String? = null,
     ): ApiResponse<List<TraktShowsResponse>>

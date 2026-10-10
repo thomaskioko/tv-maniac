@@ -10,4 +10,5 @@ public data class ShowItem(
     val posterImageUrl: String? = null,
     val overview: String? = null,
     val inLibrary: Boolean = false,
+    val episodeCount: Int? = null,
 )

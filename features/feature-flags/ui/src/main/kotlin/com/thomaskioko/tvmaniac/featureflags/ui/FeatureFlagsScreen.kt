@@ -158,7 +158,7 @@ internal fun FeatureFlagsScreen(
                 .padding(innerPadding),
             query = state.searchQuery,
             hint = state.searchHint,
-            lazyListState = lazyListState,
+            scrollableState = lazyListState,
             onQueryChanged = onSearchQueryChanged,
             onClearQuery = { onSearchQueryChanged("") },
         ) {

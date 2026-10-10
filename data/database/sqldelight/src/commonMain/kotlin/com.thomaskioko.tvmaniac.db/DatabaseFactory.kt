@@ -67,6 +67,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         genre_showsAdapter = Genre_shows.Adapter(
             show_idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
         ),
         genresAdapter = Genres.Adapter(
             idAdapter = IdAdapter(),
@@ -164,6 +165,9 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         list_showsAdapter = List_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),
+        ),
+        search_resultsAdapter = Search_results.Adapter(
+            show_idAdapter = IdAdapter(),
         ),
     )
 }

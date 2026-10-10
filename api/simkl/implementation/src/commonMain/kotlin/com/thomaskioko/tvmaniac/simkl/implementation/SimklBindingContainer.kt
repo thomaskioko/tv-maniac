@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.appconfig.SimklConfig
 import com.thomaskioko.tvmaniac.core.base.SimklApi
 import com.thomaskioko.tvmaniac.core.base.SimklDataApi
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import dev.zacsweers.metro.AppScope
@@ -34,6 +35,7 @@ public object SimklBindingContainer {
         simklConfig: SimklConfig,
         logger: Logger,
         authStateHolder: AuthStateHolder,
+        internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = simklHttpClient(
         isDebug = debugConfig.isDebug,
         simklClientId = simklConfig.clientId,
@@ -41,6 +43,7 @@ public object SimklBindingContainer {
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
         authStateHolder = authStateHolder,
+        internetConnectionChecker = internetConnectionChecker,
     )
 
     @Provides
@@ -50,10 +53,12 @@ public object SimklBindingContainer {
         @SimklApi httpClientEngine: HttpClientEngine,
         debugConfig: DebugConfig,
         logger: Logger,
+        internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = simklDataHttpClient(
         isDebug = debugConfig.isDebug,
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
+        internetConnectionChecker = internetConnectionChecker,
     )
 }

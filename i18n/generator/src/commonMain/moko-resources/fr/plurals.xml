@@ -76,4 +76,8 @@
         <item quantity="one">%d série ignorée</item>
         <item quantity="other">%d séries ignorées</item>
     </plurals>
+    <plurals name="plurals_search_episode_count">
+        <item quantity="one">%d ép.</item>
+        <item quantity="other">%d ép.</item>
+    </plurals>
 </resources>

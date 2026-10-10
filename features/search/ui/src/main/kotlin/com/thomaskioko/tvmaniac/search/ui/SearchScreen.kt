@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.search.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -11,9 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.SearchOff
@@ -23,7 +28,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -58,27 +62,31 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR
-import com.thomaskioko.tvmaniac.i18n.cd_back
-import com.thomaskioko.tvmaniac.i18n.generic_empty_content
-import com.thomaskioko.tvmaniac.i18n.generic_retry
-import com.thomaskioko.tvmaniac.i18n.menu_item_search
-import com.thomaskioko.tvmaniac.i18n.missing_api_key
-import com.thomaskioko.tvmaniac.i18n.msg_search_show_hint
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_empty_results
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_placeholder
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.i18n.search_no_results
 import com.thomaskioko.tvmaniac.search.presenter.BackClicked
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
+import com.thomaskioko.tvmaniac.search.presenter.ClearRecentSearches
+import com.thomaskioko.tvmaniac.search.presenter.GenreMoreClicked
 import com.thomaskioko.tvmaniac.search.presenter.MessageShown
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
+import com.thomaskioko.tvmaniac.search.presenter.RecentSearchClicked
 import com.thomaskioko.tvmaniac.search.presenter.ReloadShowContent
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchSubmitted
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.BrowsingGenres
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.Error
 import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.InitialLoading
@@ -88,7 +96,8 @@ import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.SearchResults
 import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.HorizontalShowContentRow
-import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
+import com.thomaskioko.tvmaniac.search.ui.components.RecentSearchesSection
+import com.thomaskioko.tvmaniac.search.ui.components.SearchResultCard
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultsShimmer
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
@@ -119,14 +128,16 @@ internal fun SearchScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val snackBarHostState = remember { SnackbarHostState() }
-    val lazyListState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
     var showFilterSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val context = LocalContext.current
-    val isBrowsingGenres = state.uiState is BrowsingGenres
+    val uiState = state.uiState
+    val isBrowsingGenres = uiState is BrowsingGenres
+    val isSearchUpdating = uiState is SearchLoading || (uiState is SearchResults && uiState.isUpdating)
 
-    LaunchedEffect(state.message, state.uiState) {
-        if (state.uiState is Error) return@LaunchedEffect
+    LaunchedEffect(state.message, uiState) {
+        if (uiState is Error) return@LaunchedEffect
         state.message?.let { message ->
             val snackBarResult = snackBarHostState.showSnackbar(
                 message = message.message,
@@ -150,7 +161,7 @@ internal fun SearchScreen(
             TvManiacTopBar(
                 title = {
                     Text(
-                        text = MR.strings.menu_item_search.resolve(context),
+                        text = menu_item_search.resolve(context),
                         style = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
@@ -165,7 +176,7 @@ internal fun SearchScreen(
                     IconButton(onClick = { onAction(BackClicked) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = MR.strings.cd_back.resolve(context),
+                            contentDescription = cd_back.resolve(context),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
@@ -201,7 +212,8 @@ internal fun SearchScreen(
                 paddingValues = paddingValues,
                 scrollBehavior = scrollBehavior,
                 onAction = onAction,
-                lazyListState = lazyListState,
+                gridState = gridState,
+                isLoading = isSearchUpdating,
             )
         },
     )
@@ -236,39 +248,62 @@ private fun SearchScreenContent(
     paddingValues: PaddingValues,
     scrollBehavior: TopAppBarScrollBehavior,
     onAction: (SearchShowAction) -> Unit,
-    lazyListState: LazyListState,
+    gridState: LazyGridState,
+    isLoading: Boolean,
 ) {
-    SearchScreenHeader(
-        query = state.query,
-        paddingValues = paddingValues,
-        scrollBehavior = scrollBehavior,
-        onAction = onAction,
-        lazyListState = lazyListState,
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .padding(paddingValues.copy(copyBottom = false)),
     ) {
+        SearchTextContainer(
+            query = state.query,
+            hint = label_search_placeholder.resolve(context),
+            scrollableState = gridState,
+            isLoading = isLoading,
+            textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
+            onClearQuery = { onAction(ClearQuery) },
+            onQueryChanged = { onAction(QueryChanged(it)) },
+            onSubmit = { onAction(SearchSubmitted) },
+        ) {
+            SearchScreenBody(state = state, gridState = gridState, onAction = onAction)
+        }
+    }
+}
+
+@Composable
+private fun SearchScreenBody(
+    state: SearchShowState,
+    gridState: LazyGridState,
+    onAction: (SearchShowAction) -> Unit,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
         when (val uiState = state.uiState) {
             InitialLoading -> LoadingIndicator()
-            SearchLoading -> SearchResultsShimmer(
-                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
-            )
+            SearchLoading -> SearchResultsShimmer()
             SearchEmpty -> {
                 EmptyStateView(
                     modifier = Modifier.testTag(SearchTestTags.EMPTY_STATE_TEST_TAG),
                     imageVector = Icons.Filled.SearchOff,
-                    title = MR.strings.search_no_results.resolve(LocalContext.current),
+                    title = label_search_empty_results.resolve(LocalContext.current),
                 )
             }
 
-            is SearchResults -> SearchResultsContent(
-                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
-                onAction = onAction,
+            is SearchResults -> SearchResultsGrid(
                 results = uiState.results,
-                scrollState = lazyListState,
-                isUpdating = uiState.isUpdating,
+                gridState = gridState,
+                onShowClicked = { onAction(SearchShowClicked(it)) },
             )
 
             is BrowsingGenres -> GenreRowsContent(
                 genreRows = uiState.genreRows,
+                recentSearches = uiState.recentSearches,
                 onShowClicked = { onAction(SearchShowClicked(it)) },
+                onRecentSearchClicked = { onAction(RecentSearchClicked(it)) },
+                onClearRecentSearches = { onAction(ClearRecentSearches) },
+                onMoreClicked = { slug, name -> onAction(GenreMoreClicked(slug, name)) },
             )
 
             is Error -> {
@@ -276,9 +311,9 @@ private fun SearchScreenContent(
                 EmptyStateView(
                     modifier = Modifier.testTag(SearchTestTags.ERROR_STATE_TEST_TAG),
                     imageVector = Icons.Outlined.ErrorOutline,
-                    title = MR.strings.generic_empty_content.resolve(context),
-                    message = state.message?.message ?: MR.strings.missing_api_key.resolve(context),
-                    buttonText = MR.strings.generic_retry.resolve(context),
+                    title = generic_empty_content.resolve(context),
+                    message = state.message?.message ?: missing_api_key.resolve(context),
+                    buttonText = generic_retry.resolve(context),
                     onClick = { onAction(ReloadShowContent) },
                 )
             }
@@ -287,74 +322,30 @@ private fun SearchScreenContent(
 }
 
 @Composable
-private fun SearchScreenHeader(
-    query: String,
-    onAction: (SearchShowAction) -> Unit,
-    paddingValues: PaddingValues,
-    scrollBehavior: TopAppBarScrollBehavior,
-    lazyListState: LazyListState,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(paddingValues.copy(copyBottom = false)),
-    ) {
-        SearchTextContainer(
-            query = query,
-            hint = MR.strings.msg_search_show_hint.resolve(LocalContext.current),
-            lazyListState = lazyListState,
-            content = content,
-            textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
-            onClearQuery = { onAction(ClearQuery) },
-            onQueryChanged = { onAction(QueryChanged(it)) },
-        )
-    }
-}
-
-@Composable
-private fun SearchResultsContent(
-    onAction: (SearchShowAction) -> Unit,
-    scrollState: LazyListState,
+private fun SearchResultsGrid(
     results: ImmutableList<ShowItem>,
-    isUpdating: Boolean,
+    gridState: LazyGridState,
+    onShowClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        if (isUpdating) {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = TvManiacSpacing.medium),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(Layout.posterColumns),
+        state = gridState,
+        contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+        modifier = modifier.fillMaxSize(),
+    ) {
+        items(
+            items = results,
+            key = { it.showId },
+            contentType = { "SearchResult" },
+        ) { item ->
+            SearchResultCard(
+                item = item,
+                onClick = { onShowClicked(item.showId) },
+                modifier = Modifier.testTag(SearchTestTags.resultItem(item.showId)),
             )
-        }
-
-        LazyColumn(
-            state = scrollState,
-        ) {
-            items(
-                items = results,
-                key = { it.showId },
-                contentType = { "SearchResult" },
-            ) { item ->
-
-                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
-
-                SearchResultItem(
-                    modifier = Modifier.testTag(SearchTestTags.resultItem(item.showId)),
-                    title = item.title,
-                    status = item.status,
-                    voteAverage = item.voteAverage,
-                    year = item.year,
-                    overview = item.overview,
-                    imageUrl = item.posterImageUrl,
-                    isInLibrary = item.inLibrary,
-                    onClick = { onAction(SearchShowClicked(item.showId)) },
-                )
-            }
         }
     }
 }
@@ -362,7 +353,11 @@ private fun SearchResultsContent(
 @Composable
 private fun GenreRowsContent(
     genreRows: ImmutableList<GenreRowModel>,
+    recentSearches: ImmutableList<String>,
     onShowClicked: (Long) -> Unit,
+    onRecentSearchClicked: (String) -> Unit,
+    onClearRecentSearches: () -> Unit,
+    onMoreClicked: (slug: String, name: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -372,7 +367,21 @@ private fun GenreRowsContent(
     ) {
         if (genreRows.isEmpty()) return
 
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.testTag(SearchTestTags.GENRE_ROWS_LIST_TEST_TAG),
+        ) {
+            if (recentSearches.isNotEmpty()) {
+                item(key = "recent_searches", contentType = "RecentSearches") {
+                    RecentSearchesSection(
+                        recentSearches = recentSearches,
+                        onRecentSearchClicked = onRecentSearchClicked,
+                        onClearRecentSearches = onClearRecentSearches,
+                    )
+
+                    Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
+                }
+            }
+
             items(
                 items = genreRows,
                 key = { it.slug },
@@ -382,7 +391,9 @@ private fun GenreRowsContent(
                     title = genreRow.name,
                     description = genreRow.subtitle,
                     tvShows = genreRow.shows,
+                    slug = genreRow.slug,
                     onItemClicked = onShowClicked,
+                    onMoreClicked = { onMoreClicked(genreRow.slug, genreRow.name) },
                 )
 
                 Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))

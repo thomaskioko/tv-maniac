@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
-import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_API_PAGE
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn

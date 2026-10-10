@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.search.ui.createDiscoverShowList
 import com.thomaskioko.tvmaniac.search.ui.createGenreRowList
+import com.thomaskioko.tvmaniac.search.ui.createRecentSearchesList
 import com.thomaskioko.tvmaniac.search.ui.previewCategories
 import org.junit.Rule
 import org.junit.Test
@@ -65,6 +66,24 @@ class SearchScreenTest {
                     state = SearchShowState(
                         isRefreshing = false,
                         genreRows = createGenreRowList(),
+                        categoryTitle = "Category",
+                        categories = previewCategories(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun searchScreenBrowsingGenresRecentSearches() {
+        composeTestRule.captureMultiDevice("SearchBrowsingGenres_RecentSearches") {
+            TvManiacBackground {
+                SearchScreen(
+                    state = SearchShowState(
+                        isRefreshing = false,
+                        genreRows = createGenreRowList(),
+                        recentSearches = createRecentSearchesList(),
                         categoryTitle = "Category",
                         categories = previewCategories(),
                     ),

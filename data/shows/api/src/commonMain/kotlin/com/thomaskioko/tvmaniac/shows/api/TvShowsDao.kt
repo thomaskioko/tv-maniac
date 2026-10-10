@@ -1,18 +1,16 @@
 package com.thomaskioko.tvmaniac.shows.api
 
+import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import kotlinx.coroutines.flow.Flow
 
 public interface TvShowsDao {
     public fun upsert(show: ShowToPersist)
 
     public fun upsert(list: List<ShowToPersist>)
 
-    public fun observeShowsByQuery(query: String): Flow<List<ShowEntity>>
+    public fun upsertExternalId(tmdbId: Long, provider: Provider, externalId: String)
 
-    public fun observeQueryCount(query: String): Flow<Long>
-
-    public suspend fun getQueryCount(query: String): Long
+    public fun getTmdbIdsWithPoster(tmdbIds: List<Long>): Set<Long>
 
     public fun deleteTvShows()
 

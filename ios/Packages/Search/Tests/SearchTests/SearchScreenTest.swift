@@ -35,14 +35,21 @@ class SearchScreenTest: SnapshotTestCase {
             overview: "Follow Oswald Oz Cobb's quest for control as he seeks to fill the power vacuum.",
             status: "Ended",
             imageUrl: nil,
-            year: "2024", voteAverage: 8.5
+            year: "2019", voteAverage: 8.5, inLibrary: true, captionComponents: ["2019", "62 eps."]
         ),
         .init(
             tmdbId: 1234, showId: 1234, title: "Kaos",
             overview: "A renegade fighter battles a powerful robot for vital data.",
             status: "Ended",
             imageUrl: nil,
-            year: "2024", voteAverage: 7.2
+            year: "2024", voteAverage: 7.2, captionComponents: ["2024", "8 eps."]
+        ),
+        .init(
+            tmdbId: 5678, showId: 5678, title: "Arcane",
+            overview: nil,
+            status: "Ended",
+            imageUrl: nil,
+            year: nil, voteAverage: 8.9, captionComponents: ["18 eps."]
         ),
     ]
 
@@ -62,6 +69,23 @@ class SearchScreenTest: SnapshotTestCase {
         let view = makeScreen(state: .browsingGenres(genres: sampleGenres, isRefreshing: true))
         view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres_Refreshing")
         view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, settleSystemSearch: true, testName: "SearchScreen_BrowsingGenres_Refreshing")
+    }
+
+    func test_SearchScreen_BrowsingGenres_RecentSearches() {
+        let view = makeScreen(
+            state: .browsingGenres(
+                genres: sampleGenres,
+                recentSearches: ["Arcane", "The Penguin", "Kaos", "One Piece"],
+                isRefreshing: false
+            )
+        )
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres_RecentSearches")
+        view.assertSnapshot(
+            layout: .defaultDevice,
+            liquidGlass: true,
+            settleSystemSearch: true,
+            testName: "SearchScreen_BrowsingGenres_RecentSearches"
+        )
     }
 
     func test_SearchScreen_SearchResults() {
@@ -98,7 +122,7 @@ class SearchScreenTest: SnapshotTestCase {
             state: SearchScreen.State(
                 title: "Search",
                 screenState: screenState,
-                searchPlaceholder: "Enter Show Title",
+                searchPlaceholder: "Search shows…",
                 emptyResultsMessage: "No results found",
                 retryButtonText: "Retry",
                 selectedCategory: selectedCategory,
@@ -109,7 +133,8 @@ class SearchScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onRetry: {},
             onBack: {},
-            onCategoryChanged: { _ in }
+            onCategoryChanged: { _ in },
+            onGenreMoreClicked: { _, _ in }
         )
         .appPreview()
     }

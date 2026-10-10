@@ -20,6 +20,7 @@ public sealed interface SearchUiState {
     public data object InitialLoading : SearchUiState
     public data class BrowsingGenres(
         val genreRows: ImmutableList<GenreRowModel>,
+        val recentSearches: ImmutableList<String>,
         val selectedCategory: GenreShowCategory,
         val categoryTitle: String,
         val categories: ImmutableList<CategoryItem>,
@@ -41,6 +42,7 @@ public data class SearchShowState(
     val message: UiMessage? = null,
     val searchResults: ImmutableList<ShowItem> = persistentListOf(),
     val genreRows: ImmutableList<GenreRowModel> = persistentListOf(),
+    val recentSearches: ImmutableList<String> = persistentListOf(),
     val selectedCategory: GenreShowCategory = GenreShowCategory.POPULAR,
     val categoryTitle: String = "",
     val categories: ImmutableList<CategoryItem> = persistentListOf(),
@@ -55,7 +57,7 @@ public data class SearchShowState(
             isSearchableQuery && isUpdating -> SearchLoading
             isSearchableQuery && searchResults.isEmpty() && message == null -> SearchEmpty
             isRefreshing && genreRows.isEmpty() -> InitialLoading
-            genreRows.isNotEmpty() -> BrowsingGenres(genreRows, selectedCategory, categoryTitle, categories, isRefreshing)
+            genreRows.isNotEmpty() -> BrowsingGenres(genreRows, recentSearches, selectedCategory, categoryTitle, categories, isRefreshing)
             else -> InitialLoading
         }
 

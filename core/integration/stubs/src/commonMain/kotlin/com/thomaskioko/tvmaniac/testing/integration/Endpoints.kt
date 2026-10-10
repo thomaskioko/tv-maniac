@@ -458,6 +458,16 @@ public object Endpoints {
         }
 
         /**
+         * `GET /search/tv?q=&extended=full&limit=` — public show search, needs no auth token.
+         */
+        public object Search : Endpoint.Exact {
+            override val host: String = HOST
+            override val path: String = "/search/tv"
+            override val successFixture: String = "simkl/search/tv/success.json"
+            override val errorFixture: String = "simkl/search/tv/error.json"
+        }
+
+        /**
          * `GET /tv/{simklId}?extended=full` — show summary, community rating comes from
          * `body.ratings.simkl`. Shares its path shape with no other endpoint in this catalog.
          */
@@ -617,6 +627,7 @@ public object Endpoints {
         Simkl.SyncAllItems,
         Simkl.SyncActivities,
         Simkl.SyncHistory,
+        Simkl.Search,
         Simkl.ShowSummary,
         Simkl.SyncRatingsAdd,
         Simkl.SyncRatingsRemove,

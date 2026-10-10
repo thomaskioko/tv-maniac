@@ -295,6 +295,8 @@ internal class Scenarios(
         fun stubEmptySearch(): Unit = http.stubEmptySearch()
 
         fun stubSearchError(query: String): Unit = http.stubSearchError(query)
+
+        fun stubSimklSearch(): Unit = http.stubSimklSearch()
     }
 
     inner class UpNext {

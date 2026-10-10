@@ -68,6 +68,8 @@ public struct ProfileScreen: View {
                             .testTag(ProfileTestTags.shared.SETTINGS_BUTTON_TEST_TAG)
                         }
                     }
+                    .scrollEdgeEffectHidden(showGlass == 0, for: .top)
+                    .scrollEdgeEffectHidden(for: .bottom)
                     .edgesIgnoringSafeArea(.top)
             },
             legacy: { view in

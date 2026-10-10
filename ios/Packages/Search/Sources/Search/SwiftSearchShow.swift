@@ -13,6 +13,7 @@ public struct SwiftSearchShow: Identifiable {
     public let year: String?
     public let voteAverage: Double?
     public let inLibrary: Bool
+    public let captionComponents: [String]
 
     public init(
         tmdbId: Int64,
@@ -23,7 +24,8 @@ public struct SwiftSearchShow: Identifiable {
         imageUrl: String?,
         year: String?,
         voteAverage: Double?,
-        inLibrary: Bool = false
+        inLibrary: Bool = false,
+        captionComponents: [String] = []
     ) {
         self.tmdbId = tmdbId
         self.showId = showId
@@ -34,5 +36,6 @@ public struct SwiftSearchShow: Identifiable {
         self.year = year
         self.voteAverage = voteAverage
         self.inLibrary = inLibrary
+        self.captionComponents = captionComponents
     }
 }
