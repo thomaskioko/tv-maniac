@@ -30,8 +30,9 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
-import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
-import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.episode_count
+import com.thomaskioko.tvmaniac.i18n.season_count
 
 @Composable
 internal fun ContinueWatchingListItem(
@@ -121,7 +122,7 @@ internal fun ContinueWatchingListItem(
                     if (item.seasonCount > 0) {
                         append(
                             resources.getQuantityString(
-                                season_count.resourceId,
+                                MR.plurals.season_count.resourceId,
                                 item.seasonCount.toInt(),
                                 item.seasonCount.toInt(),
                             ),
@@ -133,7 +134,7 @@ internal fun ContinueWatchingListItem(
                     if (item.episodeCount > 0) {
                         append(
                             resources.getQuantityString(
-                                episode_count.resourceId,
+                                MR.plurals.episode_count.resourceId,
                                 item.episodeCount.toInt(),
                                 item.episodeCount.toInt(),
                             ),

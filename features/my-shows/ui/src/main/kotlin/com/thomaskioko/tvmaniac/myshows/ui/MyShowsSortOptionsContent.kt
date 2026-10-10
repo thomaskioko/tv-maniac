@@ -13,13 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_by
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_desc
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_added_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_added_desc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_by
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_released_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_released_desc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_title_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_title_desc
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import kotlinx.collections.immutable.persistentSetOf
@@ -42,18 +43,18 @@ internal fun MyShowsSortOptionsContent(
             .verticalScroll(scrollState),
     ) {
         FilterChipSection(
-            title = label_library_sort_by.resolve(context),
+            title = MR.strings.label_library_sort_by.resolve(context),
             items = WatchlistSortOption.entries.toImmutableList(),
             selectedItems = persistentSetOf(selectedSortOption),
             onItemToggle = { onSortOptionSelected(it) },
             labelProvider = { sortOption ->
                 when (sortOption) {
-                    WatchlistSortOption.ADDED_DESC -> label_library_sort_added_desc.resolve(context)
-                    WatchlistSortOption.ADDED_ASC -> label_library_sort_added_asc.resolve(context)
-                    WatchlistSortOption.RELEASED_DESC -> label_library_sort_released_desc.resolve(context)
-                    WatchlistSortOption.RELEASED_ASC -> label_library_sort_released_asc.resolve(context)
-                    WatchlistSortOption.TITLE_ASC -> label_library_sort_title_asc.resolve(context)
-                    WatchlistSortOption.TITLE_DESC -> label_library_sort_title_desc.resolve(context)
+                    WatchlistSortOption.ADDED_DESC -> MR.strings.label_library_sort_added_desc.resolve(context)
+                    WatchlistSortOption.ADDED_ASC -> MR.strings.label_library_sort_added_asc.resolve(context)
+                    WatchlistSortOption.RELEASED_DESC -> MR.strings.label_library_sort_released_desc.resolve(context)
+                    WatchlistSortOption.RELEASED_ASC -> MR.strings.label_library_sort_released_asc.resolve(context)
+                    WatchlistSortOption.TITLE_ASC -> MR.strings.label_library_sort_title_asc.resolve(context)
+                    WatchlistSortOption.TITLE_DESC -> MR.strings.label_library_sort_title_desc.resolve(context)
                 }
             },
             collapsedItemCount = 6,

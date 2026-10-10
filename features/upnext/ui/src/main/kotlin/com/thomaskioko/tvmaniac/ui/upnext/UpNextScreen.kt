@@ -44,9 +44,10 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_empty
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_last_watched
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_upnext_empty
+import com.thomaskioko.tvmaniac.i18n.label_upnext_sort_air_date
+import com.thomaskioko.tvmaniac.i18n.label_upnext_sort_last_watched
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.upnext.MarkWatched
 import com.thomaskioko.tvmaniac.presentation.upnext.MarkWatchedLongPressed
@@ -157,7 +158,7 @@ private fun UpNextEmptyState() {
             EmptyStateView(
                 modifier = Modifier.testTag(UpNextTestTags.EMPTY_STATE_TEST_TAG),
                 imageVector = Icons.Outlined.Inbox,
-                title = label_upnext_empty.resolve(context),
+                title = MR.strings.label_upnext_empty.resolve(context),
             )
         }
     }
@@ -254,12 +255,12 @@ private fun SortChipsRow(
         horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         SelectableFilterChip(
-            label = label_upnext_sort_last_watched.resolve(context),
+            label = MR.strings.label_upnext_sort_last_watched.resolve(context),
             isSelected = currentSortOption == UpNextSortOption.LAST_WATCHED,
             onClick = { onSortOptionSelected(UpNextSortOption.LAST_WATCHED) },
         )
         SelectableFilterChip(
-            label = label_upnext_sort_air_date.resolve(context),
+            label = MR.strings.label_upnext_sort_air_date.resolve(context),
             isSelected = currentSortOption == UpNextSortOption.AIR_DATE,
             onClick = { onSortOptionSelected(UpNextSortOption.AIR_DATE) },
         )

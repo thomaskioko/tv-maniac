@@ -20,8 +20,9 @@ import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.str_more
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import kotlinx.collections.immutable.ImmutableList
@@ -44,7 +45,7 @@ internal fun HorizontalShowContentRow(
         BoxTextItems(
             title = title,
             subtitle = description,
-            label = str_more.resolve(LocalContext.current),
+            label = MR.strings.str_more.resolve(LocalContext.current),
             onMoreClicked = onMoreClicked,
             moreModifier = Modifier.testTag(SearchTestTags.genreMoreButton(slug)),
             modifier = Modifier

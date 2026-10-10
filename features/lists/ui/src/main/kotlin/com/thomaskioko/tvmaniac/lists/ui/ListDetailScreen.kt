@@ -68,11 +68,12 @@ import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_list_options
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_cancel
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_ok
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_back
+import com.thomaskioko.tvmaniac.i18n.cd_list_options
+import com.thomaskioko.tvmaniac.i18n.generic_retry
+import com.thomaskioko.tvmaniac.i18n.label_cancel
+import com.thomaskioko.tvmaniac.i18n.label_ok
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailPresenter
@@ -119,7 +120,7 @@ internal fun ListDetailScreen(
                             .padding(TvManiacSpacing.medium)
                             .testTag(ListDetailTestTags.BACK_BUTTON_TEST_TAG),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(context),
+                        contentDescription = MR.strings.cd_back.resolve(context),
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },
@@ -144,7 +145,7 @@ internal fun ListDetailScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = cd_list_options.resolve(context),
+                                contentDescription = MR.strings.cd_list_options.resolve(context),
                                 tint = MaterialTheme.colorScheme.onBackground,
                             )
                         }
@@ -209,7 +210,7 @@ internal fun ListDetailScreen(
             title = confirmation.title,
             message = confirmation.message,
             confirmButtonText = confirmation.confirmLabel,
-            dismissButtonText = label_cancel.resolve(context),
+            dismissButtonText = MR.strings.label_cancel.resolve(context),
             onConfirm = { onAction(ListDetailAction.RemoveConfirmed) },
             onDismiss = { onAction(ListDetailAction.RemoveDismissed) },
             confirmButtonTestTag = ListDetailTestTags.REMOVE_CONFIRM_BUTTON_TEST_TAG,
@@ -222,7 +223,7 @@ internal fun ListDetailScreen(
             title = dialog.title,
             message = "",
             confirmButtonText = dialog.saveLabel,
-            dismissButtonText = label_cancel.resolve(context),
+            dismissButtonText = MR.strings.label_cancel.resolve(context),
             onConfirm = { onAction(ListDetailAction.RenameConfirmed) },
             onDismiss = { onAction(ListDetailAction.RenameDismissed) },
             confirmButtonTestTag = ListDetailTestTags.RENAME_SAVE_BUTTON_TEST_TAG,
@@ -261,7 +262,7 @@ internal fun ListDetailScreen(
             title = confirmation.title,
             message = confirmation.message,
             confirmButtonText = confirmation.confirmLabel,
-            dismissButtonText = label_cancel.resolve(context),
+            dismissButtonText = MR.strings.label_cancel.resolve(context),
             onConfirm = { onAction(ListDetailAction.DeleteConfirmed) },
             onDismiss = { onAction(ListDetailAction.DeleteDismissed) },
             confirmButtonTestTag = ListDetailTestTags.DELETE_CONFIRM_BUTTON_TEST_TAG,
@@ -300,7 +301,7 @@ private fun ListDetailBody(
             EmptyStateView(
                 title = errorMessage,
                 imageVector = Icons.Outlined.Warning,
-                buttonText = label_ok.resolve(context),
+                buttonText = MR.strings.label_ok.resolve(context),
                 buttonTestTag = ListDetailTestTags.DISMISS_ERROR_BUTTON_TEST_TAG,
                 onClick = { onAction(ListDetailAction.DismissErrorMessage) },
                 modifier = modifier
@@ -424,7 +425,7 @@ private fun ListDetailGrid(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     InlineSectionError(
                         message = appendError.orEmpty(),
-                        retryLabel = generic_retry.resolve(context),
+                        retryLabel = MR.strings.generic_retry.resolve(context),
                         onRetry = { onAction(ListDetailAction.RetryLoadMore) },
                     )
                 }

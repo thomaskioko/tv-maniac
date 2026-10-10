@@ -39,7 +39,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_back
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsAction
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsPresenter
@@ -89,7 +90,7 @@ internal fun StatisticsScreen(
                             .padding(TvManiacSpacing.medium)
                             .testTag(StatisticsTestTags.BACK_BUTTON_TEST_TAG),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(context),
+                        contentDescription = MR.strings.cd_back.resolve(context),
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },

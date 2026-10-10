@@ -30,9 +30,10 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.title_providers
+import com.thomaskioko.tvmaniac.i18n.title_providers_label
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.providers.ShowDetailsProvidersPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.providers.ShowDetailsProvidersState
@@ -66,8 +67,8 @@ private fun WatchProvider(
     val context = LocalContext.current
 
     TextLoadingItem(
-        title = title_providers.resolve(context),
-        subTitle = title_providers_label.resolve(context),
+        title = MR.strings.title_providers.resolve(context),
+        subTitle = MR.strings.title_providers_label.resolve(context),
     ) {
         val lazyListState = rememberLazyListState()
 

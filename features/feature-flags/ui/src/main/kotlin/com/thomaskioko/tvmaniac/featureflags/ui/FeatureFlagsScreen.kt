@@ -65,7 +65,8 @@ import com.thomaskioko.tvmaniac.featureflags.presenter.GroupByTypeToggled
 import com.thomaskioko.tvmaniac.featureflags.presenter.SearchQueryChanged
 import com.thomaskioko.tvmaniac.featureflags.presenter.SortChanged
 import com.thomaskioko.tvmaniac.featureflags.presenter.ToggleFlag
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_back
 import com.thomaskioko.tvmaniac.i18n.resolve
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
@@ -119,7 +120,7 @@ internal fun FeatureFlagsScreen(
                             .clickable(onClick = onBackClicked)
                             .padding(TvManiacSpacing.medium),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(context),
+                        contentDescription = MR.strings.cd_back.resolve(context),
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },

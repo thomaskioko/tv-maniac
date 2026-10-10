@@ -23,10 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_settings
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.menu_item_discover
+import com.thomaskioko.tvmaniac.i18n.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.menu_item_settings
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
@@ -88,28 +89,28 @@ private fun TvManiacTvManiacNavigationBarPreviewPreview() {
     TvManiacNavigationBar {
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Movie,
-            title = menu_item_discover.resolve(LocalContext.current),
+            title = MR.strings.menu_item_discover.resolve(LocalContext.current),
             selected = true,
             onClick = { },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Search,
-            title = menu_item_search.resolve(LocalContext.current),
+            title = MR.strings.menu_item_search.resolve(LocalContext.current),
             selected = false,
             onClick = { },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.VideoLibrary,
-            title = menu_item_library.resolve(LocalContext.current),
+            title = MR.strings.menu_item_library.resolve(LocalContext.current),
             selected = false,
             onClick = { },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Settings,
-            title = menu_item_settings.resolve(LocalContext.current),
+            title = MR.strings.menu_item_settings.resolve(LocalContext.current),
             selected = false,
             onClick = { },
         )

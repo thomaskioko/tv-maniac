@@ -38,8 +38,9 @@ import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.title_episodes
 import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeWatchedLongPressed
 import com.thomaskioko.tvmaniac.seasondetails.presenter.OnEpisodeHeaderClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
@@ -164,7 +165,7 @@ private fun SeasonTitleHeader(
             )
 
             Text(
-                text = title_episodes.resolve(LocalContext.current),
+                text = MR.strings.title_episodes.resolve(LocalContext.current),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,

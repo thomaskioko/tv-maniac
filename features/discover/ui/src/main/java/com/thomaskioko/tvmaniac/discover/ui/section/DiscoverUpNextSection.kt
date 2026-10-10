@@ -15,7 +15,8 @@ import com.thomaskioko.tvmaniac.discover.presenter.upnext.DiscoverUpNextPresente
 import com.thomaskioko.tvmaniac.discover.presenter.upnext.DiscoverUpNextState
 import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
 import com.thomaskioko.tvmaniac.discover.ui.discoverUpNextContentSuccess
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
@@ -25,7 +26,7 @@ public fun DiscoverUpNextSection(presenter: DiscoverUpNextPresenter) {
     val context = LocalContext.current
     DiscoverUpNextSection(
         state = state,
-        title = label_discover_up_next.resolve(context),
+        title = MR.strings.label_discover_up_next.resolve(context),
         onAction = presenter::dispatch,
     )
 }

@@ -33,7 +33,8 @@ import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_show_poster
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryListItemPreviewParameterProvider
 
@@ -131,7 +132,7 @@ internal fun LibraryDetailedItem(
 
             AsyncImageComposable(
                 model = item.posterImageUrl,
-                contentDescription = stringResource(cd_show_poster.resourceId, item.title),
+                contentDescription = stringResource(MR.strings.cd_show_poster.resourceId, item.title),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()

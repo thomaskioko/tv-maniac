@@ -30,8 +30,9 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.calculateScrollOffset
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_continue_tracking
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.title_continue_tracking
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import kotlinx.collections.immutable.ImmutableList
@@ -62,7 +63,7 @@ internal fun ContinueTrackingSection(
                 Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
                 Text(
-                    text = title_continue_tracking.resolve(LocalContext.current),
+                    text = MR.strings.title_continue_tracking.resolve(LocalContext.current),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),

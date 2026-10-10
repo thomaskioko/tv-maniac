@@ -33,10 +33,11 @@ import com.thomaskioko.tvmaniac.compose.components.NavigationDefaultColors
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_tab_my_shows
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_tab_my_shows
+import com.thomaskioko.tvmaniac.i18n.menu_item_discover
+import com.thomaskioko.tvmaniac.i18n.menu_item_profile
+import com.thomaskioko.tvmaniac.i18n.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
@@ -116,7 +117,7 @@ internal fun BottomNavigationContent(
         TvManiacBottomNavigationItem(
             modifier = Modifier.testTag(HomeTestTags.DISCOVER_TAB),
             imageVector = Icons.Outlined.Movie,
-            title = menu_item_discover.resolve(context),
+            title = MR.strings.menu_item_discover.resolve(context),
             selected = activeRoot is DiscoverRoot,
             onClick = { component.onDiscoverClicked() },
         )
@@ -124,7 +125,7 @@ internal fun BottomNavigationContent(
         TvManiacBottomNavigationItem(
             modifier = Modifier.testTag(HomeTestTags.PROGRESS_TAB),
             imageVector = Icons.Outlined.PlayCircleOutline,
-            title = menu_item_progress.resolve(context),
+            title = MR.strings.menu_item_progress.resolve(context),
             selected = activeRoot is ProgressRoot,
             onClick = { component.onProgressClicked() },
         )
@@ -132,7 +133,7 @@ internal fun BottomNavigationContent(
         TvManiacBottomNavigationItem(
             modifier = Modifier.testTag(HomeTestTags.MY_SHOWS_TAB),
             imageVector = Icons.Outlined.Bookmarks,
-            title = label_tab_my_shows.resolve(context),
+            title = MR.strings.label_tab_my_shows.resolve(context),
             selected = activeRoot is MyShowsRoot,
             onClick = { component.onMyShowsClicked() },
         )
@@ -140,7 +141,7 @@ internal fun BottomNavigationContent(
         ProfileNavigationItem(
             modifier = Modifier.testTag(HomeTestTags.PROFILE_TAB),
             avatarUrl = avatarUrl,
-            title = menu_item_profile.resolve(context),
+            title = MR.strings.menu_item_profile.resolve(context),
             selected = activeRoot is ProfileRoot,
             onClick = { component.onProfileClicked() },
         )

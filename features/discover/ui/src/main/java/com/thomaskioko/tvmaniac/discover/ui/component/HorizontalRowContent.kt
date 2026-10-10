@@ -29,8 +29,9 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverCatalogContentSuccess
-import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.str_more
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import kotlinx.collections.immutable.ImmutableList
 
@@ -53,7 +54,7 @@ internal fun HorizontalRowContent(
                         .fillMaxWidth()
                         .padding(start = TvManiacSpacing.medium),
                     title = category,
-                    label = str_more.resolve(LocalContext.current),
+                    label = MR.strings.str_more.resolve(LocalContext.current),
                     onMoreClicked = onMoreClicked,
                     moreModifier = Modifier.testTag(DiscoverTestTags.moreButton(rowKey)),
                 )

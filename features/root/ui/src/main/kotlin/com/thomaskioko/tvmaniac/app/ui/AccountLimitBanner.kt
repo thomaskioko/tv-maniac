@@ -18,9 +18,10 @@ import com.thomaskioko.tvmaniac.compose.components.BannerStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBanner
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.i18n.MR.strings.account_limit_banner_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.account_limit_dismiss_cta
-import com.thomaskioko.tvmaniac.i18n.MR.strings.account_limit_upgrade_cta
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.account_limit_banner_message
+import com.thomaskioko.tvmaniac.i18n.account_limit_dismiss_cta
+import com.thomaskioko.tvmaniac.i18n.account_limit_upgrade_cta
 import dev.icerock.moko.resources.compose.stringResource
 
 private const val TRAKT_VIP_URL = "https://trakt.tv/vip"
@@ -34,12 +35,12 @@ internal fun AccountLimitBanner(
     val context = LocalContext.current
 
     TvManiacBanner(
-        message = stringResource(account_limit_banner_message),
+        message = stringResource(MR.strings.account_limit_banner_message),
         onDismiss = onDismiss,
         modifier = modifier,
         visible = visible,
         style = BannerStyle.Error,
-        dismissContentDescription = stringResource(account_limit_dismiss_cta),
+        dismissContentDescription = stringResource(MR.strings.account_limit_dismiss_cta),
         action = {
             Button(
                 onClick = { openInCustomTab(context, TRAKT_VIP_URL) },
@@ -50,7 +51,7 @@ internal fun AccountLimitBanner(
                 shape = RoundedCornerShape(20.dp),
             ) {
                 Text(
-                    text = stringResource(account_limit_upgrade_cta),
+                    text = stringResource(MR.strings.account_limit_upgrade_cta),
                     style = MaterialTheme.typography.labelLarge,
                 )
             }

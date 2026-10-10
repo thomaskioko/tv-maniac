@@ -28,7 +28,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_clear
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
@@ -94,7 +95,7 @@ public fun SearchBar(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,
-                    contentDescription = cd_clear.resolve(context),
+                    contentDescription = MR.strings.cd_clear.resolve(context),
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 )
             }

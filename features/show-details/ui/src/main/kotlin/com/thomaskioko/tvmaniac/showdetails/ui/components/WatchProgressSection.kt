@@ -35,8 +35,12 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_details
+import com.thomaskioko.tvmaniac.i18n.episodes_left
+import com.thomaskioko.tvmaniac.i18n.episodes_watched
+import com.thomaskioko.tvmaniac.i18n.label_up_to_date
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.season_count
+import com.thomaskioko.tvmaniac.i18n.title_season_details
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import kotlinx.collections.immutable.ImmutableList
@@ -71,7 +75,7 @@ internal fun WatchProgressSection(
 
         if (showHeader) {
             Text(
-                text = title_season_details.resolve(context),
+                text = MR.strings.title_season_details.resolve(context),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),

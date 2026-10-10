@@ -52,7 +52,8 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_dismiss
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_dismiss
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -219,7 +220,7 @@ internal fun TvManiacSnackBar(
         } else {
             Icon(
                 imageVector = style.icon,
-                contentDescription = stringResource(cd_dismiss.resourceId),
+                contentDescription = stringResource(MR.strings.cd_dismiss.resourceId),
                 tint = Color.White,
                 modifier = Modifier
                     .clip(CircleShape)
