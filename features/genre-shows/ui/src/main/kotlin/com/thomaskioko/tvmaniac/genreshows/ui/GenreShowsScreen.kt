@@ -61,7 +61,8 @@ import com.thomaskioko.tvmaniac.genreshows.presentation.GenreShowsPresenter
 import com.thomaskioko.tvmaniac.genreshows.presentation.GenreShowsState
 import com.thomaskioko.tvmaniac.genreshows.presentation.RefreshGenreShows
 import com.thomaskioko.tvmaniac.genreshows.presentation.RetryGenreShowsLoadMore
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.generic_retry
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.genreshows.GenreShowsTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
@@ -223,7 +224,7 @@ internal fun GridContent(
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     InlineSectionError(
                         message = appendError.orEmpty(),
-                        retryLabel = generic_retry.resolve(context),
+                        retryLabel = MR.strings.generic_retry.resolve(context),
                         onRetry = { onAction(RetryGenreShowsLoadMore) },
                         retryModifier = Modifier.testTag(GenreShowsTestTags.RETRY_TEST_TAG),
                     )

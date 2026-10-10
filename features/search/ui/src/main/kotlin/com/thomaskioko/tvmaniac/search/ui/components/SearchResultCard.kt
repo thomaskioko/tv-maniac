@@ -23,7 +23,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.metadataWithAccentDots
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.plurals.plurals_search_episode_count
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.plurals_search_episode_count
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 
 @Composable
@@ -65,7 +66,7 @@ internal fun SearchResultCard(
 private fun searchResultCaption(year: String?, episodeCount: Int?): AnnotatedString? {
     val parts = buildList {
         year?.let { add(it) }
-        episodeCount?.let { add(pluralStringResource(plurals_search_episode_count.resourceId, it, it)) }
+        episodeCount?.let { add(pluralStringResource(MR.plurals.plurals_search_episode_count.resourceId, it, it)) }
     }
     return if (parts.isEmpty()) null else metadataWithAccentDots(parts)
 }
