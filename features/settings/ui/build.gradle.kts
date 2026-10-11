@@ -42,8 +42,17 @@ dependencies {
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.coil.compose)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
+
+    implementation(libs.androidx.activity.base)
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.coroutines.core)
+    implementation(libs.kotlinx.collections)
+    implementation(libs.moko.resources)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.junit4)
 }

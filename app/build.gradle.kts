@@ -298,7 +298,6 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.kotlin.test.junit)
-    testImplementation(libs.turbine)
     testImplementation(libs.ktor.core)
     testImplementation(libs.ktor.http)
     testImplementation(libs.ktor.mock)
@@ -336,4 +335,11 @@ dependencies {
     androidTestImplementation(libs.ktor.http)
 
     androidTestRuntimeOnly(libs.androidx.test.core)
+
+    implementation(libs.androidx.activity.base)
+    implementation(libs.okhttp.okhttp)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.essenty.lifecycle)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.essenty.lifecycle)
 }
