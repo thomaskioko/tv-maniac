@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_expand_collapse
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_expand_collapse
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
@@ -61,7 +62,7 @@ public fun SheetDragHandle(
             Icon(
                 imageVector = imageVector,
                 tint = tint,
-                contentDescription = cd_expand_collapse.resolve(context),
+                contentDescription = MR.strings.cd_expand_collapse.resolve(context),
                 modifier = Modifier
                     .size(24.dp)
                     .clickable { onClick() },

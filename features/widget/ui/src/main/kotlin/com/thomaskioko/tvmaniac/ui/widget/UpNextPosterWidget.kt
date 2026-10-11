@@ -14,8 +14,9 @@ import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkUrls
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
-import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_empty_watchlist
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.widget_empty_watchlist
 import com.thomaskioko.tvmaniac.ui.widget.di.widgetGraph
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
@@ -66,7 +67,7 @@ private fun PosterBody(
 ) {
     WidgetTheme(theme) {
         UpNextPosterWidgetContent(
-            emptyMessage = widget_empty_watchlist.resolve(context),
+            emptyMessage = MR.strings.widget_empty_watchlist.resolve(context),
             item = item,
             openApp = context.openAppAction(),
             itemAction = { context.openItemAction(it) },

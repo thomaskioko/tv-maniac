@@ -22,8 +22,9 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
-import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.str_more
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -46,7 +47,7 @@ internal fun NextEpisodesSection(
                         .fillMaxWidth()
                         .padding(start = TvManiacSpacing.medium),
                     title = title,
-                    label = str_more.resolve(LocalContext.current),
+                    label = MR.strings.str_more.resolve(LocalContext.current),
                     onMoreClicked = onSeeAllClick,
                 )
 

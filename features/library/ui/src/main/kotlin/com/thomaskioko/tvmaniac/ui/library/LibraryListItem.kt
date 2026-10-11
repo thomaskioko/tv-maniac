@@ -36,8 +36,9 @@ import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
-import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.episode_count
+import com.thomaskioko.tvmaniac.i18n.season_count
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryListItemPreviewParameterProvider
 import java.text.DecimalFormat
@@ -146,11 +147,11 @@ internal fun buildMetadataString(item: LibraryShowItem): AnnotatedString {
         item.status?.let { add(it) }
         if (item.seasonCount > 0) {
             val seasonNumber = item.seasonCount.toInt()
-            add(pluralStringResource(season_count.resourceId, seasonNumber, seasonNumber))
+            add(pluralStringResource(MR.plurals.season_count.resourceId, seasonNumber, seasonNumber))
         }
         if (item.episodeCount > 0) {
             val episodeNumber = item.episodeCount.toInt()
-            add(pluralStringResource(episode_count.resourceId, episodeNumber, episodeNumber))
+            add(pluralStringResource(MR.plurals.episode_count.resourceId, episodeNumber, episodeNumber))
         }
         item.genres?.firstOrNull()?.let { add(it) }
     }

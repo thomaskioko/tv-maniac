@@ -32,8 +32,15 @@ dependencies {
     api(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.coil.compose)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
+
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.coroutines.core)
+    implementation(libs.kotlinx.collections)
+    implementation(libs.moko.resources)
+    testImplementation(libs.androidx.activity.base)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.junit4)
 }

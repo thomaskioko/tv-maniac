@@ -55,10 +55,11 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.i18n.MR.strings.following
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_more
-import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.following
+import com.thomaskioko.tvmaniac.i18n.label_action_more
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.unfollow
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsFollowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderPresenter
@@ -367,7 +368,7 @@ internal fun ShowDetailButtons(
                     },
                 ),
             shape = MaterialTheme.shapes.medium,
-            text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
+            text = if (isFollowed) MR.strings.unfollow.resolve(context) else MR.strings.following.resolve(context),
             imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,
             containerColor = if (isFollowed) {
                 MaterialTheme.colorScheme.error.copy(alpha = 0.65f)
@@ -397,7 +398,7 @@ internal fun ShowDetailButtons(
                     .fillMaxHeight()
                     .testTag(ShowDetailsTestTags.MORE_BUTTON_TEST_TAG),
                 shape = MaterialTheme.shapes.medium,
-                contentDescription = label_action_more.resolve(context),
+                contentDescription = MR.strings.label_action_more.resolve(context),
                 imageVector = Icons.Filled.MoreHoriz,
                 containerColor = MaterialTheme.colorScheme.secondary,
                 onClick = onMoreClicked,

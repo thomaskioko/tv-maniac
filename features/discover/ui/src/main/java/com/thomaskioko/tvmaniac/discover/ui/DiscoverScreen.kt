@@ -61,12 +61,13 @@ import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverCatalogSection
 import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverFeaturedSection
 import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverStartWatchingSection
 import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverUpNextSection
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_search
+import com.thomaskioko.tvmaniac.i18n.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.generic_error_message
+import com.thomaskioko.tvmaniac.i18n.generic_retry
+import com.thomaskioko.tvmaniac.i18n.label_discover_title
+import com.thomaskioko.tvmaniac.i18n.missing_api_key
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
@@ -145,8 +146,8 @@ internal fun DiscoverScaffold(
 
             hostState.showError -> EmptyStateView(
                 imageVector = Icons.Outlined.ErrorOutline,
-                title = hostState.message?.message ?: generic_error_message.resolve(context),
-                buttonText = generic_retry.resolve(context),
+                title = hostState.message?.message ?: MR.strings.generic_error_message.resolve(context),
+                buttonText = MR.strings.generic_retry.resolve(context),
                 buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                 onClick = { onHostAction(RefreshData) },
             )
@@ -155,9 +156,9 @@ internal fun DiscoverScaffold(
                 modifier = Modifier
                     .padding(paddingValues.copy(copyBottom = false)),
                 imageVector = Icons.Filled.Movie,
-                title = generic_empty_content.resolve(context),
-                message = missing_api_key.resolve(context),
-                buttonText = generic_retry.resolve(context),
+                title = MR.strings.generic_empty_content.resolve(context),
+                message = MR.strings.missing_api_key.resolve(context),
+                buttonText = MR.strings.generic_retry.resolve(context),
                 buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                 onClick = { onHostAction(RefreshData) },
             )
@@ -213,7 +214,7 @@ internal fun DiscoverLazyColumn(
             listState = listState,
             title = {
                 Text(
-                    text = label_discover_title.resolve(context),
+                    text = MR.strings.label_discover_title.resolve(context),
                     style = MaterialTheme.typography.titleLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                     ),
@@ -234,7 +235,7 @@ internal fun DiscoverLazyColumn(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Search,
-                        contentDescription = cd_search.resolve(context),
+                        contentDescription = MR.strings.cd_search.resolve(context),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }

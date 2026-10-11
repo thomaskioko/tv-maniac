@@ -65,13 +65,14 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_empty_results
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_placeholder
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
-import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_back
+import com.thomaskioko.tvmaniac.i18n.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.generic_retry
+import com.thomaskioko.tvmaniac.i18n.label_search_empty_results
+import com.thomaskioko.tvmaniac.i18n.label_search_placeholder
+import com.thomaskioko.tvmaniac.i18n.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.missing_api_key
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.search.presenter.BackClicked
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
@@ -161,7 +162,7 @@ internal fun SearchScreen(
             TvManiacTopBar(
                 title = {
                     Text(
-                        text = menu_item_search.resolve(context),
+                        text = MR.strings.menu_item_search.resolve(context),
                         style = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
@@ -176,7 +177,7 @@ internal fun SearchScreen(
                     IconButton(onClick = { onAction(BackClicked) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = cd_back.resolve(context),
+                            contentDescription = MR.strings.cd_back.resolve(context),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
@@ -260,7 +261,7 @@ private fun SearchScreenContent(
     ) {
         SearchTextContainer(
             query = state.query,
-            hint = label_search_placeholder.resolve(context),
+            hint = MR.strings.label_search_placeholder.resolve(context),
             scrollableState = gridState,
             isLoading = isLoading,
             textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
@@ -287,7 +288,7 @@ private fun SearchScreenBody(
                 EmptyStateView(
                     modifier = Modifier.testTag(SearchTestTags.EMPTY_STATE_TEST_TAG),
                     imageVector = Icons.Filled.SearchOff,
-                    title = label_search_empty_results.resolve(LocalContext.current),
+                    title = MR.strings.label_search_empty_results.resolve(LocalContext.current),
                 )
             }
 
@@ -311,9 +312,9 @@ private fun SearchScreenBody(
                 EmptyStateView(
                     modifier = Modifier.testTag(SearchTestTags.ERROR_STATE_TEST_TAG),
                     imageVector = Icons.Outlined.ErrorOutline,
-                    title = generic_empty_content.resolve(context),
-                    message = state.message?.message ?: missing_api_key.resolve(context),
-                    buttonText = generic_retry.resolve(context),
+                    title = MR.strings.generic_empty_content.resolve(context),
+                    message = state.message?.message ?: MR.strings.missing_api_key.resolve(context),
+                    buttonText = MR.strings.generic_retry.resolve(context),
                     onClick = { onAction(ReloadShowContent) },
                 )
             }

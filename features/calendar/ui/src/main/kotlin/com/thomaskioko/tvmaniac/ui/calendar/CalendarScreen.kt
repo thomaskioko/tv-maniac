@@ -53,8 +53,9 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_next_week
+import com.thomaskioko.tvmaniac.i18n.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
@@ -231,7 +232,7 @@ internal fun WeekNavigationHeader(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = cd_previous_week.resolve(context),
+                contentDescription = MR.strings.cd_previous_week.resolve(context),
                 tint = if (canNavigatePrevious) {
                     MaterialTheme.colorScheme.onSurface
                 } else {
@@ -267,7 +268,7 @@ internal fun WeekNavigationHeader(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = cd_next_week.resolve(context),
+                contentDescription = MR.strings.cd_next_week.resolve(context),
                 tint = if (canNavigateNext) {
                     MaterialTheme.colorScheme.onSurface
                 } else {

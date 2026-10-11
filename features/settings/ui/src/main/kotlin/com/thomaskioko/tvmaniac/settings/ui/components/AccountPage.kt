@@ -38,11 +38,12 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
-import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
-import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_settings_trakt_dialog_button_secondary
+import com.thomaskioko.tvmaniac.i18n.logout
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.trakt_dialog_logout_message
+import com.thomaskioko.tvmaniac.i18n.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
@@ -325,10 +326,10 @@ private fun LogoutDialog(
         exit = fadeOut(animationSpec = tween(durationMillis = 250)),
     ) {
         TvManiacAlertDialog(
-            title = trakt_dialog_logout_title.resolve(context),
-            message = trakt_dialog_logout_message.resolve(context),
-            confirmButtonText = logout.resolve(context),
-            dismissButtonText = label_settings_trakt_dialog_button_secondary.resolve(context),
+            title = MR.strings.trakt_dialog_logout_title.resolve(context),
+            message = MR.strings.trakt_dialog_logout_message.resolve(context),
+            confirmButtonText = MR.strings.logout.resolve(context),
+            dismissButtonText = MR.strings.label_settings_trakt_dialog_button_secondary.resolve(context),
             onConfirm = onLogoutClicked,
             onDismiss = onDismissDialog,
             confirmButtonTestTag = SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG,

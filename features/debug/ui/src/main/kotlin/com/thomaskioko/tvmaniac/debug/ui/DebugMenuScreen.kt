@@ -71,12 +71,13 @@ import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.debug.presenter.DebugState
 import com.thomaskioko.tvmaniac.debug.presenter.DismissSnackbar
 import com.thomaskioko.tvmaniac.debug.presenter.SetAccountType
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_account_type_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_account_type_free
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_account_type_premium
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_account_type_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_ok
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_back
+import com.thomaskioko.tvmaniac.i18n.label_debug_account_type_description
+import com.thomaskioko.tvmaniac.i18n.label_debug_account_type_free
+import com.thomaskioko.tvmaniac.i18n.label_debug_account_type_premium
+import com.thomaskioko.tvmaniac.i18n.label_debug_account_type_title
+import com.thomaskioko.tvmaniac.i18n.label_ok
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.testtags.debug.DebugTestTags
@@ -116,7 +117,7 @@ internal fun DebugMenuScreen(
                                 .clickable(onClick = { onAction(BackClicked) })
                                 .padding(TvManiacSpacing.medium),
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = cd_back.resolve(context),
+                            contentDescription = MR.strings.cd_back.resolve(context),
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
@@ -267,7 +268,7 @@ internal fun AccountTypeDialog(
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    text = label_debug_account_type_title.resolve(context),
+                    text = MR.strings.label_debug_account_type_title.resolve(context),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -275,19 +276,19 @@ internal fun AccountTypeDialog(
             text = {
                 Column {
                     Text(
-                        text = label_debug_account_type_description.resolve(context),
+                        text = MR.strings.label_debug_account_type_description.resolve(context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = TvManiacSpacing.xSmall),
                     )
                     AccountTypeOption(
-                        label = label_debug_account_type_premium.resolve(context),
+                        label = MR.strings.label_debug_account_type_premium.resolve(context),
                         selected = current == AccountType.Premium,
                         onClick = { onOverrideSelected(AccountType.Premium) },
                         modifier = Modifier.testTag(DebugTestTags.accountTypeOption(AccountType.Premium.name)),
                     )
                     AccountTypeOption(
-                        label = label_debug_account_type_free.resolve(context),
+                        label = MR.strings.label_debug_account_type_free.resolve(context),
                         selected = current == AccountType.Free,
                         onClick = { onOverrideSelected(AccountType.Free) },
                         modifier = Modifier.testTag(DebugTestTags.accountTypeOption(AccountType.Free.name)),
@@ -297,7 +298,7 @@ internal fun AccountTypeDialog(
             confirmButton = {
                 TextButton(onClick = onDismiss) {
                     Text(
-                        text = label_ok.resolve(context),
+                        text = MR.strings.label_ok.resolve(context),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.secondary,
                     )

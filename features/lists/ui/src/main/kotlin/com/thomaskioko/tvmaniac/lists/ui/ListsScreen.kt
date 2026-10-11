@@ -36,7 +36,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_back
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.lists.presenter.ListsAction
 import com.thomaskioko.tvmaniac.lists.presenter.ListsPresenter
@@ -81,7 +82,7 @@ internal fun ListsScreen(
                             .padding(TvManiacSpacing.medium)
                             .testTag(ListsTestTags.BACK_BUTTON_TEST_TAG),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(context),
+                        contentDescription = MR.strings.cd_back.resolve(context),
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },

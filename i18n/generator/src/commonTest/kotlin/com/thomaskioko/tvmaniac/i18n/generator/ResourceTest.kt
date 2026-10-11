@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey.EpisodeCount
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.CdShowPosterImage
+import com.thomaskioko.tvmaniac.i18n.button_error_retry
 import com.thomaskioko.tvmaniac.i18n.testing.util.BaseLocalizerTest
 import com.thomaskioko.tvmaniac.i18n.testing.util.getPlural
 import com.thomaskioko.tvmaniac.i18n.testing.util.getString

@@ -37,4 +37,14 @@ dependencies {
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
+
+    implementation(libs.androidx.activity.base)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.coroutines.core)
+    implementation(libs.decompose.decompose)
+    implementation(libs.moko.resources)
+    implementation(libs.moko.resources.compose)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.junit4)
 }

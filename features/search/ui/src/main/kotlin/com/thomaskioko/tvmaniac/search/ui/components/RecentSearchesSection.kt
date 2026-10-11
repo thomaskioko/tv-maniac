@@ -28,8 +28,9 @@ import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_search_clear_recent
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_search_recent
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.btn_search_clear_recent
+import com.thomaskioko.tvmaniac.i18n.label_search_recent
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import kotlinx.collections.immutable.ImmutableList
@@ -58,10 +59,10 @@ internal fun RecentSearchesSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            BoxTextItems(title = label_search_recent.resolve(context))
+            BoxTextItems(title = MR.strings.label_search_recent.resolve(context))
 
             Text(
-                text = btn_search_clear_recent.resolve(context),
+                text = MR.strings.btn_search_clear_recent.resolve(context),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier

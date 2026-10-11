@@ -39,7 +39,11 @@ dependencies {
     testImplementation(libs.androidx.glance.appwidget.testing)
     testImplementation(libs.androidx.glance.testing)
     testImplementation(libs.androidx.test.core)
-    testImplementation(libs.bundles.unittest)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.kotest.assertions)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.robolectric)
+
+    implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.moko.resources)
 }

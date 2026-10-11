@@ -85,21 +85,22 @@ import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_compact
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_detailed
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_grid
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_list
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layouts_locked_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layouts_locked_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_premium_badge
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upgrade_to_premium
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
-import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_filter
+import com.thomaskioko.tvmaniac.i18n.cd_search
+import com.thomaskioko.tvmaniac.i18n.cd_toggle_list_style
+import com.thomaskioko.tvmaniac.i18n.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.label_layout_compact
+import com.thomaskioko.tvmaniac.i18n.label_layout_detailed
+import com.thomaskioko.tvmaniac.i18n.label_layout_grid
+import com.thomaskioko.tvmaniac.i18n.label_layout_list
+import com.thomaskioko.tvmaniac.i18n.label_layouts_locked_message
+import com.thomaskioko.tvmaniac.i18n.label_layouts_locked_title
+import com.thomaskioko.tvmaniac.i18n.label_premium_badge
+import com.thomaskioko.tvmaniac.i18n.label_upgrade_to_premium
+import com.thomaskioko.tvmaniac.i18n.label_watchlist_empty_result
+import com.thomaskioko.tvmaniac.i18n.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.library.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.presentation.library.ChangeSortOption
@@ -197,14 +198,14 @@ internal fun LibraryScreen(
                     }
                     state.isEmpty -> {
                         val message = if (state.query.isNotBlank()) {
-                            label_watchlist_empty_result.resolve(context).format(state.query)
+                            MR.strings.label_watchlist_empty_result.resolve(context).format(state.query)
                         } else {
                             null
                         }
                         EmptyStateView(
                             modifier = Modifier.testTag(LibraryTestTags.EMPTY_STATE_TEST_TAG),
                             imageVector = Icons.Outlined.Inbox,
-                            title = generic_empty_content.resolve(context),
+                            title = MR.strings.generic_empty_content.resolve(context),
                             message = message,
                         )
                     }
@@ -302,7 +303,7 @@ private fun TopBar(
                     SearchBar(
                         modifier = Modifier.testTag(LibraryTestTags.SEARCH_BAR_TEST_TAG),
                         query = state.query,
-                        hint = msg_search_show_hint.resolve(context),
+                        hint = MR.strings.msg_search_show_hint.resolve(context),
                         onQueryChanged = { onAction(LibraryQueryChanged(it)) },
                         onCloseClick = {
                             onAction(ClearLibraryQuery)
@@ -355,7 +356,7 @@ private fun CollapsedTopBarContent(
         )
 
         Text(
-            text = menu_item_library.resolve(context),
+            text = MR.strings.menu_item_library.resolve(context),
             style = MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
             ),
@@ -371,7 +372,7 @@ private fun CollapsedTopBarContent(
             IconButton(onClick = onSearchClick, modifier = Modifier.testTag(LibraryTestTags.SEARCH_BUTTON_TEST_TAG)) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
-                    contentDescription = cd_search.resolve(context),
+                    contentDescription = MR.strings.cd_search.resolve(context),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
@@ -379,7 +380,7 @@ private fun CollapsedTopBarContent(
             IconButton(onClick = onFilterClick, modifier = Modifier.testTag(LibraryTestTags.FILTER_BUTTON_TEST_TAG)) {
                 Icon(
                     imageVector = Icons.Outlined.FilterList,
-                    contentDescription = cd_filter.resolve(context),
+                    contentDescription = MR.strings.cd_filter.resolve(context),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
@@ -413,7 +414,7 @@ internal fun LayoutMenu(
         ) {
             Icon(
                 imageVector = currentStyle.icon(),
-                contentDescription = cd_toggle_list_style.resolve(context),
+                contentDescription = MR.strings.cd_toggle_list_style.resolve(context),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -424,7 +425,7 @@ internal fun LayoutMenu(
             modifier = Modifier.testTag(LibraryTestTags.LAYOUT_MENU_TEST_TAG),
         ) {
             LayoutMenuItem(
-                label = label_layout_grid.resolve(context),
+                label = MR.strings.label_layout_grid.resolve(context),
                 style = ListStyle.GRID,
                 currentStyle = currentStyle,
                 tag = LibraryTestTags.LAYOUT_MENU_ITEM_GRID_TEST_TAG,
@@ -434,7 +435,7 @@ internal fun LayoutMenu(
                 },
             )
             LayoutMenuItem(
-                label = label_layout_list.resolve(context),
+                label = MR.strings.label_layout_list.resolve(context),
                 style = ListStyle.LIST,
                 currentStyle = currentStyle,
                 tag = LibraryTestTags.LAYOUT_MENU_ITEM_LIST_TEST_TAG,
@@ -446,10 +447,10 @@ internal fun LayoutMenu(
 
             PremiumOverlay(
                 locked = isLocked,
-                badgeText = label_premium_badge.resolve(context),
-                title = label_layouts_locked_title.resolve(context),
-                message = label_layouts_locked_message.resolve(context),
-                actionText = label_upgrade_to_premium.resolve(context),
+                badgeText = MR.strings.label_premium_badge.resolve(context),
+                title = MR.strings.label_layouts_locked_title.resolve(context),
+                message = MR.strings.label_layouts_locked_message.resolve(context),
+                actionText = MR.strings.label_upgrade_to_premium.resolve(context),
                 onActionClick = {
                     onAction(LibraryUpgradeClicked)
                     onExpandedChange(false)
@@ -461,7 +462,7 @@ internal fun LayoutMenu(
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     LayoutMenuItem(
-                        label = label_layout_compact.resolve(context),
+                        label = MR.strings.label_layout_compact.resolve(context),
                         style = ListStyle.COMPACT,
                         currentStyle = currentStyle,
                         tag = LibraryTestTags.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG,
@@ -471,7 +472,7 @@ internal fun LayoutMenu(
                         },
                     )
                     LayoutMenuItem(
-                        label = label_layout_detailed.resolve(context),
+                        label = MR.strings.label_layout_detailed.resolve(context),
                         style = ListStyle.DETAILED,
                         currentStyle = currentStyle,
                         tag = LibraryTestTags.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG,

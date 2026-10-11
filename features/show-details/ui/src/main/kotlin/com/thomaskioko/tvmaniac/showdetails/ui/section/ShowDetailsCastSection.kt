@@ -21,8 +21,9 @@ import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.i18n.title_casts
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastState
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
@@ -52,7 +53,7 @@ private fun CastContent(
     if (castsList.isEmpty()) return
 
     TextLoadingItem(
-        title = title_casts.resolve(LocalContext.current),
+        title = MR.strings.title_casts.resolve(LocalContext.current),
         modifier = modifier,
     ) {
         Box(contentAlignment = Alignment.BottomCenter) {

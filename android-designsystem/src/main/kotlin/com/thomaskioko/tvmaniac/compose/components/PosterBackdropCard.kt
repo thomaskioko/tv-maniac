@@ -26,7 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.cd_show_poster
 
 @Composable
 public fun PosterBackdropCard(
@@ -74,7 +75,7 @@ public fun PosterBackdropCard(
                         .aspectRatio(aspectRatio),
                     model = imageUrl,
                     contentScale = contentScale,
-                    contentDescription = stringResource(cd_show_poster.resourceId, title),
+                    contentDescription = stringResource(MR.strings.cd_show_poster.resourceId, title),
                     alignment = Alignment.Center,
                 )
 

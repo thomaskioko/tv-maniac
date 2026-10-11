@@ -38,13 +38,14 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_no
-import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_yes
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_watch_again
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watch_again_confirm_title
+import com.thomaskioko.tvmaniac.i18n.cd_navigate_back
+import com.thomaskioko.tvmaniac.i18n.dialog_button_no
+import com.thomaskioko.tvmaniac.i18n.dialog_button_yes
+import com.thomaskioko.tvmaniac.i18n.generic_error_message
+import com.thomaskioko.tvmaniac.i18n.generic_retry
+import com.thomaskioko.tvmaniac.i18n.label_action_watch_again
+import com.thomaskioko.tvmaniac.i18n.label_watch_again_confirm_message
+import com.thomaskioko.tvmaniac.i18n.label_watch_again_confirm_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsBackClicked
@@ -124,10 +125,10 @@ internal fun ShowDetailsDialogs(
 ) {
     if (state.showWatchAgainConfirmation) {
         TvManiacAlertDialog(
-            title = label_watch_again_confirm_title.resolve(LocalContext.current),
+            title = MR.strings.label_watch_again_confirm_title.resolve(LocalContext.current),
             message = stringResource(MR.strings.label_watch_again_confirm_message.resourceId, state.title),
-            confirmButtonText = label_action_watch_again.resolve(LocalContext.current),
-            dismissButtonText = dialog_button_no.resolve(LocalContext.current),
+            confirmButtonText = MR.strings.label_action_watch_again.resolve(LocalContext.current),
+            dismissButtonText = MR.strings.dialog_button_no.resolve(LocalContext.current),
             confirmButtonTestTag = ShowDetailsTestTags.WATCH_AGAIN_CONFIRM_TEST_TAG,
             onConfirm = { onAction(WatchAgainConfirmed) },
             onDismiss = { onAction(WatchAgainDismissed) },
@@ -138,8 +139,8 @@ internal fun ShowDetailsDialogs(
         TvManiacAlertDialog(
             title = state.markShowWatchedTitle,
             message = state.markShowWatchedMessage,
-            confirmButtonText = dialog_button_yes.resolve(LocalContext.current),
-            dismissButtonText = dialog_button_no.resolve(LocalContext.current),
+            confirmButtonText = MR.strings.dialog_button_yes.resolve(LocalContext.current),
+            dismissButtonText = MR.strings.dialog_button_no.resolve(LocalContext.current),
             confirmButtonTestTag = ShowDetailsTestTags.MARK_SHOW_WATCHED_CONFIRM_TEST_TAG,
             onConfirm = { onAction(MarkShowWatchedConfirmed) },
             onDismiss = { onAction(MarkShowWatchedDismissed) },
@@ -174,8 +175,8 @@ internal fun ShowDetailsScaffold(
                         EmptyStateView(
                             modifier = Modifier.padding(top = TvManiacSpacing.medium),
                             imageVector = Icons.Outlined.ErrorOutline,
-                            title = generic_error_message.resolve(LocalContext.current),
-                            buttonText = generic_retry.resolve(LocalContext.current),
+                            title = MR.strings.generic_error_message.resolve(LocalContext.current),
+                            buttonText = MR.strings.generic_retry.resolve(LocalContext.current),
                             buttonTestTag = ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                             onClick = { onHostAction(ShowDetailsReload) },
                         )
@@ -201,7 +202,7 @@ internal fun ShowDetailsScaffold(
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                        contentDescription = MR.strings.cd_navigate_back.resolve(LocalContext.current),
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },

@@ -26,6 +26,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.day_label
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 

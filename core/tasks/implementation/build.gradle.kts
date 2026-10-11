@@ -38,7 +38,8 @@ kotlin {
 
         androidHostTest {
             dependencies {
-                implementation(libs.bundles.unittest)
+                implementation(libs.coroutines.test)
+                implementation(libs.kotest.assertions)
                 implementation(libs.androidx.test.core)
                 implementation(libs.androidx.work.testing)
                 implementation(projects.core.logger.testing)

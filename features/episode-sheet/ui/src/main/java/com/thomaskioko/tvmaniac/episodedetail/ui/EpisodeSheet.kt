@@ -27,7 +27,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate_episode
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_action_rate_episode
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetAction
@@ -118,7 +119,7 @@ private fun EpisodeSheetActions(
             SheetActionItem(
                 modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
                 icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                label = label_action_rate_episode.resolve(context),
+                label = MR.strings.label_action_rate_episode.resolve(context),
                 onClick = { onAction(EpisodeSheetAction.RatingClicked) },
             )
         }

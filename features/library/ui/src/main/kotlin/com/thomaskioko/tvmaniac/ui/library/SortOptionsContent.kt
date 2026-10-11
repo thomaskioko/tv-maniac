@@ -31,24 +31,25 @@ import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_apply
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_clear
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_genres
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_status
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_by
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_rank_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_rank_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_canceled
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_ended
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_in_production
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_planned
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_returning
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_library_filter_apply
+import com.thomaskioko.tvmaniac.i18n.label_library_filter_clear
+import com.thomaskioko.tvmaniac.i18n.label_library_filter_genres
+import com.thomaskioko.tvmaniac.i18n.label_library_filter_status
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_added_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_added_desc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_by
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_rank_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_rank_desc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_released_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_released_desc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_title_asc
+import com.thomaskioko.tvmaniac.i18n.label_library_sort_title_desc
+import com.thomaskioko.tvmaniac.i18n.label_library_status_canceled
+import com.thomaskioko.tvmaniac.i18n.label_library_status_ended
+import com.thomaskioko.tvmaniac.i18n.label_library_status_in_production
+import com.thomaskioko.tvmaniac.i18n.label_library_status_planned
+import com.thomaskioko.tvmaniac.i18n.label_library_status_returning
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
@@ -83,20 +84,20 @@ internal fun SortOptionsContent(
                 .verticalScroll(scrollState),
         ) {
             FilterChipSection(
-                title = label_library_sort_by.resolve(context),
+                title = MR.strings.label_library_sort_by.resolve(context),
                 items = LibrarySortOption.entries.toImmutableList(),
                 selectedItems = persistentSetOf(state.sortOption),
                 onItemToggle = { onSortOptionSelected(it) },
                 labelProvider = { sortOption ->
                     when (sortOption) {
-                        LibrarySortOption.RANK_ASC -> label_library_sort_rank_asc.resolve(context)
-                        LibrarySortOption.RANK_DESC -> label_library_sort_rank_desc.resolve(context)
-                        LibrarySortOption.ADDED_DESC -> label_library_sort_added_desc.resolve(context)
-                        LibrarySortOption.ADDED_ASC -> label_library_sort_added_asc.resolve(context)
-                        LibrarySortOption.RELEASED_DESC -> label_library_sort_released_desc.resolve(context)
-                        LibrarySortOption.RELEASED_ASC -> label_library_sort_released_asc.resolve(context)
-                        LibrarySortOption.TITLE_ASC -> label_library_sort_title_asc.resolve(context)
-                        LibrarySortOption.TITLE_DESC -> label_library_sort_title_desc.resolve(context)
+                        LibrarySortOption.RANK_ASC -> MR.strings.label_library_sort_rank_asc.resolve(context)
+                        LibrarySortOption.RANK_DESC -> MR.strings.label_library_sort_rank_desc.resolve(context)
+                        LibrarySortOption.ADDED_DESC -> MR.strings.label_library_sort_added_desc.resolve(context)
+                        LibrarySortOption.ADDED_ASC -> MR.strings.label_library_sort_added_asc.resolve(context)
+                        LibrarySortOption.RELEASED_DESC -> MR.strings.label_library_sort_released_desc.resolve(context)
+                        LibrarySortOption.RELEASED_ASC -> MR.strings.label_library_sort_released_asc.resolve(context)
+                        LibrarySortOption.TITLE_ASC -> MR.strings.label_library_sort_title_asc.resolve(context)
+                        LibrarySortOption.TITLE_DESC -> MR.strings.label_library_sort_title_desc.resolve(context)
                     }
                 },
                 collapsedItemCount = 5,
@@ -107,7 +108,7 @@ internal fun SortOptionsContent(
 
             if (state.availableGenres.isNotEmpty()) {
                 FilterChipSection(
-                    title = label_library_filter_genres.resolve(context),
+                    title = MR.strings.label_library_filter_genres.resolve(context),
                     items = state.availableGenres,
                     selectedItems = state.selectedGenres,
                     onItemToggle = { onGenreToggle(it) },
@@ -120,17 +121,17 @@ internal fun SortOptionsContent(
 
             if (state.availableStatuses.isNotEmpty()) {
                 FilterChipSection(
-                    title = label_library_filter_status.resolve(context),
+                    title = MR.strings.label_library_filter_status.resolve(context),
                     items = state.availableStatuses,
                     selectedItems = state.selectedStatuses,
                     onItemToggle = { onStatusToggle(it) },
                     labelProvider = { status ->
                         when (status) {
-                            ShowStatus.RETURNING_SERIES -> label_library_status_returning.resolve(context)
-                            ShowStatus.PLANNED -> label_library_status_planned.resolve(context)
-                            ShowStatus.IN_PRODUCTION -> label_library_status_in_production.resolve(context)
-                            ShowStatus.ENDED -> label_library_status_ended.resolve(context)
-                            ShowStatus.CANCELED -> label_library_status_canceled.resolve(context)
+                            ShowStatus.RETURNING_SERIES -> MR.strings.label_library_status_returning.resolve(context)
+                            ShowStatus.PLANNED -> MR.strings.label_library_status_planned.resolve(context)
+                            ShowStatus.IN_PRODUCTION -> MR.strings.label_library_status_in_production.resolve(context)
+                            ShowStatus.ENDED -> MR.strings.label_library_status_ended.resolve(context)
+                            ShowStatus.CANCELED -> MR.strings.label_library_status_canceled.resolve(context)
                         }
                     },
                     collapsedItemCount = 5,
@@ -141,8 +142,8 @@ internal fun SortOptionsContent(
         }
 
         FilterActionBar(
-            clearText = label_library_filter_clear.resolve(context),
-            applyText = label_library_filter_apply.resolve(context),
+            clearText = MR.strings.label_library_filter_clear.resolve(context),
+            applyText = MR.strings.label_library_filter_apply.resolve(context),
             onClearClick = onClearFilters,
             onApplyClick = onApplyFilters,
         )

@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_watch_again
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.label_action_rate
+import com.thomaskioko.tvmaniac.i18n.label_action_watch_again
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.MarkShowWatchedClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderAction
@@ -40,7 +41,7 @@ internal fun ShowDetailsMoreMenu(
         modifier = modifier.testTag(ShowDetailsTestTags.MORE_MENU_TEST_TAG),
     ) {
         MoreMenuItem(
-            label = label_action_rate.resolve(context),
+            label = MR.strings.label_action_rate.resolve(context),
             imageVector = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
             tag = ShowDetailsTestTags.RATE_BUTTON_TEST_TAG,
             onClick = { onAction(ShowRatingClicked) },
@@ -57,7 +58,7 @@ internal fun ShowDetailsMoreMenu(
 
         if (state.canWatchAgain) {
             MoreMenuItem(
-                label = label_action_watch_again.resolve(context),
+                label = MR.strings.label_action_watch_again.resolve(context),
                 imageVector = Icons.Filled.DoneAll,
                 tag = ShowDetailsTestTags.WATCH_AGAIN_BUTTON_TEST_TAG,
                 onClick = { onAction(WatchAgainClicked) },

@@ -22,6 +22,12 @@ dependencies {
     api(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.coil.compose)
     implementation(libs.youtubePlayer)
+
+    api(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.coroutines.core)
+    implementation(libs.kotlinx.collections)
 }

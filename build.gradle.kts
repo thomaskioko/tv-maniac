@@ -1,3 +1,14 @@
+buildscript {
+    dependencies {
+        constraints {
+            classpath("com.autonomousapps:dependency-analysis-gradle-plugin") {
+                version { strictly("3.17.0") }
+                because("DAGP 3.18+ runs buildHealth out of memory, see autonomousapps/dependency-analysis-gradle-plugin#1878")
+            }
+        }
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false

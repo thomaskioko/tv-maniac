@@ -33,7 +33,7 @@ dependencies {
     api(libs.kotlinx.collections)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.coil.coil)
-    implementation(libs.coil.compose)
+    api(libs.coil.compose)
     implementation(libs.kenburns)
     implementation(libs.androidx.palette)
     implementation(libs.coroutines.jvm)
@@ -41,4 +41,9 @@ dependencies {
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
     testImplementation(libs.kotest.assertions)
+
+    implementation(libs.moko.resources)
+    testImplementation(libs.androidx.activity.base)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.junit4)
 }

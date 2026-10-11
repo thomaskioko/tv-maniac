@@ -23,4 +23,7 @@ dependencies {
 
     runtimeOnly(libs.robolectric)
     runtimeOnly(libs.androidx.compose.ui.test.manifest)
+
+    api(libs.androidx.activity.base)
+    implementation(libs.androidx.junit)
 }
