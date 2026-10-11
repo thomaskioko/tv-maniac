@@ -33,4 +33,14 @@ dependencies {
     testImplementation(libs.robolectric.annotations)
     testImplementation(libs.kotlinx.datetime)
     testImplementation(projects.core.screenshotTests)
+
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.coroutines.core)
+    implementation(libs.moko.resources)
+    testImplementation(libs.androidx.activity.base)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.junit4)
 }

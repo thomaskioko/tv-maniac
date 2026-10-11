@@ -26,4 +26,11 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.decompose.extensions.compose)
+
+    api(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.coroutines.core)
+    implementation(libs.decompose.decompose)
+    implementation(libs.moko.resources)
 }
