@@ -1,7 +1,6 @@
 import Components
 import CoreKit
 import DesignSystem
-import FirebaseCore
 import SwiftUI
 import TvManiac
 import UIKit
@@ -45,7 +44,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     override public init() {
         super.init()
         if Self.hasFirebaseConfiguration {
-            FirebaseApp.configure()
+            FirebaseSetup.configure()
         }
         ImageCacheManager.configure()
         // Force IosTaskScheduler construction so BGTask handlers are registered
