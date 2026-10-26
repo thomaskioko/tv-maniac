@@ -44,9 +44,7 @@ runs:
       uses: actions/cache@v6
       with:
         path: ${{ inputs.spm-cache-path }}
-        key: ${{ runner.os }}-spm-${{ hashFiles('ios/tv-maniac.xcodeproj/project.pbxproj', 'ios/Packages/**/Package.swift') }}
-        restore-keys: |
-          ${{ runner.os }}-spm-
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/Packages/**/Package.swift') }}
 
     - name: 🔑 Resolve Kotlin version
       id: kotlin
