@@ -28,28 +28,11 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.app.root)
-    alias(libs.plugins.app.lint)
     alias(libs.plugins.app.android) apply false
     alias(libs.plugins.app.application) apply false
     alias(libs.plugins.app.baseline.profile) apply false
     alias(libs.plugins.app.kmp) apply false
     alias(libs.plugins.app.resource.generator) apply false
-    alias(libs.plugins.app.spotless) apply false
+    alias(libs.plugins.app.spotless)
     alias(libs.plugins.app.buildconfig) apply false
-}
-
-subprojects {
-    tasks.withType<Test>().configureEach {
-        jvmArgs(
-            "--add-opens=java.base/java.lang=ALL-UNNAMED",
-            "--add-opens=java.base/java.util=ALL-UNNAMED",
-            "--add-opens=java.base/java.io=ALL-UNNAMED",
-            "--add-opens=java.base/java.net=ALL-UNNAMED",
-            "--add-opens=java.base/java.security=ALL-UNNAMED",
-            "--add-opens=java.base/java.text=ALL-UNNAMED",
-            "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
-            "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-        )
-    }
 }
