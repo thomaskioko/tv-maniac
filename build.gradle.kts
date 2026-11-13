@@ -5,6 +5,10 @@ buildscript {
                 version { strictly("3.17.0") }
                 because("DAGP 3.18+ runs buildHealth out of memory, see autonomousapps/dependency-analysis-gradle-plugin#1878")
             }
+            classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin") {
+                version { strictly("2.3.12") }
+                because("KSP 2.3.13 sometimes writes no output for a module when KSP tasks run in parallel")
+            }
         }
     }
 }
