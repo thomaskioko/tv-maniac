@@ -43,7 +43,7 @@ kotlin {
 }
 
 tasks.withType<Test>().configureEach {
-    inputs.file(rootProject.file("ios/Packages/Models/Tests/ModelsTests/Fixtures/widget-snapshot.json"))
+    inputs.file(rootDir.resolve("ios/Packages/Models/Tests/ModelsTests/Fixtures/widget-snapshot.json"))
         .withPropertyName("widgetSnapshotFixture")
         .withPathSensitivity(PathSensitivity.RELATIVE)
 }
