@@ -72,7 +72,9 @@
     "timezone": "Europe/Berlin",
     "prConcurrentLimit": 3,
     "prHourlyLimit": 1,
-    "dependencyDashboard": true,
+    "dependencyDashboard": {
+        "enabled": true
+    },
     "rebaseWhen": "conflicted",
     "configMigration": true,
     "commitMessagePrefix": "chore(deps):"
