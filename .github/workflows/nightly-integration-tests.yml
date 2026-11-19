@@ -68,8 +68,7 @@ jobs:
       - name: 🤖 Run Integration Tests on Emulator
         run: |
           ./gradlew :app:pixel6Api34DebugAndroidTest \
-            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
-            --no-configuration-cache
+            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
 
       - name: 📊 Upload Test Reports
         if: ${{ !cancelled() }}
