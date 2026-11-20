@@ -65,8 +65,7 @@ jobs:
             -PreleaseStoreFile=release/app-release.jks \
             -PreleaseStorePassword="$SIGNING_STORE_PASSWORD" \
             -PreleaseKeyAlias=tvmaniac \
-            -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD" \
-            --no-configuration-cache
+            -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD"
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v7

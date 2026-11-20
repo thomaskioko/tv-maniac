@@ -58,7 +58,6 @@ jobs:
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=baselineprofile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           -Pandroid.experimental.androidTest.numManagedDeviceShards=1
-          --no-configuration-cache
 
       - name: Open a pull request with the new profile
         uses: peter-evans/create-pull-request@v8
