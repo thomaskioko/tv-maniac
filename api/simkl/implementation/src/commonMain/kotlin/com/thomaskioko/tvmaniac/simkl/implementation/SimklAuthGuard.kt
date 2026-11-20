@@ -14,9 +14,7 @@ internal val SimklAuthGuard = createClientPlugin("SimklAuthGuard", ::SimklAuthCo
     onRequest { request, _ ->
         val requiresAuth = request.attributes.getOrNull(RequiresAuth) == true
         if (requiresAuth && !isAuthenticated()) {
-            throw AuthenticationException(
-                message = "Authentication required for ${request.method.value} ${request.url.buildString()}",
-            )
+            throw AuthenticationException(message = "Authentication required")
         }
     }
 }
