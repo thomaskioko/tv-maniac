@@ -187,15 +187,10 @@ public class SearchShowsPresenter(
         }
 
         private suspend fun observeCategoryChanges() {
-            var isOpening = true
             genreRepository.observeGenreShowCategory()
                 .distinctUntilChanged()
                 .collect { category ->
-                    fetchGenreContent(
-                        category = category,
-                        loadingCounter = if (isOpening) ObservableLoadingCounter() else genreLoadingState,
-                    )
-                    isOpening = false
+                    fetchGenreContent(category = category, loadingCounter = ObservableLoadingCounter())
                 }
         }
 

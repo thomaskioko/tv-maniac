@@ -373,7 +373,6 @@ internal class SearchShowsPresenterTest {
             )
 
             genreRepository.setGenreShowCategory(GenreShowCategory.TRENDING)
-            skipItems(2)
 
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
@@ -418,7 +417,6 @@ internal class SearchShowsPresenterTest {
 
             presenter.dispatch(CategoryChanged(GenreShowCategory.TRENDING))
             setGenreRows(createGenreWithShowsForCategory("Breaking Bad", 1388))
-            skipItems(2)
 
             awaitItem() shouldBe settledState(
                 selectedCategory = GenreShowCategory.TRENDING,
@@ -638,7 +636,7 @@ internal class SearchShowsPresenterTest {
     }
 
     @Test
-    fun `should show refreshing given a category change while its fetch runs`() = runTest {
+    fun `should not show refreshing given genre rows are stored and a category change fetch is running`() = runTest {
         val gatedRepository = GatedGenreRepository(genreRepository)
         val categoryPresenter = buildPresenter(repository = gatedRepository)
         setGenreRows(createGenreWithShowsList())
@@ -652,11 +650,71 @@ internal class SearchShowsPresenterTest {
             gatedRepository.setFetchGate(gate)
             categoryPresenter.dispatch(CategoryChanged(GenreShowCategory.TRENDING))
             runCurrent()
-            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe true
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
 
             gate.complete(Unit)
             runCurrent()
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `should show initial loading given no rows are stored for the new category while its fetch runs`() = runTest {
+        val gatedRepository = GatedGenreRepository(genreRepository)
+        val categoryPresenter = buildPresenter(repository = gatedRepository)
+        setGenreRows(createGenreWithShowsList())
+
+        categoryPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
             expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+
+            gatedRepository.setFetchGate(CompletableDeferred())
+            categoryPresenter.dispatch(CategoryChanged(GenreShowCategory.TRENDING))
+            setGenreRows(emptyList())
+            runCurrent()
+
+            expectMostRecentItem().uiState shouldBe SearchUiState.InitialLoading
+        }
+    }
+
+    @Test
+    fun `should not show refreshing given a new presenter opens over a stored category and rows while its fetch runs`() = runTest {
+        genreRepository.setGenreShowCategory(GenreShowCategory.TRENDING)
+        setGenreRows(createGenreWithShowsList())
+        val restoredPresenter = buildPresenter(repository = GatedGenreRepository(genreRepository, CompletableDeferred()))
+
+        restoredPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
+
+            val state = expectMostRecentItem()
+            state.selectedCategory shouldBe GenreShowCategory.TRENDING
+            state.isBrowsingGenresRefreshing() shouldBe false
+        }
+    }
+
+    @Test
+    fun `should surface a message given a category change fetch fails`() = runTest {
+        val gatedRepository = GatedGenreRepository(genreRepository)
+        val categoryPresenter = buildPresenter(repository = gatedRepository)
+        setGenreRows(createGenreWithShowsList())
+
+        categoryPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+
+            val gate = CompletableDeferred<Unit>()
+            gate.completeExceptionally(IllegalStateException("Network error"))
+            gatedRepository.setFetchGate(gate)
+            categoryPresenter.dispatch(CategoryChanged(GenreShowCategory.TRENDING))
+            advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.message.shouldNotBeNull().message shouldBe "Network error"
+            state.uiState shouldBe SearchUiState.Error("Network error")
+            logger.recordedErrors.single().throwable.message shouldBe "Network error"
         }
     }
 
