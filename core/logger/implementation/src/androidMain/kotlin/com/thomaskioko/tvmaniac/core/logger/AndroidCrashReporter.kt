@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.core.logger
 import com.google.firebase.crashlytics.CustomKeysAndValues
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class)
+@ContributesIntoSet(AppScope::class)
 public class AndroidCrashReporter(
     private val crashlytics: FirebaseCrashlytics?,
 ) : CrashReporter {
