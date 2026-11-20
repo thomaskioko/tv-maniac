@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.RequiresAuth
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotContain
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -43,6 +44,21 @@ class TraktAuthGuardPluginTest {
                 attributes.put(RequiresAuth, true)
             }
         }
+    }
+
+    @Test
+    fun `should not include request url in message given auth required and user not authenticated`() = runTest {
+        val client = createClient(isAuthenticated = { false })
+
+        val exception = shouldThrow<AuthenticationException> {
+            client.get("https://api.example.test/users/jane-doe/lists?extended=full") {
+                attributes.put(RequiresAuth, true)
+            }
+        }
+
+        exception.message.orEmpty() shouldNotContain "jane-doe"
+        exception.message.orEmpty() shouldNotContain "api.example.test"
+        exception.message.orEmpty() shouldNotContain "extended=full"
     }
 
     @Test
