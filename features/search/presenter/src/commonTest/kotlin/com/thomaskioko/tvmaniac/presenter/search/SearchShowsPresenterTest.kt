@@ -79,7 +79,7 @@ internal class SearchShowsPresenterTest {
     }
 
     @Test
-    fun `should return loading state when initialized`() = runTest {
+    fun `should settle without refreshing given the presenter opens`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
             awaitItem() shouldBe settledState()
