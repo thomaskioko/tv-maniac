@@ -85,4 +85,23 @@ class IosCrashReporterTest {
 
         fakeCrashlytics.customValues shouldBe mapOf(CrashReportKeys.ENDPOINT to "")
     }
+
+    @Test
+    fun `should send the event value and restore the launch value given an event key set by a custom key`() {
+        reporter.setCustomKey("provider", "trakt")
+
+        reporter.recordException(IllegalStateException("boom"), mapOf("provider" to "tmdb"))
+
+        fakeCrashlytics.valuesAtSend shouldContainExactly mapOf("provider" to "tmdb")
+        fakeCrashlytics.customValues shouldBe mapOf("provider" to "trakt")
+    }
+
+    @Test
+    fun `should clear only the event key never set by a custom key given a report with two keys`() {
+        reporter.setCustomKey("provider", "trakt")
+
+        reporter.recordException(IllegalStateException("boom"), mapOf("provider" to "tmdb", "endpoint" to "shows/{id}"))
+
+        fakeCrashlytics.customValues shouldBe mapOf("provider" to "trakt", "endpoint" to "")
+    }
 }

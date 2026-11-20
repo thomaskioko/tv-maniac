@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.testing.di
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.connectivity.implementation.PlatformInternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.logger.CompositeCrashReporter
 import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
@@ -20,7 +21,10 @@ import dev.zacsweers.metro.SingleIn
 @BindingContainer
 @ContributesTo(
     AppScope::class,
-    replaces = [PlatformInternetConnectionChecker::class],
+    replaces = [
+        PlatformInternetConnectionChecker::class,
+        CompositeCrashReporter::class,
+    ],
 )
 public object TestPlatformFakesBindingContainer {
 
