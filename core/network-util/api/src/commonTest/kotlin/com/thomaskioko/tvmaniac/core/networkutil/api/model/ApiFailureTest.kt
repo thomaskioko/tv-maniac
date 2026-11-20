@@ -66,6 +66,21 @@ class ApiFailureTest {
     }
 
     @Test
+    fun `should replace the segment after users with user given a username`() {
+        "users/jane-doe/stats".toEndpointTemplate() shouldBe "users/{user}/stats"
+    }
+
+    @Test
+    fun `should replace the segment after users with user given a list id`() {
+        "users/jane-doe/lists/42/items".toEndpointTemplate() shouldBe "users/{user}/lists/{id}/items"
+    }
+
+    @Test
+    fun `should replace the segment after users with user given me`() {
+        "/users/me/watchlist/shows".toEndpointTemplate() shouldBe "/users/{user}/watchlist/shows"
+    }
+
+    @Test
     fun `should build a short message with the status when present`() {
         val failure = ApiFailure(
             provider = "trakt",

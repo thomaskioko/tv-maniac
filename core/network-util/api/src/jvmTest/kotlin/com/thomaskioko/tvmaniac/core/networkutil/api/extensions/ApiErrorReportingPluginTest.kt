@@ -3,33 +3,46 @@ package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiFailure
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiFailureKind
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiHttpException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiNetworkException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiSerializationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldNotContain
+import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondError
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLProtocol
 import io.ktor.http.headersOf
 import io.ktor.http.isSuccess
 import io.ktor.http.path
+import io.ktor.serialization.ContentConvertException
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
+import java.net.ConnectException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 
@@ -190,7 +203,7 @@ class ApiErrorReportingPluginTest {
         val (failure, throwable) = reported.first()
         failure.status shouldBe null
         failure.kind shouldBe ApiFailureKind.Expected
-        throwable.shouldBeInstanceOf<HttpRequestTimeoutException>()
+        throwable.shouldBeInstanceOf<ApiNetworkException>()
     }
 
     @Test
@@ -210,7 +223,7 @@ class ApiErrorReportingPluginTest {
         val (failure, _) = reported.first()
         failure.status shouldBe null
         failure.kind shouldBe ApiFailureKind.Unexpected
-        failure.body shouldBe "not json"
+        failure.body.shouldBeNull()
     }
 
     @Test
@@ -299,5 +312,138 @@ class ApiErrorReportingPluginTest {
         failure.endpointTemplate.shouldNotContain("access_token")
         failure.endpointTemplate.shouldNotContain("super-secret-token")
         failure.endpointTemplate.shouldNotContain("?")
+    }
+
+    private fun HttpRequestBuilder.accountRequest() {
+        url {
+            protocol = URLProtocol.HTTPS
+            host = "api.trakt.tv"
+            path("users", "jane-doe", "lists")
+            parameters.append("access_token", "super-secret-token")
+        }
+        method = HttpMethod.Get
+    }
+
+    @Test
+    fun `should report a message with the endpoint template given a failed status on a user endpoint`() = runTest {
+        val engine = MockEngine { _ ->
+            respondError(
+                status = HttpStatusCode.InternalServerError,
+                content = "",
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+
+        createClient(engine).safeRequest<JsonObject> { accountRequest() }
+
+        reported.size shouldBe 1
+        val (failure, throwable) = reported.first()
+        failure.endpointTemplate shouldBe "users/{user}/lists"
+        throwable.shouldBeInstanceOf<ApiHttpException>()
+        throwable.message shouldBe "HTTP 500 GET users/{user}/lists"
+        throwable.message.shouldContain("users/{user}/lists")
+        throwable.message.shouldNotContain("jane-doe")
+        throwable.message.shouldNotContain("api.trakt.tv")
+        throwable.message.shouldNotContain("super-secret-token")
+    }
+
+    private fun Throwable.shouldCarryNoAccountDetails() {
+        cause.shouldBeNull()
+        val text = message.orEmpty()
+        text.shouldNotContain("jane-doe")
+        text.shouldNotContain("api.trakt.tv")
+        text.shouldNotContain("super-secret-token")
+        text.shouldNotContain("access_token")
+        text.shouldNotContain("hidden-body")
+    }
+
+    @Test
+    fun `should report a network exception without a cause given a request timeout`() = runTest {
+        val engine = MockEngine { _ ->
+            throw HttpRequestTimeoutException(url = "https://api.trakt.tv/users/jane-doe/lists?access_token=super-secret-token", timeoutMillis = 1_000L)
+        }
+        val client = createClient(engine)
+
+        shouldThrow<HttpRequestTimeoutException> { client.request { accountRequest() } }
+
+        reported.size shouldBe 1
+        val (failure, throwable) = reported.first()
+        failure.kind shouldBe ApiFailureKind.Expected
+        throwable.shouldBeInstanceOf<ApiNetworkException>()
+        throwable.kind shouldBe ApiResponse.Error.NetworkFailure.Kind.Timeout
+        throwable.message shouldBe "HttpRequestTimeoutException GET users/{user}/lists"
+        throwable.shouldCarryNoAccountDetails()
+    }
+
+    @Test
+    fun `should report a network exception without a cause given a connect failure`() = runTest {
+        val engine = MockEngine { _ ->
+            throw ConnectException("Connection refused: https://api.trakt.tv/users/jane-doe/lists?access_token=super-secret-token")
+        }
+        val client = createClient(engine)
+
+        shouldThrow<ConnectException> { client.request { accountRequest() } }
+
+        reported.size shouldBe 1
+        val (failure, throwable) = reported.first()
+        failure.kind shouldBe ApiFailureKind.Unexpected
+        throwable.shouldBeInstanceOf<ApiNetworkException>()
+        throwable.kind shouldBe ApiResponse.Error.NetworkFailure.Kind.Unknown
+        throwable.message shouldBe "ConnectException GET users/{user}/lists"
+        throwable.shouldCarryNoAccountDetails()
+    }
+
+    @Test
+    fun `should report a serialization exception without a body given an undecodable response`() = runTest {
+        val engine = MockEngine { _ ->
+            respond(
+                content = "hidden-body jane-doe not json",
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val client = createClient(engine)
+
+        shouldThrow<ContentConvertException> { client.request { accountRequest() }.body<JsonObject>() }
+
+        reported.size shouldBe 1
+        val (failure, throwable) = reported.first()
+        failure.body.shouldBeNull()
+        failure.kind shouldBe ApiFailureKind.Unexpected
+        throwable.shouldBeInstanceOf<ApiSerializationException>()
+        throwable.message.shouldStartWith("JsonConvertException GET ")
+        throwable.message.shouldEndWith("users/{user}/lists")
+        throwable.shouldCarryNoAccountDetails()
+    }
+
+    @Test
+    fun `should report an http exception with its status given a response exception`() = runTest {
+        val engine = MockEngine { _ ->
+            respondError(
+                status = HttpStatusCode.InternalServerError,
+                content = "hidden-body",
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val client = HttpClient(engine) {
+            expectSuccess = true
+            install(ApiErrorReportingPlugin) {
+                provider = "trakt"
+                onFailure = { failure, throwable -> reported.add(failure to throwable) }
+            }
+        }
+
+        shouldThrow<ServerResponseException> { client.request { accountRequest() } }
+
+        reported.size shouldBe 1
+        val (failure, throwable) = reported.first()
+        failure.status shouldBe 500
+        throwable.shouldBeInstanceOf<ApiHttpException>()
+        throwable.code shouldBe 500
+        throwable.cause.shouldBeNull()
+        throwable.message.shouldContain("HTTP 500 GET users/{user}/lists")
+        throwable.message.shouldNotContain("jane-doe")
+        throwable.message.shouldNotContain("api.trakt.tv")
+        throwable.message.shouldNotContain("super-secret-token")
     }
 }
