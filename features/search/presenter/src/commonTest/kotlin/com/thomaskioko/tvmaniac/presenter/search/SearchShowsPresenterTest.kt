@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
+import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
 import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
 import com.thomaskioko.tvmaniac.genre.model.TraktGenreEntity
@@ -27,6 +28,7 @@ import com.thomaskioko.tvmaniac.search.presenter.GenreMoreClicked
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.RecentSearchClicked
+import com.thomaskioko.tvmaniac.search.presenter.ReloadShowContent
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
@@ -43,11 +45,13 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
@@ -78,7 +82,6 @@ internal class SearchShowsPresenterTest {
     fun `should return loading state when initialized`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            skipItems(1)
             awaitItem() shouldBe settledState()
         }
     }
@@ -87,7 +90,6 @@ internal class SearchShowsPresenterTest {
     fun `should return initial state when query is blank`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            skipItems(1)
             awaitItem() shouldBe settledState()
 
             presenter.dispatch(QueryChanged(""))
@@ -101,7 +103,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(emptyList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState()
         }
@@ -113,7 +114,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(createGenreWithShowsList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
@@ -127,7 +127,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             presenter.dispatch(QueryChanged("t"))
-            skipItems(1) // Skip init settled state
 
             awaitItem() shouldBe settledState(query = "t")
         }
@@ -139,7 +138,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(createGenreWithShowsList())
-            skipItems(1)
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
             )
@@ -161,7 +159,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(createGenreWithShowsList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
@@ -179,7 +176,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(createGenreWithShowsList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
@@ -208,7 +204,6 @@ internal class SearchShowsPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
             setGenreRows(emptyList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState()
 
@@ -235,11 +230,9 @@ internal class SearchShowsPresenterTest {
     fun `should handle transition from short to valid query`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            skipItems(1)
 
             presenter.dispatch(QueryChanged("a"))
 
-            skipItems(1) // Skip init settled state
             awaitItem() shouldBe settledState(query = "a")
 
             presenter.dispatch(QueryChanged("abc"))
@@ -260,14 +253,12 @@ internal class SearchShowsPresenterTest {
     fun `should handle empty short and valid query transitions correctly`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            skipItems(1)
 
             presenter.dispatch(QueryChanged(""))
             expectNoEvents()
 
             presenter.dispatch(QueryChanged("a"))
 
-            skipItems(1) // Skip init settled state
             awaitItem() shouldBe settledState(query = "a")
 
             presenter.dispatch(QueryChanged("test"))
@@ -296,7 +287,6 @@ internal class SearchShowsPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
             setGenreRows(createGenreWithShowsList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
@@ -377,7 +367,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(createGenreWithShowsList())
-            skipItems(1)
 
             awaitItem() shouldBe settledState(
                 genreRows = genreRowModelList(),
@@ -422,7 +411,6 @@ internal class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
 
             setGenreRows(createGenreWithShowsForCategory("Loki", 84958))
-            skipItems(1)
 
             awaitItem() shouldBe settledState(
                 genreRows = toExpectedGenreRowModels("Loki", 84958),
@@ -625,6 +613,140 @@ internal class SearchShowsPresenterTest {
     }
 
     @Test
+    fun `should not show refreshing given genre rows are stored and the open fetch is running`() = runTest {
+        val openPresenter = buildPresenter(repository = GatedGenreRepository(genreRepository, CompletableDeferred()))
+        setGenreRows(createGenreWithShowsList())
+
+        openPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
+
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+        }
+    }
+
+    @Test
+    fun `should keep initial loading given nothing is stored and the open fetch is running`() = runTest {
+        val openPresenter = buildPresenter(repository = GatedGenreRepository(genreRepository, CompletableDeferred()))
+
+        openPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
+
+            expectMostRecentItem().uiState shouldBe SearchUiState.InitialLoading
+        }
+    }
+
+    @Test
+    fun `should show refreshing given a category change while its fetch runs`() = runTest {
+        val gatedRepository = GatedGenreRepository(genreRepository)
+        val categoryPresenter = buildPresenter(repository = gatedRepository)
+        setGenreRows(createGenreWithShowsList())
+
+        categoryPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+
+            val gate = CompletableDeferred<Unit>()
+            gatedRepository.setFetchGate(gate)
+            categoryPresenter.dispatch(CategoryChanged(GenreShowCategory.TRENDING))
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe true
+
+            gate.complete(Unit)
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+        }
+    }
+
+    @Test
+    fun `should show refreshing given reload is dispatched while its fetch runs`() = runTest {
+        val gatedRepository = GatedGenreRepository(genreRepository)
+        val reloadPresenter = buildPresenter(repository = gatedRepository)
+        setGenreRows(createGenreWithShowsList())
+
+        reloadPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+
+            val gate = CompletableDeferred<Unit>()
+            gatedRepository.setFetchGate(gate)
+            reloadPresenter.dispatch(ReloadShowContent)
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe true
+
+            gate.complete(Unit)
+            runCurrent()
+            expectMostRecentItem().isBrowsingGenresRefreshing() shouldBe false
+        }
+    }
+
+    @Test
+    fun `should surface a message given the open fetch fails`() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        gate.completeExceptionally(IllegalStateException("Network error"))
+        val failingPresenter = buildPresenter(repository = GatedGenreRepository(genreRepository, gate))
+        setGenreRows(createGenreWithShowsList())
+
+        failingPresenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.message.shouldNotBeNull().message shouldBe "Network error"
+            state.uiState shouldBe SearchUiState.Error("Network error")
+            logger.recordedErrors.single().throwable.message shouldBe "Network error"
+        }
+    }
+
+    @Test
+    fun `should keep search loading given a submitted search is still running`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            presenter.dispatch(QueryChanged("nothing"))
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchEmpty
+
+            fakeSearchRepository.setSearchDelay(1.seconds)
+            presenter.dispatch(SearchSubmitted)
+            advanceTimeBy(100)
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchLoading
+
+            advanceTimeBy(800)
+            expectNoEvents()
+
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchEmpty
+        }
+    }
+
+    @Test
+    fun `should show the error after loading given a submitted search fails`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+            presenter.dispatch(QueryChanged("nothing"))
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchEmpty
+
+            fakeSearchRepository.setSearchError(IllegalStateException("Network error"))
+            fakeSearchRepository.setSearchDelay(1.seconds)
+            presenter.dispatch(SearchSubmitted)
+            advanceTimeBy(100)
+            expectMostRecentItem().uiState shouldBe SearchUiState.SearchLoading
+
+            advanceTimeBy(800)
+            expectNoEvents()
+
+            advanceUntilIdle()
+            expectMostRecentItem().uiState shouldBe SearchUiState.Error("Network error")
+        }
+    }
+
+    @Test
     fun `should map episode count given the entity carries one`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
@@ -658,13 +780,14 @@ internal class SearchShowsPresenterTest {
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
         navigator: Navigator = NoOpNavigator(),
+        repository: GenreRepository = genreRepository,
     ): SearchShowsPresenter = SearchShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         navigator = navigator,
         searchRepository = fakeSearchRepository,
-        genreRepository = genreRepository,
+        genreRepository = repository,
         fetchGenreContentInteractor = FetchGenreContentInteractor(
-            repository = genreRepository,
+            repository = repository,
             dispatchers = AppCoroutineDispatchers(
                 io = testDispatcher,
                 computation = testDispatcher,
@@ -680,6 +803,9 @@ internal class SearchShowsPresenterTest {
             localizer = fakeLocalizer,
         ),
     )
+
+    private fun SearchShowState.isBrowsingGenresRefreshing(): Boolean =
+        uiState.shouldBeInstanceOf<SearchUiState.BrowsingGenres>().isRefreshing
 
     private suspend fun setGenreRows(list: List<GenreWithShowsEntity>) {
         genreRepository.setGenreWithShowsResult(list)
@@ -794,5 +920,19 @@ internal class SearchShowsPresenterTest {
 
     companion object {
         const val LIST_SIZE = 5
+    }
+}
+
+private class GatedGenreRepository(
+    delegate: GenreRepository,
+    private var fetchGate: CompletableDeferred<Unit>? = null,
+) : GenreRepository by delegate {
+
+    fun setFetchGate(gate: CompletableDeferred<Unit>) {
+        fetchGate = gate
+    }
+
+    override suspend fun fetchTraktGenres(forceRefresh: Boolean) {
+        fetchGate?.await()
     }
 }
