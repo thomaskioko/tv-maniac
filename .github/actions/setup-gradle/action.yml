@@ -26,3 +26,15 @@ runs:
         cache-provider: basic
         cache-disabled: ${{ inputs.gradle-cache-disabled }}
         cache-read-only: ${{ inputs.gradle-cache-read-only }}
+
+    - name: 🐘 Size Gradle for the Linux runner
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        GRADLE_HOME_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}"
+        mkdir -p "$GRADLE_HOME_DIR"
+        {
+          echo "org.gradle.jvmargs=-Dfile.encoding=UTF-8 -XX:+UseG1GC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseStringDeduplication -XX:MaxMetaspaceSize=2g -Xmx5g"
+          echo "kotlin.daemon.jvmargs=-Xmx3g"
+        } >> "$GRADLE_HOME_DIR/gradle.properties"
+        cat "$GRADLE_HOME_DIR/gradle.properties"
