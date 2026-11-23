@@ -5,7 +5,6 @@ TEST_OS = "26.5"
 TEST_DESTINATION = "platform=iOS Simulator,OS=#{TEST_OS},name=#{TEST_DEVICE}"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
 WIDGET_PACKAGE_NAME = "#{PACKAGE_NAME}.widget"
-TESTFLIGHT_INTERNAL_GROUP = "App Store Connect Users"
 PROJECT_DIR = File.expand_path('..', Dir.pwd)
 DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
 COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
@@ -237,10 +236,12 @@ platform :ios do
 
     app = Spaceship::ConnectAPI::App.find(PACKAGE_NAME)
     beta_groups = app.get_beta_groups
-    internal_groups = beta_groups.select { |group| group.name == TESTFLIGHT_INTERNAL_GROUP }
+    internal_groups = beta_groups.select(&:is_internal_group)
     external_groups = external ? beta_groups.reject(&:is_internal_group) : []
-    UI.user_error!("TestFlight has no group named #{TESTFLIGHT_INTERNAL_GROUP}") if internal_groups.empty?
+    UI.user_error!("TestFlight has no internal group") if internal_groups.empty?
     UI.user_error!("TestFlight has no external group") if external && external_groups.empty?
+    automatic_groups, manual_groups = internal_groups.partition(&:has_access_to_all_builds)
+    UI.message("#{automatic_groups.count} internal groups get the build by automatic distribution. Adding it to #{manual_groups.count} internal and #{external_groups.count} external groups")
 
     wait_for_processed_build(app, version, build)
 
@@ -250,7 +251,7 @@ platform :ios do
       app_platform: "ios",
       app_version: version,
       build_number: build,
-      groups: (internal_groups + external_groups).map(&:name),
+      groups: (manual_groups + external_groups).map(&:id),
       distribute_external: external,
       submit_beta_review: external,
       changelog: changelog_from_git_commits(
