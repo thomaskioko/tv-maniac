@@ -5,6 +5,7 @@ TEST_OS = "26.5"
 TEST_DESTINATION = "platform=iOS Simulator,OS=#{TEST_OS},name=#{TEST_DEVICE}"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
 WIDGET_PACKAGE_NAME = "#{PACKAGE_NAME}.widget"
+TESTFLIGHT_INTERNAL_GROUP = "App Store Connect Users"
 PROJECT_DIR = File.expand_path('..', Dir.pwd)
 DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
 COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
@@ -223,6 +224,43 @@ platform :ios do
     )
   end
 
+  desc "Add an uploaded build to the TestFlight groups after App Store Connect processes it"
+  lane :distribute_testflight do |options|
+    api_key = get_api_key
+    if api_key.nil?
+      UI.user_error!("App Store Connect API key is not configured — set APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and APP_STORE_CONNECT_API_KEY")
+    end
+
+    version = options.fetch(:version)
+    build = options.fetch(:build)
+    external = options[:external] == true
+
+    app = Spaceship::ConnectAPI::App.find(PACKAGE_NAME)
+    beta_groups = app.get_beta_groups
+    internal_groups = beta_groups.select { |group| group.name == TESTFLIGHT_INTERNAL_GROUP }
+    external_groups = external ? beta_groups.reject(&:is_internal_group) : []
+    UI.user_error!("TestFlight has no group named #{TESTFLIGHT_INTERNAL_GROUP}") if internal_groups.empty?
+    UI.user_error!("TestFlight has no external group") if external && external_groups.empty?
+
+    wait_for_processed_build(app, version, build)
+
+    upload_to_testflight(
+      api_key: api_key,
+      distribute_only: true,
+      app_platform: "ios",
+      app_version: version,
+      build_number: build,
+      groups: (internal_groups + external_groups).map(&:name),
+      distribute_external: external,
+      submit_beta_review: external,
+      changelog: changelog_from_git_commits(
+        commits_count: 10,
+        pretty: "- %s",
+        merge_commit_filtering: "exclude_merges",
+      ),
+    )
+  end
+
   desc "Build beta and upload to TestFlight"
   lane :build_beta do |options|
     build_signed_app
@@ -288,7 +326,7 @@ platform :ios do
     api_key
   end
 
-  desc "Submit to App Store review"
+  desc "Attach an uploaded build to its App Store version and submit it for review"
   lane :deploy_app_store do |options|
     submit = options[:submit_for_review] || ENV["IOS_SUBMIT_FOR_REVIEW"] == "true"
 
@@ -297,13 +335,26 @@ platform :ios do
       UI.user_error!("App Store Connect API key is not configured — set APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and APP_STORE_CONNECT_API_KEY")
     end
 
+    version = options.fetch(:version)
+    build = options.fetch(:build)
+    release_notes = ENV.fetch("RELEASE_NOTES")[0, 4000]
+
+    app = Spaceship::ConnectAPI::App.find(PACKAGE_NAME)
+    locales = app.get_latest_app_store_version.get_app_store_version_localizations.map(&:locale)
+    wait_for_processed_build(app, version, build)
+
     deliver(
       api_key: api_key,
+      app_version: version,
+      build_number: build,
+      release_notes: locales.to_h { |locale| [locale, release_notes] },
       submit_for_review: submit,
+      run_precheck_before_submit: false,
       automatic_release: false,
       phased_release: true,
-      skip_metadata: true,
+      skip_binary_upload: true,
       skip_screenshots: true,
+      force: true,
     )
   end
 
@@ -446,6 +497,18 @@ def get_api_key
     key_content: ENV["APP_STORE_CONNECT_API_KEY"],
     is_key_content_base64: true,
     in_house: false,
+  )
+end
+
+def wait_for_processed_build(app, version, build)
+  FastlaneCore::BuildWatcher.wait_for_build_processing_to_be_complete(
+    app_id: app.id,
+    platform: Spaceship::ConnectAPI::Platform::IOS,
+    app_version: version,
+    build_version: build,
+    poll_interval: 30,
+    return_spaceship_testflight_build: false,
+    wait_for_build_beta_detail_processing: true,
   )
 end
 

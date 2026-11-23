@@ -71,6 +71,14 @@ Build signed release IPA
 
 Upload built IPA to TestFlight
 
+### ios distribute_testflight
+
+```sh
+[bundle exec] fastlane ios distribute_testflight
+```
+
+Add an uploaded build to the TestFlight groups after App Store Connect processes it
+
 ### ios build_beta
 
 ```sh
@@ -85,7 +93,7 @@ Build beta and upload to TestFlight
 [bundle exec] fastlane ios deploy_app_store
 ```
 
-Submit to App Store review
+Attach an uploaded build to its App Store version and submit it for review
 
 ### ios build_tvmaniac_ipa
 
