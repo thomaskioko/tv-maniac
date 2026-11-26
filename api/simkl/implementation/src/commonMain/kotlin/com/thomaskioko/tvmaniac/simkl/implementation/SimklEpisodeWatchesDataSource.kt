@@ -47,7 +47,7 @@ public class SimklEpisodeWatchesDataSource(
         val request = SimklSyncHistoryRequest(shows = entries.toSimklHistoryShows())
         when (syncRemoteDataSource.addWatchedHistory(request)) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> Unit
+            is ApiResponse.Unauthenticated -> return emptyList()
             is ApiResponse.Error -> throw Exception("Simkl: failed to add episode history")
         }
         return entries
@@ -58,7 +58,7 @@ public class SimklEpisodeWatchesDataSource(
         val request = SimklSyncHistoryRequest(shows = entries.toSimklHistoryShows())
         when (syncRemoteDataSource.removeWatchedHistory(request)) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> Unit
+            is ApiResponse.Unauthenticated -> return emptyList()
             is ApiResponse.Error -> throw Exception("Simkl: failed to remove episode history")
         }
         return entries

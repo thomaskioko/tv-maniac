@@ -143,13 +143,31 @@ internal class SimklEpisodeWatchesDataSourceTest {
     }
 
     @Test
-    fun `should report every entry as sent given entries are added or removed`() = runTest {
+    fun `should report every entry as sent given the provider accepts the add or removal`() = runTest {
         fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
         fakeRemote.setRemoveHistoryResponse(ApiResponse.Success(SimklRemoveHistoryResponse()))
         val entries = listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z")))
 
         dataSource.addEpisodeEntries(entries) shouldBe entries
         dataSource.removeEpisodeEntries(entries) shouldBe entries
+    }
+
+    @Test
+    fun `should report no entries as sent given the login has expired when entries are added`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Unauthenticated)
+
+        dataSource.addEpisodeEntries(
+            listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z"))),
+        ).shouldBeEmpty()
+    }
+
+    @Test
+    fun `should report no entries as sent given the login has expired when entries are removed`() = runTest {
+        fakeRemote.setRemoveHistoryResponse(ApiResponse.Unauthenticated)
+
+        dataSource.removeEpisodeEntries(
+            listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z"))),
+        ).shouldBeEmpty()
     }
 
     @Test

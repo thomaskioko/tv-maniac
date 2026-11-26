@@ -96,7 +96,7 @@ public class TraktEpisodeWatchesDataSource(
 
         when (remoteDataSource.addEpisodeWatches(TraktSyncItems(shows = sent.toShowSyncItems(traktIds)))) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> Unit
+            is ApiResponse.Unauthenticated -> return emptyList()
             is ApiResponse.Error -> throw Exception("Failed to add episodes to history")
         }
         return sent
@@ -109,7 +109,7 @@ public class TraktEpisodeWatchesDataSource(
 
         when (remoteDataSource.removeEpisodeWatches(TraktSyncItems(shows = sent.toShowSyncItems(traktIds)))) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> Unit
+            is ApiResponse.Unauthenticated -> return emptyList()
             is ApiResponse.Error -> throw Exception("Failed to remove episodes from history")
         }
         return sent
