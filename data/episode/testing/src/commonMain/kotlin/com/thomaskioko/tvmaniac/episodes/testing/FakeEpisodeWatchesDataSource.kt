@@ -54,11 +54,13 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         return allWatchedShowsPages[page] ?: emptyList()
     }
 
-    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
         addEpisodeWatchesInvocations.add(entries)
+        return entries
     }
 
-    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
         removeEpisodeWatchesInvocations.add(entries)
+        return entries
     }
 }

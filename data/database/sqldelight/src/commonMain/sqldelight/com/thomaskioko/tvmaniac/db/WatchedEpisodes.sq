@@ -200,12 +200,10 @@ LEFT JOIN episode ON episode.id = watched_episodes.episode_id
 ORDER BY show_progress.last_watched_at DESC
 LIMIT ?;
 
--- Trakt Sync Queries
-
 getEntriesByPendingAction:
 SELECT
     watched_episodes.id AS watched_id,
-    show_trakt.trakt_id AS trakt_id,
+    tvshow.tmdb_id AS show_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,
@@ -215,7 +213,6 @@ SELECT
     watched_episodes.pending_action
 FROM watched_episodes
 INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 WHERE pending_action = ?
 ORDER BY watched_at;
 

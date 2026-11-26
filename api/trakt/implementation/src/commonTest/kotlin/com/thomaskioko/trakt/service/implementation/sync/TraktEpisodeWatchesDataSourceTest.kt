@@ -3,6 +3,7 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
@@ -25,10 +26,11 @@ internal class TraktEpisodeWatchesDataSourceTest {
 
     private val fakeSync = FakeTraktSyncRemoteDataSource()
     private val fakeHistory = FakeTraktEpisodeHistoryRemoteDataSource()
+    private val followedShowsDao = FakeFollowedShowsDao()
     private val dataSource = TraktEpisodeWatchesDataSource(
         remoteDataSource = fakeHistory,
         syncRemoteDataSource = fakeSync,
-        followedShowsDao = FakeFollowedShowsDao(),
+        followedShowsDao = followedShowsDao,
     )
 
     @Test
@@ -93,6 +95,8 @@ internal class TraktEpisodeWatchesDataSourceTest {
 
     @Test
     fun `should send the local watched time unchanged given the mark carries a date`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+
         dataSource.addEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))))
 
         fakeHistory.lastAddedItems!!.shows!!.single().seasons!!.single().episodes.single().watchedAt shouldBe
@@ -101,9 +105,72 @@ internal class TraktEpisodeWatchesDataSourceTest {
 
     @Test
     fun `should send the unknown literal given the watched time is unknown`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+
         dataSource.addEpisodeEntries(listOf(watchedEntry(WatchedDate.UNKNOWN)))
 
         fakeHistory.lastAddedItems!!.shows!!.single().seasons!!.single().episodes.single().watchedAt shouldBe "unknown"
+    }
+
+    @Test
+    fun `should send the trakt id of the show given entries are added`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+
+        dataSource.addEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))))
+
+        fakeHistory.lastAddedItems!!.shows!!.single().ids.traktId shouldBe TRAKT_ID
+    }
+
+    @Test
+    fun `should send the trakt id of the show given entries are removed`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+
+        dataSource.removeEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))))
+
+        fakeHistory.lastRemovedItems!!.shows!!.single().ids.traktId shouldBe TRAKT_ID
+    }
+
+    @Test
+    fun `should skip the show given it has no trakt id`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = null)
+
+        dataSource.addEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))))
+
+        fakeHistory.lastAddedItems.shouldBeNull()
+    }
+
+    @Test
+    fun `should report the show as not sent given it has no trakt id`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = null)
+        val entries = listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z")))
+
+        dataSource.addEpisodeEntries(entries).shouldBeEmpty()
+        dataSource.removeEpisodeEntries(entries).shouldBeEmpty()
+    }
+
+    @Test
+    fun `should report only the entries of shows with a trakt id as sent`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val sentEntry = watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))
+        val skippedEntry = sentEntry.copy(showId = UNLINKED_TMDB_ID)
+        val entries = listOf(sentEntry, skippedEntry)
+
+        dataSource.addEpisodeEntries(entries) shouldBe listOf(sentEntry)
+        dataSource.removeEpisodeEntries(entries) shouldBe listOf(sentEntry)
+    }
+
+    @Test
+    fun `should send only the shows that have a trakt id given entries span both kinds`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+
+        dataSource.addEpisodeEntries(
+            listOf(
+                watchedEntry(Instant.parse("2026-04-25T20:00:00Z")),
+                watchedEntry(Instant.parse("2026-04-25T21:00:00Z")).copy(showId = UNLINKED_TMDB_ID),
+            ),
+        )
+
+        fakeHistory.lastAddedItems!!.shows!!.map { it.ids.traktId } shouldBe listOf(TRAKT_ID)
     }
 
     @Test
@@ -124,8 +191,14 @@ internal class TraktEpisodeWatchesDataSourceTest {
         episode.watchedAt shouldBe Instant.parse("1999-06-15T20:00:00.000Z")
     }
 
+    private fun followShow(tmdbId: Long, traktId: Long?) {
+        followedShowsDao.upsert(
+            FollowedShowEntry(showId = tmdbId, tmdbId = tmdbId, traktId = traktId, followedAt = Instant.parse("2026-04-01T00:00:00Z")),
+        )
+    }
+
     private fun watchedEntry(watchedAt: Instant) = WatchedEpisodeEntry(
-        showId = 1388L,
+        showId = TMDB_ID,
         episodeId = null,
         seasonNumber = 1L,
         episodeNumber = 1L,
@@ -133,6 +206,10 @@ internal class TraktEpisodeWatchesDataSourceTest {
         pendingAction = PendingAction.NOTHING,
     )
 }
+
+private const val TMDB_ID = 1396L
+private const val TRAKT_ID = 1388L
+private const val UNLINKED_TMDB_ID = 4242L
 
 private val BREAKING_BAD = TraktWatchedShowResponse(
     plays = 56,
