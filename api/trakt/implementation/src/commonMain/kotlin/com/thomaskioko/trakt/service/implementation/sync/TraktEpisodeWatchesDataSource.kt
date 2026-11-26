@@ -114,7 +114,8 @@ public class TraktEpisodeWatchesDataSource(
     }
 
     private fun List<WatchedEpisodeEntry>.toShowSyncItems(): List<TraktSyncShow> =
-        groupBy { it.showId }.map { (traktId, showWatches) ->
+        groupBy { it.showId }.mapNotNull { (tmdbId, showWatches) ->
+            val traktId = followedShowsDao.traktIdForTmdbId(tmdbId) ?: return@mapNotNull null
             TraktSyncShow(
                 ids = TraktShowIds(traktId = traktId),
                 seasons = showWatches.groupBy { it.seasonNumber }.map { (seasonNumber, seasonWatches) ->

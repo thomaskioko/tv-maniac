@@ -181,7 +181,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         episode: com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction,
     ): WatchedEpisodeEntry = WatchedEpisodeEntry(
         id = episode.watched_id,
-        showId = episode.trakt_id,
+        showId = episode.show_id.id,
         episodeId = episode.episode_id?.id,
         seasonNumber = episode.season_number,
         episodeNumber = episode.episode_number,

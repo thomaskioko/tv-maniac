@@ -167,6 +167,29 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should upload pending episode with the tmdb id given the show has no trakt id`() = runTest {
+        val simklOnlyShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L, forShowId = simklOnlyShowId)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.uploaded.single().single().showId shouldBe SIMKL_SHOW_ID
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = simklOnlyShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should upload pending episode with the tmdb id given the show has a trakt id`() = runTest {
+        val traktShowId = addAnotherShow(tmdbId = THIRD_SHOW_ID, traktId = THIRD_SHOW_TRAKT_ID)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L, forShowId = traktShowId)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.uploaded.single().single().showId shouldBe THIRD_SHOW_ID
+    }
+
+    @Test
     fun `should persist watched episodes in db given bulk sync batch carries tmdb boundary id`() = runTest {
         recordingDataSource.batchesToReturn = listOf(
             WatchedShowBatch(
@@ -419,9 +442,9 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         lastUpdatedAt = lastUpdatedAt,
     )
 
-    private fun addPendingUpload(seasonNumber: Long, episodeNumber: Long) {
+    private fun addPendingUpload(seasonNumber: Long, episodeNumber: Long, forShowId: Id<ShowId> = showId) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_id = showId,
+            show_id = forShowId,
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -548,6 +571,11 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun addAnotherShow(tmdbId: Long, traktId: Long): Id<ShowId> {
+        addShowWithoutTraktId(tmdbId)
+        return showIdForTraktId(traktId = traktId, tmdbId = tmdbId)
+    }
+
+    private fun addShowWithoutTraktId(tmdbId: Long): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
             name = "Test Show $tmdbId",
@@ -563,7 +591,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        return showIdForTraktId(traktId = traktId, tmdbId = tmdbId)
+        return database.tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOne()
     }
 
     @Test

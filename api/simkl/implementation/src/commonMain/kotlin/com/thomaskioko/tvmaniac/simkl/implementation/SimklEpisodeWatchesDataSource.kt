@@ -65,7 +65,7 @@ public class SimklEpisodeWatchesDataSource(
     private fun List<WatchedEpisodeEntry>.toSimklHistoryShows(): List<SimklHistoryShow> =
         groupBy { it.showId }.map { (showId, showWatches) ->
             SimklHistoryShow(
-                ids = SimklShowIds(simkl = showId),
+                ids = SimklShowIds(tmdb = showId.toString()),
                 seasons = showWatches.groupBy { it.seasonNumber }.map { (seasonNumber, seasonWatches) ->
                     SimklHistorySeason(
                         number = seasonNumber.toInt(),
