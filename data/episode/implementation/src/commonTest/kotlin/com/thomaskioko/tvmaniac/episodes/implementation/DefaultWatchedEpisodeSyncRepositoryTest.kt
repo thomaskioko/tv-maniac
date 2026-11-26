@@ -193,7 +193,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should keep the upload pending given the source skips the show`() = runTest {
         val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
-        recordingDataSource.skippedShowIds = setOf(SIMKL_SHOW_ID)
+        recordingDataSource.skippedAddShowIds = setOf(SIMKL_SHOW_ID)
         addPendingUpload(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
         addPendingUpload(seasonNumber = 1L, episodeNumber = 1L)
 
@@ -210,7 +210,8 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should keep the update pending given the source skips the show`() = runTest {
         val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
-        recordingDataSource.skippedShowIds = setOf(SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
+        recordingDataSource.skippedAddShowIds = setOf(SIMKL_SHOW_ID)
         addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
         addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
 
@@ -225,9 +226,45 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should keep the update pending given the source removes the show but skips the add`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedAddShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should keep the update pending given the source skips the removal but adds the show`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
     fun `should keep the delete row given the source skips the show`() = runTest {
         val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
-        recordingDataSource.skippedShowIds = setOf(SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
         addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
         addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
 
@@ -242,7 +279,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should not defer the bulk pull given the source skips every outstanding removal`() = runTest {
         val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
-        recordingDataSource.skippedShowIds = setOf(SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
         addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
 
         defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
@@ -813,7 +850,8 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val getAllWatchedShowsCalls: List<Int> get() = _getAllWatchedShowsCalls.toList()
 
     var addError: Throwable? = null
-    var skippedShowIds: Set<Long> = emptySet()
+    var skippedRemoveShowIds: Set<Long> = emptySet()
+    var skippedAddShowIds: Set<Long> = emptySet()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
     var metadataToReturn: List<WatchedShowMetadata> = emptyList()
@@ -843,13 +881,13 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         _operations += "add"
         addError?.let { throw it }
         _uploaded += entries
-        return entries.filterNot { it.showId in skippedShowIds }
+        return entries.filterNot { it.showId in skippedAddShowIds }
     }
 
     override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
         _operations += "remove"
         _removed += entries.map { it.seasonNumber to it.episodeNumber }
-        return entries.filterNot { it.showId in skippedShowIds }
+        return entries.filterNot { it.showId in skippedRemoveShowIds }
     }
 }
 
