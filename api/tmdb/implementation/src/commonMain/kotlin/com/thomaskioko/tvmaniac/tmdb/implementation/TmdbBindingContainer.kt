@@ -35,7 +35,7 @@ public object TmdbBindingContainer {
         logger: Logger,
         internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = tmdbHttpClient(
-        tmdbApiKey = tmdbConfig.apiKey,
+        tmdbAccessToken = tmdbConfig.accessToken,
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,

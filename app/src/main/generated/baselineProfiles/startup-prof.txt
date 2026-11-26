@@ -21008,7 +21008,7 @@ HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultSimklConfig$MetroFactory$Companion
 HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultSimklConfig$MetroFactory$Companion;->newInstance()Lcom/thomaskioko/tvmaniac/appconfig/DefaultSimklConfig;
 Lcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig;
 HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig;-><init>()V
-HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig;->getApiKey()Ljava/lang/String;
+HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig;->getAccessToken()Ljava/lang/String;
 Lcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig$MetroFactory;
 HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig$MetroFactory;-><clinit>()V
 HSPLcom/thomaskioko/tvmaniac/appconfig/DefaultTmdbConfig$MetroFactory;-><init>()V

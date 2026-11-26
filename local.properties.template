@@ -2,8 +2,8 @@
 #   cp local.properties.template local.properties
 # See docs/setup.md for where to obtain each credential.
 
-# TMDB API key: https://www.themoviedb.org/settings/api
-TMDB_API_KEY=your_tmdb_api_key
+# TMDB API Read Access Token: https://www.themoviedb.org/settings/api
+TMDB_ACCESS_TOKEN=your_tmdb_access_token
 
 # Trakt OAuth app: https://trakt.tv/oauth/applications/new  (Redirect URI: tvmaniac://auth/trakt)
 TRAKT_CLIENT_ID=your_trakt_client_id

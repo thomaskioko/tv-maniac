@@ -27,7 +27,15 @@ kotlin {
             }
         }
 
-        commonTest { dependencies { implementation(libs.ktor.serialization) } }
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(libs.ktor.mock)
+                implementation(libs.ktor.serialization)
+                implementation(projects.core.connectivity.testing)
+                implementation(projects.core.logger.testing)
+            }
+        }
 
         iosMain {
             dependencies {

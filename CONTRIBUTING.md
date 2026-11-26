@@ -31,7 +31,7 @@ The app requires TMDB and Trakt credentials at build time. See [docs/setup.md](d
 obtain them. Create `local.properties` in the project root:
 
 ```properties
-TMDB_API_KEY=your_tmdb_api_key
+TMDB_ACCESS_TOKEN=your_tmdb_access_token
 TRAKT_CLIENT_ID=your_trakt_client_id
 TRAKT_CLIENT_SECRET=your_trakt_client_secret
 TRAKT_REDIRECT_URI=tvmaniac://auth/trakt
