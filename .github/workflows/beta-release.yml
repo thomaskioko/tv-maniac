@@ -253,4 +253,4 @@ jobs:
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: |
           bundle exec fastlane ios distribute_testflight version:"${{ needs.build-ios.outputs.version }}" build:"${{ needs.build-ios.outputs.build }}" external:true
-          echo "Added **${{ needs.build-ios.outputs.version }}** build \`${{ needs.build-ios.outputs.build }}\` to App Store Connect Users and the external TestFlight groups, and submitted it to TestFlight App Review" >> "$GITHUB_STEP_SUMMARY"
+          echo "Added **${{ needs.build-ios.outputs.version }}** build \`${{ needs.build-ios.outputs.build }}\` to the internal and external TestFlight groups, and submitted it to TestFlight App Review" >> "$GITHUB_STEP_SUMMARY"

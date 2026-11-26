@@ -132,7 +132,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: |
           bundle exec fastlane ios distribute_testflight version:"${{ needs.build.outputs.version }}" build:"${{ needs.build.outputs.build }}"
-          echo "Added **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` to App Store Connect Users" >> "$GITHUB_STEP_SUMMARY"
+          echo "Added **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` to the internal TestFlight groups" >> "$GITHUB_STEP_SUMMARY"
 
   submit-app-store:
     needs: [build, deploy-testflight]
