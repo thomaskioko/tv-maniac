@@ -15,7 +15,7 @@ internal expect fun createTestSqlDriver(name: String): SqlDriver
 
 public abstract class BaseDatabaseTest {
 
-    private val sqlDriver: SqlDriver by lazy {
+    protected val sqlDriver: SqlDriver by lazy {
         createTestSqlDriver("${this@BaseDatabaseTest::class.simpleName}_${Uuid.random()}")
     }
 

@@ -47,7 +47,6 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.shows.implementation)
                 implementation(projects.data.syncActivity.testing)
-                implementation(projects.data.watchproviders.implementation)
             }
         }
     }

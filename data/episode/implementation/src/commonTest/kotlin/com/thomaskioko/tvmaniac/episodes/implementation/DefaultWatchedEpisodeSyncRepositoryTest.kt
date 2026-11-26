@@ -241,7 +241,12 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     fun `should drop bulk sync batch given show resolution fails`() = runTest {
         val failingRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
-            episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
+            episodesDao = DefaultEpisodesDao(
+                database = database,
+                showIdResolver = showIdResolver,
+                dispatchers = dispatchers,
+                dateTimeProvider = fakeDateTimeProvider,
+            ),
             activeSource = { recordingDataSource },
             accountManager = accountManager,
             datastoreRepository = datastoreRepository,

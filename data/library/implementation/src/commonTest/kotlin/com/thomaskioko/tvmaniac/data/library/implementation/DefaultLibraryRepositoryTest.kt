@@ -13,12 +13,15 @@ import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRemoteDataSource
-import com.thomaskioko.tvmaniac.data.watchproviders.implementation.DefaultWatchProviderDao
+import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
+import com.thomaskioko.tvmaniac.db.Watch_providers
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -38,6 +41,8 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -105,11 +110,7 @@ internal class DefaultLibraryRepositoryTest : BaseDatabaseTest() {
                 dispatchers = dispatchers,
                 dateTimeProvider = FakeDateTimeProvider(),
             ),
-            watchProviderDao = DefaultWatchProviderDao(
-                database = database,
-                showIdResolver = showIdResolver,
-                dispatcher = dispatchers,
-            ),
+            watchProviderDao = EmptyWatchProviderDao(),
             libraryStore = libraryStore,
             datastoreRepository = FakeDatastoreRepository(),
             followedShowsDao = followedShowsDao,
@@ -130,12 +131,13 @@ internal class DefaultLibraryRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should keep show followed given follow is uploaded while library fetch is in flight`() = runTest(testDispatcher) {
+    fun `should keep show followed given show is followed while library fetch is in flight`() = runTest(testDispatcher) {
+        val entered = CompletableDeferred<Unit>()
         val gate = CompletableDeferred<Unit>()
-        activeSource = GatedLibrarySource(gate)
+        activeSource = GatedLibrarySource(entered = entered, gate = gate)
 
         val fetch = launch { repository.syncLibrary(forceRefresh = true) }
-        advanceUntilIdle()
+        entered.await()
 
         insertFollowedShow(tmdbId = TMDB_ID, pendingAction = PendingAction.UPLOAD)
         val push = launch { repository.syncPendingFollowedShows() }
@@ -204,13 +206,29 @@ internal class DefaultLibraryRepositoryTest : BaseDatabaseTest() {
     }
 }
 
+private class EmptyWatchProviderDao : WatchProviderDao {
+    override fun upsert(entity: Watch_providers) {}
+
+    override fun fetchWatchProviders(tmdbId: Long): List<WatchProviders> = emptyList()
+
+    override fun observeWatchProviders(tmdbId: Long): Flow<List<WatchProviders>> = flowOf(emptyList())
+
+    override fun observeWatchProvidersByShowId(showId: Long): Flow<List<WatchProvidersByShowId>> = flowOf(emptyList())
+
+    override fun deleteByShowId(showId: Long) {}
+
+    override fun deleteAll() {}
+}
+
 private class GatedLibrarySource(
+    private val entered: CompletableDeferred<Unit>,
     private val gate: CompletableDeferred<Unit>,
 ) : LibraryRemoteDataSource {
 
     override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getWatchlist(): ApiResponse<List<RemoteFollowedShow>> {
+        entered.complete(Unit)
         gate.await()
         return ApiResponse.Success(emptyList())
     }

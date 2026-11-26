@@ -117,6 +117,27 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should fail and increment tmdb missing given stub row cannot be read back`() = runTest {
+        sqlDriver.execute(
+            identifier = null,
+            sql = "CREATE TRIGGER drop_new_tvshow AFTER INSERT ON tvshow BEGIN DELETE FROM tvshow WHERE id = NEW.id; END",
+            parameters = 0,
+        )
+
+        val (outcome, result) = reconciler.reconcile(
+            tmdbId = TMDB_ID,
+            imdbId = null,
+            title = SHOW_TITLE,
+            providerShowId = SIMKL_ID,
+            provider = SyncProviderSource.SIMKL,
+        )
+
+        outcome shouldBe ShowResolveOutcome.Failed
+        result.matched shouldBe 0
+        result.tmdbMissing shouldBe 1
+    }
+
+    @Test
     fun `should skip given tmdb id and imdb id both absent`() = runTest {
         val (outcome, result) = reconciler.reconcile(
             tmdbId = null,
