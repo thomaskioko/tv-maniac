@@ -6,7 +6,7 @@ scaffold {
     app {
         applicationId("com.thomaskioko.tvmaniac")
         minify(
-            rootProject.file("app/proguard-rules.pro"),
+            file("proguard-rules.pro"),
         )
         useFirebase()
     }
@@ -23,10 +23,6 @@ scaffold {
     }
 
     optIn("androidx.compose.ui.test.ExperimentalTestApi")
-
-    ignoreUnusedDependencies(
-        ":data:subscription:implementation",
-    )
 }
 
 android {
@@ -41,6 +37,17 @@ android {
 }
 
 tasks.withType<Test>().configureEach {
+    jvmArgs(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.security=ALL-UNNAMED",
+        "--add-opens=java.base/java.text=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+    )
     develocity.testRetry {
         maxRetries = providers.environmentVariable("CI").map { 2 }.orElse(0)
         failOnPassedAfterRetry = false

@@ -28,6 +28,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -167,6 +168,126 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should upload pending episode with the tmdb id given the show has no trakt id`() = runTest {
+        val simklOnlyShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L, forShowId = simklOnlyShowId)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.uploaded.single().single().showId shouldBe SIMKL_SHOW_ID
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = simklOnlyShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should upload pending episode with the tmdb id given the show has a trakt id`() = runTest {
+        val traktShowId = addAnotherShow(tmdbId = THIRD_SHOW_ID, traktId = THIRD_SHOW_TRAKT_ID)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L, forShowId = traktShowId)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.uploaded.single().single().showId shouldBe THIRD_SHOW_ID
+    }
+
+    @Test
+    fun `should keep the upload pending given the source skips the show`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedAddShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPLOAD.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should keep the update pending given the source skips the show`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
+        recordingDataSource.skippedAddShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should keep the update pending given the source removes the show but skips the add`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedAddShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should keep the update pending given the source skips the removal but adds the show`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should keep the delete row given the source skips the show`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+        addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L, forShowId = skippedShowId)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.DELETE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
+    }
+
+    @Test
+    fun `should not defer the bulk pull given the source skips every outstanding removal`() = runTest {
+        val skippedShowId = addShowWithoutTraktId(tmdbId = SIMKL_SHOW_ID)
+        recordingDataSource.skippedRemoveShowIds = setOf(SIMKL_SHOW_ID)
+        addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = null, forShowId = skippedShowId)
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+
+        recordingDataSource.getAllWatchedShowsCalls.shouldNotBeEmpty()
+    }
+
+    @Test
     fun `should persist watched episodes in db given bulk sync batch carries tmdb boundary id`() = runTest {
         recordingDataSource.batchesToReturn = listOf(
             WatchedShowBatch(
@@ -233,6 +354,37 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         )
 
         defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+
+        database.watchedEpisodesQueries.getWatchedEpisodes(showId).executeAsList().size shouldBe 0
+    }
+
+    @Test
+    fun `should drop bulk sync batch given show resolution fails`() = runTest {
+        val failingRepository = DefaultWatchedEpisodeSyncRepository(
+            dao = dao,
+            episodesDao = DefaultEpisodesDao(
+                database = database,
+                showIdResolver = showIdResolver,
+                dispatchers = dispatchers,
+                dateTimeProvider = fakeDateTimeProvider,
+            ),
+            activeSource = { recordingDataSource },
+            accountManager = accountManager,
+            datastoreRepository = datastoreRepository,
+            lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
+            syncRepository = syncRepository,
+            logger = NoOpLogger,
+            watchStatusRepository = FakeShowWatchStatusRepository(),
+            showReconciler = FailingShowReconciler(),
+        )
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        requestManagerRepository.requestValid = false
+        syncRepository.setRemoteTimestamp(
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = kotlin.time.Clock.System.now(),
+        )
+
+        failingRepository.syncAllWatchedEpisodes(forceRefresh = true)
 
         database.watchedEpisodesQueries.getWatchedEpisodes(showId).executeAsList().size shouldBe 0
     }
@@ -419,9 +571,9 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         lastUpdatedAt = lastUpdatedAt,
     )
 
-    private fun addPendingUpload(seasonNumber: Long, episodeNumber: Long) {
+    private fun addPendingUpload(seasonNumber: Long, episodeNumber: Long, forShowId: Id<ShowId> = showId) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_id = showId,
+            show_id = forShowId,
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -436,9 +588,10 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         seasonNumber: Long,
         episodeNumber: Long,
         traktId: Long?,
+        forShowId: Id<ShowId> = showId,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_id = showId,
+            show_id = forShowId,
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -453,9 +606,10 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         seasonNumber: Long,
         episodeNumber: Long,
         traktId: Long?,
+        forShowId: Id<ShowId> = showId,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_id = showId,
+            show_id = forShowId,
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -548,6 +702,11 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun addAnotherShow(tmdbId: Long, traktId: Long): Id<ShowId> {
+        addShowWithoutTraktId(tmdbId)
+        return showIdForTraktId(traktId = traktId, tmdbId = tmdbId)
+    }
+
+    private fun addShowWithoutTraktId(tmdbId: Long): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
             name = "Test Show $tmdbId",
@@ -563,7 +722,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        return showIdForTraktId(traktId = traktId, tmdbId = tmdbId)
+        return database.tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOne()
     }
 
     @Test
@@ -722,6 +881,8 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val getAllWatchedShowsCalls: List<Int> get() = _getAllWatchedShowsCalls.toList()
 
     var addError: Throwable? = null
+    var skippedRemoveShowIds: Set<Long> = emptySet()
+    var skippedAddShowIds: Set<Long> = emptySet()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
     var metadataToReturn: List<WatchedShowMetadata> = emptyList()
@@ -746,15 +907,18 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         return batchesToReturn.drop(offset).take(limit)
     }
 
-    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
         yield()
         _operations += "add"
         addError?.let { throw it }
         _uploaded += entries
+        return entries.filterNot { it.showId in skippedAddShowIds }
     }
-    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
         _operations += "remove"
         _removed += entries.map { it.seasonNumber to it.episodeNumber }
+        return entries.filterNot { it.showId in skippedRemoveShowIds }
     }
 }
 
@@ -776,6 +940,18 @@ private class ThrowingShowReconciler(private val failForTmdbId: Long) : ShowReco
         if (tmdbId == null) return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
         return ShowResolveOutcome.Resolved(tmdbId) to result.copy(matched = result.matched + 1)
     }
+}
+
+private class FailingShowReconciler : ShowReconciler {
+    override suspend fun reconcile(
+        tmdbId: Long?,
+        imdbId: String?,
+        title: String?,
+        providerShowId: String?,
+        provider: SyncProviderSource,
+        result: ReconciliationResult,
+    ): Pair<ShowResolveOutcome, ReconciliationResult> =
+        ShowResolveOutcome.Failed to result.copy(tmdbMissing = result.tmdbMissing + 1)
 }
 
 private class PassthroughShowReconciler : ShowReconciler {
@@ -803,6 +979,6 @@ private class SimklEpisodeWatchesDataSourceStub : EpisodeWatchesDataSource {
         return batchesToReturn.drop(offset).take(limit)
     }
 
-    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {}
-    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {}
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> = entries
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> = entries
 }

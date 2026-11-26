@@ -3,6 +3,9 @@ package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiFailure
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiFailureKind
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiHttpException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiNetworkException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse.Error.NetworkFailure.Kind
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiSerializationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.httpStatusToKind
@@ -48,13 +51,20 @@ public val ApiErrorReportingPlugin: ClientPlugin<ApiErrorReportingPluginConfig> 
             onFailure(request.toApiFailure(provider, status = null, kind = ApiFailureKind.Expected, body = null), e)
             throw e
         } catch (e: HttpRequestTimeoutException) {
-            onFailure(request.toApiFailure(provider, status = null, kind = ApiFailureKind.Expected, body = null), e)
+            val failure = request.toApiFailure(provider, status = null, kind = ApiFailureKind.Expected, body = null)
+            onFailure(failure, ApiNetworkException(Kind.Timeout, request.describe(e)))
             throw e
         } catch (e: Throwable) {
-            val status = (e as? ResponseException)?.response?.status?.value
+            val response = (e as? ResponseException)?.response
+            val status = response?.status?.value
             val kind = status?.let(::httpStatusToKind) ?: ApiFailureKind.Unexpected
-            val body = (e as? ResponseException)?.response?.errorBody()
-            onFailure(request.toApiFailure(provider, status = status, kind = kind, body = body), e)
+            val body = response?.errorBody()
+            val reported = if (status != null) {
+                ApiHttpException(status, withBody("HTTP $status ${request.requestLabel}", body))
+            } else {
+                ApiNetworkException(Kind.Unknown, request.describe(e))
+            }
+            onFailure(request.toApiFailure(provider, status = status, kind = kind, body = body), reported)
             throw e
         }
 
@@ -92,17 +102,21 @@ private suspend fun reportUnreadableBody(
     call: HttpClientCall,
     cause: Throwable,
 ) {
-    val body = call.response.errorBody()
-    onFailure(call.request.toApiFailure(provider, status = null, kind = ApiFailureKind.Unexpected, body = body), cause)
+    val failure = call.request.toApiFailure(provider, status = null, kind = ApiFailureKind.Unexpected, body = null)
+    onFailure(failure, ApiSerializationException(call.request.describe(cause)))
 }
 
 private const val ERROR_BODY_LIMIT = 500
 
 private val HttpRequestBuilder.requestLabel: String
-    get() = "${method.value} ${url.host}${url.encodedPath}"
+    get() = "${method.value} ${url.encodedPath.toEndpointTemplate()}"
 
 private val HttpRequest.requestLabel: String
-    get() = "${method.value} ${url.host}${url.encodedPath}"
+    get() = "${method.value} ${url.encodedPath.toEndpointTemplate()}"
+
+private fun HttpRequestBuilder.describe(cause: Throwable): String = "${cause::class.simpleName} $requestLabel"
+
+private fun HttpRequest.describe(cause: Throwable): String = "${cause::class.simpleName} $requestLabel"
 
 private fun HttpRequestBuilder.toApiFailure(provider: String, status: Int?, kind: ApiFailureKind, body: String?): ApiFailure =
     ApiFailure(

@@ -64,15 +64,10 @@ public class DefaultWatchedEpisodeSyncRepository(
             if (pendingUploads.isNotEmpty()) {
                 uploadPending(pendingUploads)
             }
-            if (pendingUpdates.isNotEmpty()) {
-                updatePending(pendingUpdates)
-            }
-            if (pendingDeletes.isNotEmpty()) {
-                deletePending(pendingDeletes)
-            }
+            val removals = (if (pendingUpdates.isNotEmpty()) updatePending(pendingUpdates) else 0) +
+                (if (pendingDeletes.isNotEmpty()) deletePending(pendingDeletes) else 0)
 
-            if (pendingDeletes.isNotEmpty() || pendingUpdates.isNotEmpty()) {
-                val removals = pendingDeletes.size + pendingUpdates.size
+            if (removals > 0) {
                 logger.debug(TAG, "Deferring bulk pull this cycle after pushing $removals removal(s)")
                 return
             }
@@ -137,18 +132,19 @@ public class DefaultWatchedEpisodeSyncRepository(
 
     private suspend fun updatePending(
         pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
-    ) {
-        val source = activeSource() ?: return
+    ): Int {
+        val source = activeSource() ?: return 0
         logger.debug(TAG, "Processing ${pending.size} pending updates")
 
         val entries = pending.map(::toEntry)
 
-        source.removeEpisodeEntries(entries)
-        source.addEpisodeEntries(entries)
+        val removedIds = source.removeEpisodeEntries(entries).map { it.id }.toSet()
+        val sentIds = source.addEpisodeEntries(entries).map { it.id }.filter { it in removedIds }
 
-        dao.updatePendingActions(pending.map { it.watched_id }, WatchedEpisodeSyncOperation.NOTHING)
+        dao.updatePendingActions(sentIds, WatchedEpisodeSyncOperation.NOTHING)
 
-        logger.debug(TAG, "Successfully updated ${pending.size} episodes")
+        logger.debug(TAG, "Successfully updated ${sentIds.size} of ${pending.size} episodes")
+        return sentIds.size
     }
 
     private suspend fun uploadPending(
@@ -157,31 +153,32 @@ public class DefaultWatchedEpisodeSyncRepository(
         val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending uploads")
 
-        source.addEpisodeEntries(pending.map(::toEntry))
+        val sent = source.addEpisodeEntries(pending.map(::toEntry))
 
-        dao.updatePendingActions(pending.map { it.watched_id }, WatchedEpisodeSyncOperation.NOTHING)
+        dao.updatePendingActions(sent.map { it.id }, WatchedEpisodeSyncOperation.NOTHING)
 
-        logger.debug(TAG, "Successfully uploaded ${pending.size} episodes")
+        logger.debug(TAG, "Successfully uploaded ${sent.size} of ${pending.size} episodes")
     }
 
     private suspend fun deletePending(
         pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
-    ) {
-        val source = activeSource() ?: return
+    ): Int {
+        val source = activeSource() ?: return 0
         logger.debug(TAG, "Processing ${pending.size} pending deletes")
 
-        source.removeEpisodeEntries(pending.map(::toEntry))
+        val sent = source.removeEpisodeEntries(pending.map(::toEntry))
 
-        dao.deleteByIds(pending.map { it.watched_id })
+        dao.deleteByIds(sent.map { it.id })
 
-        logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
+        logger.debug(TAG, "Successfully deleted ${sent.size} of ${pending.size} episodes")
+        return sent.size
     }
 
     private fun toEntry(
         episode: com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction,
     ): WatchedEpisodeEntry = WatchedEpisodeEntry(
         id = episode.watched_id,
-        showId = episode.trakt_id,
+        showId = episode.show_id.id,
         episodeId = episode.episode_id?.id,
         seasonNumber = episode.season_number,
         episodeNumber = episode.episode_number,
@@ -273,7 +270,9 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         val tmdbId = when (outcome) {
             is ShowResolveOutcome.Resolved -> outcome.tmdbId
-            is ShowResolveOutcome.Skipped -> return
+            is ShowResolveOutcome.Skipped,
+            is ShowResolveOutcome.Failed,
+            -> return
         }
 
         if (batch.runtime != null || batch.year != null) {

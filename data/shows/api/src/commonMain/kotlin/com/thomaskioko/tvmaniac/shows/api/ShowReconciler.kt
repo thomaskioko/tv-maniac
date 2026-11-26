@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 public sealed class ShowResolveOutcome {
     public data class Resolved(public val tmdbId: Long) : ShowResolveOutcome()
     public data object Skipped : ShowResolveOutcome()
+    public data object Failed : ShowResolveOutcome()
 }
 
 public data class ReconciliationResult(

@@ -24,7 +24,18 @@ internal fun httpStatusToKind(status: Int): ApiFailureKind = when (status) {
     else -> ApiFailureKind.Unexpected
 }
 
-internal fun String.toEndpointTemplate(): String =
-    substringBefore('?')
-        .split('/')
-        .joinToString("/") { segment -> if (segment.isNotEmpty() && segment.all(Char::isDigit)) "{id}" else segment }
+internal fun String.toEndpointTemplate(): String {
+    val segments = substringBefore('?').split('/')
+    return segments
+        .mapIndexed { index, segment ->
+            when {
+                index > 0 && segments[index - 1] == USERS_SEGMENT && segment.isNotEmpty() -> USER_PLACEHOLDER
+                segment.isNotEmpty() && segment.all(Char::isDigit) -> "{id}"
+                else -> segment
+            }
+        }
+        .joinToString("/")
+}
+
+private const val USERS_SEGMENT = "users"
+private const val USER_PLACEHOLDER = "{user}"

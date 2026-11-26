@@ -110,19 +110,48 @@ jobs:
           bundle exec fastlane ios upload_testflight
           echo "Published **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` to TestFlight" >> "$GITHUB_STEP_SUMMARY"
 
-  submit-app-store:
+  distribute-testflight:
     needs: [build, deploy-testflight]
     runs-on: ubuntu-latest
-    environment: production
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 10
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
+      - name: Add build to TestFlight groups
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          bundle exec fastlane ios distribute_testflight version:"${{ needs.build.outputs.version }}" build:"${{ needs.build.outputs.build }}"
+          echo "Added **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` to the internal TestFlight groups" >> "$GITHUB_STEP_SUMMARY"
+
+  submit-app-store:
+    needs: [build, deploy-testflight]
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install git-cliff
+        uses: kenji-miyake/setup-git-cliff@2778609c643a39a2576c4bae2e493b855eb4aee8 # v2.0.1
 
       - name: Submit to App Store review
         env:
@@ -131,5 +160,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
           IOS_SUBMIT_FOR_REVIEW: "true"
         run: |
-          bundle exec fastlane ios deploy_app_store
+          RELEASE_NOTES=$(git cliff --current --strip header)
+          export RELEASE_NOTES
+          bundle exec fastlane ios deploy_app_store version:"${{ needs.build.outputs.version }}" build:"${{ needs.build.outputs.build }}"
           echo "Submitted **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` for App Store review (phased release)" >> "$GITHUB_STEP_SUMMARY"

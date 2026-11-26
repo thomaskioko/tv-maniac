@@ -14,7 +14,7 @@ public interface EpisodeWatchesDataSource : SyncProvider {
      */
     public suspend fun getWatchedShowMetadata(page: Int = 1, limit: Int = 100): List<WatchedShowMetadata> = emptyList()
 
-    public suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>)
+    public suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry>
 
-    public suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>)
+    public suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry>
 }

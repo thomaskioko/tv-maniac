@@ -190,17 +190,18 @@ public class SearchShowsPresenter(
             genreRepository.observeGenreShowCategory()
                 .distinctUntilChanged()
                 .collect { category ->
-                    fetchGenreContent(category = category)
+                    fetchGenreContent(category = category, loadingCounter = ObservableLoadingCounter())
                 }
         }
 
         private fun fetchGenreContent(
             category: GenreShowCategory,
             forceRefresh: Boolean = false,
+            loadingCounter: ObservableLoadingCounter = genreLoadingState,
         ) {
             coroutineScope.launch {
                 fetchGenreContentInteractor(FetchGenreContentInteractor.Params(category, forceRefresh))
-                    .collectStatus(genreLoadingState, logger, uiMessageManager, "Genre Content", errorToStringMapper)
+                    .collectStatus(loadingCounter, logger, uiMessageManager, "Genre Content", errorToStringMapper)
             }
         }
 

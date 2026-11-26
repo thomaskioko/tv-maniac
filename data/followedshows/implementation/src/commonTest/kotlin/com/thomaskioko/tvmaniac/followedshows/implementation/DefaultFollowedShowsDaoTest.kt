@@ -83,6 +83,22 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should return the trakt id given the show is not followed`() {
+        insertShow(tmdbId = 4L)
+        showIdForTraktId(traktId = 400L, tmdbId = 4L)
+
+        dao.entries().size shouldBe 0
+        dao.traktIdForTmdbId(4L) shouldBe 400L
+    }
+
+    @Test
+    fun `should return null trakt id given the show has no trakt link`() {
+        insertShow(tmdbId = 5L)
+
+        dao.traktIdForTmdbId(5L).shouldBeNull()
+    }
+
+    @Test
     fun `should get all entries`() {
         dao.upsert(
             FollowedShowEntry(
@@ -478,6 +494,24 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             vote_count = 0,
             genres = null,
             status = null,
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+    }
+
+    private fun insertShow(tmdbId: Long) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(tmdbId),
+            name = "Test Show $tmdbId",
+            overview = "Test overview",
+            language = "en",
+            year = "2023-01-01",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
             episode_numbers = null,
             season_numbers = null,
             poster_path = null,

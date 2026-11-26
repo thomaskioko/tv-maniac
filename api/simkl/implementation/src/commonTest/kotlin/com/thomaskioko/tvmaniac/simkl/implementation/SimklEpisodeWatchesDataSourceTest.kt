@@ -121,6 +121,38 @@ internal class SimklEpisodeWatchesDataSourceTest {
     }
 
     @Test
+    fun `should send the tmdb id given entries are added`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
+
+        dataSource.addEpisodeEntries(listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z"))))
+
+        val ids = fakeRemote.lastAddedHistory!!.shows.single().ids
+        ids.tmdb shouldBe "583436"
+        ids.simkl.shouldBeNull()
+    }
+
+    @Test
+    fun `should send the tmdb id given entries are removed`() = runTest {
+        fakeRemote.setRemoveHistoryResponse(ApiResponse.Success(SimklRemoveHistoryResponse()))
+
+        dataSource.removeEpisodeEntries(listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z"))))
+
+        val ids = fakeRemote.lastRemovedHistory!!.shows.single().ids
+        ids.tmdb shouldBe "583436"
+        ids.simkl.shouldBeNull()
+    }
+
+    @Test
+    fun `should report every entry as sent given entries are added or removed`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
+        fakeRemote.setRemoveHistoryResponse(ApiResponse.Success(SimklRemoveHistoryResponse()))
+        val entries = listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z")))
+
+        dataSource.addEpisodeEntries(entries) shouldBe entries
+        dataSource.removeEpisodeEntries(entries) shouldBe entries
+    }
+
+    @Test
     fun `should send the placeholder given the watched time is unknown`() = runTest {
         fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
 
