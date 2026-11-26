@@ -160,6 +160,22 @@ internal class TraktEpisodeWatchesDataSourceTest {
     }
 
     @Test
+    fun `should report no entries as sent given the login has expired when entries are added`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        fakeHistory.setAddResponse(ApiResponse.Unauthenticated)
+
+        dataSource.addEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z")))).shouldBeEmpty()
+    }
+
+    @Test
+    fun `should report no entries as sent given the login has expired when entries are removed`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        fakeHistory.setRemoveResponse(ApiResponse.Unauthenticated)
+
+        dataSource.removeEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z")))).shouldBeEmpty()
+    }
+
+    @Test
     fun `should send only the shows that have a trakt id given entries span both kinds`() = runTest {
         followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
 

@@ -153,6 +153,24 @@ internal class SimklEpisodeWatchesDataSourceTest {
     }
 
     @Test
+    fun `should report no entries as sent given the login has expired when entries are added`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Unauthenticated)
+
+        dataSource.addEpisodeEntries(
+            listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z"))),
+        ).shouldBeEmpty()
+    }
+
+    @Test
+    fun `should report no entries as sent given the login has expired when entries are removed`() = runTest {
+        fakeRemote.setRemoveHistoryResponse(ApiResponse.Unauthenticated)
+
+        dataSource.removeEpisodeEntries(
+            listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z"))),
+        ).shouldBeEmpty()
+    }
+
+    @Test
     fun `should send the placeholder given the watched time is unknown`() = runTest {
         fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
 
