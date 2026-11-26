@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.oauth.implementation
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -8,56 +9,74 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
+import com.thomaskioko.tvmaniac.core.base.DeviceLocalDataStore
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class AndroidAuthStore(
-    @AppPreferencesDataStore private val dataStore: DataStore<Preferences>,
+    @DeviceLocalDataStore private val deviceLocalDataStore: DataStore<Preferences>,
+    @AppPreferencesDataStore private val appPreferencesDataStore: DataStore<Preferences>,
 ) : AuthStore {
 
-    override suspend fun get(provider: SyncProviderSource): AuthState? {
-        val prefs = dataStore.data.first()
+    private val mutex = Mutex()
 
-        val accessToken = prefs[accessTokenKey(provider)]
-        val refreshToken = prefs[refreshTokenKey(provider)]
-        val expiresAt = prefs[expiresAtKey(provider)]
-        val tokenLifetimeSeconds = prefs[tokenLifetimeKey(provider)]
+    override suspend fun get(provider: SyncProviderSource): AuthState? = mutex.withLock {
+        deviceLocalDataStore.data.first().toAuthState(provider)?.let { return@withLock it }
+
+        val storedInAppPreferences = appPreferencesDataStore.data.first().toAuthState(provider) ?: return@withLock null
+        write(provider, storedInAppPreferences)
+        storedInAppPreferences
+    }
+
+    override suspend fun save(provider: SyncProviderSource, state: AuthState): Unit = mutex.withLock {
+        write(provider, state)
+    }
+
+    override suspend fun clear(provider: SyncProviderSource): Unit = mutex.withLock {
+        deviceLocalDataStore.edit { it.removeTokens(provider) }
+        appPreferencesDataStore.edit { it.removeTokens(provider) }
+    }
+
+    private suspend fun write(provider: SyncProviderSource, state: AuthState) {
+        deviceLocalDataStore.edit { prefs ->
+            prefs[accessTokenKey(provider)] = state.accessToken
+            prefs[refreshTokenKey(provider)] = state.refreshToken
+            state.expiresAt?.let { prefs[expiresAtKey(provider)] = it.toEpochMilliseconds() }
+            state.tokenLifetimeSeconds?.let { prefs[tokenLifetimeKey(provider)] = it }
+        }
+        appPreferencesDataStore.edit { it.removeTokens(provider) }
+    }
+
+    private fun Preferences.toAuthState(provider: SyncProviderSource): AuthState? {
+        val accessToken = this[accessTokenKey(provider)]
+        val refreshToken = this[refreshTokenKey(provider)]
 
         return if (accessToken != null && refreshToken != null) {
             AuthState(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 isAuthorized = true,
-                expiresAt = expiresAt?.let { Instant.fromEpochMilliseconds(it) },
-                tokenLifetimeSeconds = tokenLifetimeSeconds,
+                expiresAt = this[expiresAtKey(provider)]?.let { Instant.fromEpochMilliseconds(it) },
+                tokenLifetimeSeconds = this[tokenLifetimeKey(provider)],
             )
         } else {
             null
         }
     }
 
-    override suspend fun save(provider: SyncProviderSource, state: AuthState) {
-        dataStore.edit { prefs ->
-            prefs[accessTokenKey(provider)] = state.accessToken
-            prefs[refreshTokenKey(provider)] = state.refreshToken
-            state.expiresAt?.let { prefs[expiresAtKey(provider)] = it.toEpochMilliseconds() }
-            state.tokenLifetimeSeconds?.let { prefs[tokenLifetimeKey(provider)] = it }
-        }
-    }
-
-    override suspend fun clear(provider: SyncProviderSource) {
-        dataStore.edit { prefs ->
-            prefs.remove(accessTokenKey(provider))
-            prefs.remove(refreshTokenKey(provider))
-            prefs.remove(expiresAtKey(provider))
-            prefs.remove(tokenLifetimeKey(provider))
-        }
+    private fun MutablePreferences.removeTokens(provider: SyncProviderSource) {
+        remove(accessTokenKey(provider))
+        remove(refreshTokenKey(provider))
+        remove(expiresAtKey(provider))
+        remove(tokenLifetimeKey(provider))
     }
 
     private fun prefix(provider: SyncProviderSource): String = provider.name.lowercase()

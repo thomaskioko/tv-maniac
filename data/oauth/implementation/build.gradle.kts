@@ -57,5 +57,12 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
             }
         }
+
+        androidHostTest {
+            dependencies {
+                implementation(libs.coroutines.test)
+                implementation(libs.kotest.assertions)
+            }
+        }
     }
 }
