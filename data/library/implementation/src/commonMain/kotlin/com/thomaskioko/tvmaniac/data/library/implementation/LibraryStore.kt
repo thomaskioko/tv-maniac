@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
@@ -91,6 +93,9 @@ public class LibraryStore(
                                 }
                             }
                             is ShowResolveOutcome.Skipped -> null
+                            is ShowResolveOutcome.Failed -> throw SyncException(
+                                SyncError.Unknown(message = "Could not match ${watchlistShow.title} to a TMDB show."),
+                            )
                         }
                     }
                 }

@@ -273,7 +273,9 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         val tmdbId = when (outcome) {
             is ShowResolveOutcome.Resolved -> outcome.tmdbId
-            is ShowResolveOutcome.Skipped -> return
+            is ShowResolveOutcome.Skipped,
+            is ShowResolveOutcome.Failed,
+            -> return
         }
 
         if (batch.runtime != null || batch.year != null) {

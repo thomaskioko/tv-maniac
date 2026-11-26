@@ -94,6 +94,43 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should fail and increment tmdb missing given tmdb absent and find returns error`() = runTest {
+        fakeTmdbSource.setFindShowByExternalId(
+            ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "Server error"),
+        )
+
+        val (outcome, result) = reconciler.reconcile(
+            tmdbId = null,
+            imdbId = IMDB_ID,
+            title = SHOW_TITLE,
+            providerShowId = SIMKL_ID,
+            provider = SyncProviderSource.SIMKL,
+        )
+
+        outcome shouldBe ShowResolveOutcome.Failed
+
+        val tvshow = database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(TMDB_ID)).executeAsOneOrNull()
+        tvshow shouldBe null
+
+        result.matched shouldBe 0
+        result.tmdbMissing shouldBe 1
+    }
+
+    @Test
+    fun `should skip given tmdb id and imdb id both absent`() = runTest {
+        val (outcome, result) = reconciler.reconcile(
+            tmdbId = null,
+            imdbId = null,
+            title = SHOW_TITLE,
+            providerShowId = SIMKL_ID,
+            provider = SyncProviderSource.SIMKL,
+        )
+
+        outcome shouldBe ShowResolveOutcome.Skipped
+        result.tmdbMissing shouldBe 1
+    }
+
+    @Test
     fun `should not overwrite existing show metadata given the show already exists`() = runTest {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(TMDB_ID),

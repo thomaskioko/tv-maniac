@@ -238,6 +238,32 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should drop bulk sync batch given show resolution fails`() = runTest {
+        val failingRepository = DefaultWatchedEpisodeSyncRepository(
+            dao = dao,
+            episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
+            activeSource = { recordingDataSource },
+            accountManager = accountManager,
+            datastoreRepository = datastoreRepository,
+            lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
+            syncRepository = syncRepository,
+            logger = NoOpLogger,
+            watchStatusRepository = FakeShowWatchStatusRepository(),
+            showReconciler = FailingShowReconciler(),
+        )
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        requestManagerRepository.requestValid = false
+        syncRepository.setRemoteTimestamp(
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = kotlin.time.Clock.System.now(),
+        )
+
+        failingRepository.syncAllWatchedEpisodes(forceRefresh = true)
+
+        database.watchedEpisodesQueries.getWatchedEpisodes(showId).executeAsList().size shouldBe 0
+    }
+
+    @Test
     fun `should skip unchanged show given bulk sync batch carries same last updated timestamp`() = runTest {
         requestManagerRepository.requestValid = false
         syncRepository.setRemoteTimestamp(
@@ -776,6 +802,18 @@ private class ThrowingShowReconciler(private val failForTmdbId: Long) : ShowReco
         if (tmdbId == null) return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
         return ShowResolveOutcome.Resolved(tmdbId) to result.copy(matched = result.matched + 1)
     }
+}
+
+private class FailingShowReconciler : ShowReconciler {
+    override suspend fun reconcile(
+        tmdbId: Long?,
+        imdbId: String?,
+        title: String?,
+        providerShowId: String?,
+        provider: SyncProviderSource,
+        result: ReconciliationResult,
+    ): Pair<ShowResolveOutcome, ReconciliationResult> =
+        ShowResolveOutcome.Failed to result.copy(tmdbMissing = result.tmdbMissing + 1)
 }
 
 private class PassthroughShowReconciler : ShowReconciler {

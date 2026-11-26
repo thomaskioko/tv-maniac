@@ -33,7 +33,11 @@ public class DefaultShowReconciler(
     ): Pair<ShowResolveOutcome, ReconciliationResult> {
         val resolvedTmdbId = when {
             tmdbId != null -> tmdbId
-            imdbId != null -> resolveViaImdb(imdbId) ?: return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
+            imdbId != null -> when (val lookup = resolveViaImdb(imdbId)) {
+                is ImdbLookup.Found -> lookup.tmdbId
+                ImdbLookup.NoMatch -> return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
+                ImdbLookup.Failed -> return ShowResolveOutcome.Failed to result.copy(tmdbMissing = result.tmdbMissing + 1)
+            }
             else -> return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
         }
 
@@ -45,20 +49,25 @@ public class DefaultShowReconciler(
         )
 
         database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(resolvedTmdbId)).executeAsOneOrNull()
-            ?: return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
+            ?: return ShowResolveOutcome.Failed to result.copy(tmdbMissing = result.tmdbMissing + 1)
 
         return ShowResolveOutcome.Resolved(resolvedTmdbId) to result.copy(matched = result.matched + 1)
     }
 
-    private suspend fun resolveViaImdb(imdbId: String): Long? =
+    private suspend fun resolveViaImdb(imdbId: String): ImdbLookup =
         when (val response = tmdbDataSource.findShowByExternalId(externalId = imdbId, source = "imdb_id")) {
             is ApiResponse.Success -> {
-                if (response.body == null) logger.debug(TAG, "TMDB find returned null for imdb_id=$imdbId")
-                response.body
+                val tmdbId = response.body
+                if (tmdbId == null) {
+                    logger.debug(TAG, "TMDB find returned null for imdb_id=$imdbId")
+                    ImdbLookup.NoMatch
+                } else {
+                    ImdbLookup.Found(tmdbId)
+                }
             }
             else -> {
                 logger.debug(TAG, "TMDB find failed for imdb_id=$imdbId")
-                null
+                ImdbLookup.Failed
             }
         }
 
@@ -95,6 +104,12 @@ public class DefaultShowReconciler(
                 externalId = providerShowId,
             )
         }
+    }
+
+    private sealed interface ImdbLookup {
+        data class Found(val tmdbId: Long) : ImdbLookup
+        data object NoMatch : ImdbLookup
+        data object Failed : ImdbLookup
     }
 
     private companion object {

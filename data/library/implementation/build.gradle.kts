@@ -37,12 +37,17 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.api.tmdb.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.database.testing)
+                implementation(projects.data.datastore.testing)
                 implementation(projects.data.followedshows.implementation)
+                implementation(projects.data.library.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.shows.implementation)
                 implementation(projects.data.syncActivity.testing)
+                implementation(projects.data.watchproviders.implementation)
             }
         }
     }

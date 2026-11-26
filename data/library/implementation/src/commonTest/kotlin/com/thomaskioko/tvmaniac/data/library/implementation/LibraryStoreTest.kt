@@ -15,7 +15,9 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.implementation.DefaultFollowedShowsDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -241,6 +243,37 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should keep followed show given imdb lookup fails`() = runTest(testDispatcher) {
+        val store = buildStore { simklSource }
+        insertFollowedShow(tmdbId = TMDB_ID)
+        fakeTmdbShowsSource.setFindShowByExternalId(
+            ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "Server error"),
+        )
+        simklSource.setWatchlist(
+            listOf(
+                RemoteFollowedShow(
+                    tmdbId = null,
+                    imdbId = IMDB_ID,
+                    providerShowId = SIMKL_ID,
+                    provider = SyncProviderSource.SIMKL,
+                    title = SHOW_TITLE,
+                    year = 2021,
+                    followedAt = FOLLOWED_AT,
+                ),
+            ),
+        )
+
+        store.stream(StoreReadRequest.fresh(LibrarySortOption.ADDED_DESC)).test {
+            awaitItem()
+            awaitItem()
+            cancelAndConsumeRemainingEvents()
+        }
+
+        followedShowsDao.entryWithTmdbId(TMDB_ID).shouldNotBeNull()
+        followedShowsDao.entryWithTmdbId(TMDB_ID)?.pendingAction shouldBe PendingAction.NOTHING
+    }
+
+    @Test
     fun `should not attach trakt external id given simkl show resolved via tmdb id`() = runTest(testDispatcher) {
         val store = buildStore { simklSource }
         simklSource.setWatchlist(
@@ -287,6 +320,33 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
             externalId = TRAKT_ID.toString(),
         ).executeAsOneOrNull()
         traktExternalId.shouldBeNull()
+    }
+
+    private fun insertFollowedShow(tmdbId: Long) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(tmdbId),
+            name = SHOW_TITLE,
+            overview = "",
+            language = null,
+            year = null,
+            ratings = 0.0,
+            vote_count = 0,
+            genres = null,
+            status = null,
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        showIdForTraktId(traktId = TRAKT_ID, tmdbId = tmdbId)
+        followedShowsDao.upsert(
+            FollowedShowEntry(
+                showId = tmdbId,
+                tmdbId = tmdbId,
+                followedAt = FOLLOWED_AT,
+                pendingAction = PendingAction.NOTHING,
+            ),
+        )
     }
 
     private companion object {

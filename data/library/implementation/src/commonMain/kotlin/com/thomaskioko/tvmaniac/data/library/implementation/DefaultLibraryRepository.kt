@@ -39,6 +39,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.time.Duration
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError as SyncStateError
 
@@ -59,6 +61,8 @@ public class DefaultLibraryRepository(
     private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : LibraryRepository {
+
+    private val syncMutex = Mutex()
 
     override fun observeLibrary(
         query: String,
@@ -151,12 +155,14 @@ public class DefaultLibraryRepository(
     override suspend fun syncLibrary(forceRefresh: Boolean) {
         if (accountManager.getActiveProvider() == null) return
 
-        if (flushPendingFollowActions() == PendingActionOutcome.BACK_OFF) return
+        syncMutex.withLock {
+            if (flushPendingFollowActions() == PendingActionOutcome.BACK_OFF) return
 
-        val sortOption = currentSortOption()
-        when {
-            forceRefresh -> libraryStore.fresh(sortOption)
-            else -> libraryStore.get(sortOption)
+            val sortOption = currentSortOption()
+            when {
+                forceRefresh -> libraryStore.fresh(sortOption)
+                else -> libraryStore.get(sortOption)
+            }
         }
 
         logger.debug(TAG, "Sync completed")
@@ -165,7 +171,9 @@ public class DefaultLibraryRepository(
     override suspend fun syncPendingFollowedShows() {
         if (accountManager.getActiveProvider() == null) return
 
-        val _ = flushPendingFollowActions()
+        syncMutex.withLock {
+            val _ = flushPendingFollowActions()
+        }
     }
 
     private suspend fun flushPendingFollowActions(): PendingActionOutcome {
@@ -199,7 +207,15 @@ public class DefaultLibraryRepository(
                     }
                 }
                 if (notFoundCount > 0) {
-                    logger.debug(TAG, "Cleared $notFoundCount unknown ids on upload (Trakt not_found)")
+                    logger.error(TAG, "Provider rejected $notFoundCount ids on upload (not_found)")
+                    syncObserver.log(
+                        SyncStateError.BackgroundSyncFailed(
+                            operationId = "$TAG:upload",
+                            cause = SyncException(
+                                SyncError.Permanent.NotFound(message = "$notFoundCount shows could not be synced to your account."),
+                            ),
+                        ),
+                    )
                 }
                 PendingActionOutcome.CONTINUE
             }
