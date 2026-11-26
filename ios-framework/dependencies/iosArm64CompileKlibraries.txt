@@ -52,8 +52,8 @@ com.squareup.okio:okio-iosarm64:3.9.1
 com.squareup.okio:okio:3.9.1
 dev.icerock.moko:graphics-iosarm64:0.10.2
 dev.icerock.moko:graphics:0.10.2
-dev.icerock.moko:resources-iosarm64:0.27.0
-dev.icerock.moko:resources:0.27.0
+dev.icerock.moko:resources-iosarm64:0.27.1
+dev.icerock.moko:resources:0.27.1
 dev.zacsweers.metro:runtime-iosarm64:1.4.3
 dev.zacsweers.metro:runtime:1.4.3
 io.github.thomaskioko.gradle.plugins:codegen-annotations-iosarm64:0.8.9
