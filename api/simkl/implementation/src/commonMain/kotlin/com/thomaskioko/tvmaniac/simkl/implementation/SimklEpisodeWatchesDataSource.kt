@@ -42,24 +42,26 @@ public class SimklEpisodeWatchesDataSource(
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> = emptyList()
 
-    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
-        if (entries.isEmpty()) return
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
+        if (entries.isEmpty()) return entries
         val request = SimklSyncHistoryRequest(shows = entries.toSimklHistoryShows())
         when (syncRemoteDataSource.addWatchedHistory(request)) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> return
+            is ApiResponse.Unauthenticated -> Unit
             is ApiResponse.Error -> throw Exception("Simkl: failed to add episode history")
         }
+        return entries
     }
 
-    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
-        if (entries.isEmpty()) return
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
+        if (entries.isEmpty()) return entries
         val request = SimklSyncHistoryRequest(shows = entries.toSimklHistoryShows())
         when (syncRemoteDataSource.removeWatchedHistory(request)) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> return
+            is ApiResponse.Unauthenticated -> Unit
             is ApiResponse.Error -> throw Exception("Simkl: failed to remove episode history")
         }
+        return entries
     }
 
     private fun List<WatchedEpisodeEntry>.toSimklHistoryShows(): List<SimklHistoryShow> =

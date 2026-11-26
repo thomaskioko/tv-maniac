@@ -89,33 +89,40 @@ public class TraktEpisodeWatchesDataSource(
         }
     }
 
-    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
-        if (entries.isEmpty()) return
-        val shows = entries.toShowSyncItems()
-        if (shows.isEmpty()) return
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
+        val traktIds = entries.traktIdsByShow()
+        val sent = entries.filter { it.showId in traktIds }
+        if (sent.isEmpty()) return sent
 
-        when (remoteDataSource.addEpisodeWatches(TraktSyncItems(shows = shows))) {
+        when (remoteDataSource.addEpisodeWatches(TraktSyncItems(shows = sent.toShowSyncItems(traktIds)))) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> return
+            is ApiResponse.Unauthenticated -> Unit
             is ApiResponse.Error -> throw Exception("Failed to add episodes to history")
         }
+        return sent
     }
 
-    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
-        if (entries.isEmpty()) return
-        val shows = entries.toShowSyncItems()
-        if (shows.isEmpty()) return
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>): List<WatchedEpisodeEntry> {
+        val traktIds = entries.traktIdsByShow()
+        val sent = entries.filter { it.showId in traktIds }
+        if (sent.isEmpty()) return sent
 
-        when (remoteDataSource.removeEpisodeWatches(TraktSyncItems(shows = shows))) {
+        when (remoteDataSource.removeEpisodeWatches(TraktSyncItems(shows = sent.toShowSyncItems(traktIds)))) {
             is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> return
+            is ApiResponse.Unauthenticated -> Unit
             is ApiResponse.Error -> throw Exception("Failed to remove episodes from history")
         }
+        return sent
     }
 
-    private fun List<WatchedEpisodeEntry>.toShowSyncItems(): List<TraktSyncShow> =
-        groupBy { it.showId }.mapNotNull { (tmdbId, showWatches) ->
-            val traktId = followedShowsDao.traktIdForTmdbId(tmdbId) ?: return@mapNotNull null
+    private fun List<WatchedEpisodeEntry>.traktIdsByShow(): Map<Long, Long> =
+        map { it.showId }.distinct().mapNotNull { tmdbId ->
+            followedShowsDao.traktIdForTmdbId(tmdbId)?.let { traktId -> tmdbId to traktId }
+        }.toMap()
+
+    private fun List<WatchedEpisodeEntry>.toShowSyncItems(traktIds: Map<Long, Long>): List<TraktSyncShow> =
+        groupBy { it.showId }.map { (tmdbId, showWatches) ->
+            val traktId = traktIds.getValue(tmdbId)
             TraktSyncShow(
                 ids = TraktShowIds(traktId = traktId),
                 seasons = showWatches.groupBy { it.seasonNumber }.map { (seasonNumber, seasonWatches) ->

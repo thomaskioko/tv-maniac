@@ -143,6 +143,16 @@ internal class SimklEpisodeWatchesDataSourceTest {
     }
 
     @Test
+    fun `should report every entry as sent given entries are added or removed`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
+        fakeRemote.setRemoveHistoryResponse(ApiResponse.Success(SimklRemoveHistoryResponse()))
+        val entries = listOf(watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z")))
+
+        dataSource.addEpisodeEntries(entries) shouldBe entries
+        dataSource.removeEpisodeEntries(entries) shouldBe entries
+    }
+
+    @Test
     fun `should send the placeholder given the watched time is unknown`() = runTest {
         fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
 

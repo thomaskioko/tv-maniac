@@ -140,6 +140,26 @@ internal class TraktEpisodeWatchesDataSourceTest {
     }
 
     @Test
+    fun `should report the show as not sent given it has no trakt id`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = null)
+        val entries = listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z")))
+
+        dataSource.addEpisodeEntries(entries).shouldBeEmpty()
+        dataSource.removeEpisodeEntries(entries).shouldBeEmpty()
+    }
+
+    @Test
+    fun `should report only the entries of shows with a trakt id as sent`() = runTest {
+        followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val sentEntry = watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))
+        val skippedEntry = sentEntry.copy(showId = UNLINKED_TMDB_ID)
+        val entries = listOf(sentEntry, skippedEntry)
+
+        dataSource.addEpisodeEntries(entries) shouldBe listOf(sentEntry)
+        dataSource.removeEpisodeEntries(entries) shouldBe listOf(sentEntry)
+    }
+
+    @Test
     fun `should send only the shows that have a trakt id given entries span both kinds`() = runTest {
         followShow(tmdbId = TMDB_ID, traktId = TRAKT_ID)
 
