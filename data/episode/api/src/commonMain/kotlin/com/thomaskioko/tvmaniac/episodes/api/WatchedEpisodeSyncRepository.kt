@@ -2,12 +2,6 @@ package com.thomaskioko.tvmaniac.episodes.api
 
 public interface WatchedEpisodeSyncRepository {
 
-    /**
-     * Pushes locally-marked `pending_action='UPLOAD'` and `pending_action='DELETE'`
-     * rows to Trakt. No remote read. Returns early when there are no pending rows
-     * so the immediate UI-triggered push and the periodic worker stay cheap on
-     * the idle path.
-     */
     public suspend fun syncPendingEpisodes()
 
     /**

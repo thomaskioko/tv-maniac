@@ -200,8 +200,6 @@ LEFT JOIN episode ON episode.id = watched_episodes.episode_id
 ORDER BY show_progress.last_watched_at DESC
 LIMIT ?;
 
--- Trakt Sync Queries
-
 getEntriesByPendingAction:
 SELECT
     watched_episodes.id AS watched_id,

@@ -91,12 +91,8 @@ public class DefaultFollowedShowsDao(
             }
     }
 
-    override fun traktIdForTmdbId(tmdbId: Long): Long? {
-        val internalShowId = showIdResolver.showIdForTmdbId(tmdbId) ?: return null
-        return queries.entryWithShowId(internalShowId)
-            .executeAsOneOrNull()
-            ?.trakt_id
-    }
+    override fun traktIdForTmdbId(tmdbId: Long): Long? =
+        database.tvShowQueries.getTraktIdByTmdbId(Id(tmdbId)).executeAsOneOrNull()
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithNoPendingAction()
