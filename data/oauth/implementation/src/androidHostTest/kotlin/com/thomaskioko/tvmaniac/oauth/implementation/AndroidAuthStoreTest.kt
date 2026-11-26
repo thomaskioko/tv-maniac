@@ -124,7 +124,7 @@ internal class AndroidAuthStoreTest {
     }
 
     @Test
-    fun `should keep the new login given a save while the first read is moving the old tokens`() = runTest {
+    fun `should keep the new login given a login while the first read is moving the old tokens`() = runTest {
         val gate = CompletableDeferred<Unit>()
         val fixture = fixture(gate = gate)
         fixture.appPreferences.edit {
