@@ -15,6 +15,8 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
@@ -24,26 +26,32 @@ public class AndroidAuthStore(
     @AppPreferencesDataStore private val appPreferencesDataStore: DataStore<Preferences>,
 ) : AuthStore {
 
-    override suspend fun get(provider: SyncProviderSource): AuthState? {
-        deviceLocalDataStore.data.first().toAuthState(provider)?.let { return it }
+    private val mutex = Mutex()
 
-        val storedInAppPreferences = appPreferencesDataStore.data.first().toAuthState(provider) ?: return null
-        save(provider, storedInAppPreferences)
-        return storedInAppPreferences
+    override suspend fun get(provider: SyncProviderSource): AuthState? = mutex.withLock {
+        deviceLocalDataStore.data.first().toAuthState(provider)?.let { return@withLock it }
+
+        val storedInAppPreferences = appPreferencesDataStore.data.first().toAuthState(provider) ?: return@withLock null
+        write(provider, storedInAppPreferences)
+        storedInAppPreferences
     }
 
-    override suspend fun save(provider: SyncProviderSource, state: AuthState) {
+    override suspend fun save(provider: SyncProviderSource, state: AuthState): Unit = mutex.withLock {
+        write(provider, state)
+    }
+
+    override suspend fun clear(provider: SyncProviderSource): Unit = mutex.withLock {
+        deviceLocalDataStore.edit { it.removeTokens(provider) }
+        appPreferencesDataStore.edit { it.removeTokens(provider) }
+    }
+
+    private suspend fun write(provider: SyncProviderSource, state: AuthState) {
         deviceLocalDataStore.edit { prefs ->
             prefs[accessTokenKey(provider)] = state.accessToken
             prefs[refreshTokenKey(provider)] = state.refreshToken
             state.expiresAt?.let { prefs[expiresAtKey(provider)] = it.toEpochMilliseconds() }
             state.tokenLifetimeSeconds?.let { prefs[tokenLifetimeKey(provider)] = it }
         }
-        appPreferencesDataStore.edit { it.removeTokens(provider) }
-    }
-
-    override suspend fun clear(provider: SyncProviderSource) {
-        deviceLocalDataStore.edit { it.removeTokens(provider) }
         appPreferencesDataStore.edit { it.removeTokens(provider) }
     }
 

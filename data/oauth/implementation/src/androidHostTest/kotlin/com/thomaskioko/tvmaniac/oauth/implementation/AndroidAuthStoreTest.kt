@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.oauth.implementation
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -9,9 +10,15 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 import org.junit.Test
@@ -19,7 +26,7 @@ import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.time.Instant
 
-class AndroidAuthStoreTest {
+internal class AndroidAuthStoreTest {
 
     private val folder: File = createTempDirectory("android_auth_store").toFile()
     private val authState = AuthState(
@@ -28,17 +35,28 @@ class AndroidAuthStoreTest {
         expiresAt = Instant.fromEpochMilliseconds(1_700_000_000_000),
         tokenLifetimeSeconds = 7200,
     )
+    private val newAuthState = AuthState(
+        accessToken = "new-access",
+        refreshToken = "new-refresh",
+        expiresAt = Instant.fromEpochMilliseconds(1_800_000_000_000),
+        tokenLifetimeSeconds = 3600,
+    )
     private val otherKey = stringPreferencesKey("theme")
 
     @Test
-    fun `should write no token key to the app preferences given a saved login`() = runTest {
+    fun `should write the tokens only to the device local file given a saved login`() = runTest {
         val fixture = fixture()
+        fixture.appPreferences.edit {
+            it[otherKey] = "dark"
+            it.putTokens(prefix = "trakt", state = authState)
+        }
 
-        fixture.store.save(SyncProviderSource.TRAKT, authState)
+        fixture.store.save(SyncProviderSource.TRAKT, newAuthState)
 
-        fixture.store.get(SyncProviderSource.TRAKT) shouldBe authState
-        fixture.appPreferences.keys() shouldBe emptySet()
+        fixture.appPreferences.keys() shouldBe setOf("theme")
+        fixture.appPreferences.data.first()[otherKey] shouldBe "dark"
         fixture.deviceLocal.keys() shouldBe TRAKT_KEYS
+        fixture.deviceLocal.data.first().toTokens(prefix = "trakt") shouldBe newAuthState
     }
 
     @Test
@@ -46,10 +64,7 @@ class AndroidAuthStoreTest {
         val fixture = fixture()
         fixture.appPreferences.edit {
             it[otherKey] = "dark"
-            it[stringPreferencesKey("trakt_access_token")] = authState.accessToken
-            it[stringPreferencesKey("trakt_refresh_token")] = authState.refreshToken
-            it[longPreferencesKey("trakt_expires_at")] = authState.expiresAt!!.toEpochMilliseconds()
-            it[longPreferencesKey("trakt_token_lifetime")] = authState.tokenLifetimeSeconds!!
+            it.putTokens(prefix = "trakt", state = authState)
         }
 
         fixture.store.get(SyncProviderSource.TRAKT) shouldBe authState
@@ -73,7 +88,7 @@ class AndroidAuthStoreTest {
     }
 
     @Test
-    fun `should remove the tokens from both files given a clear`() = runTest {
+    fun `should remove the provider's tokens from both files given a logout`() = runTest {
         val fixture = fixture()
         fixture.store.save(SyncProviderSource.TRAKT, authState)
         fixture.store.save(SyncProviderSource.SIMKL, authState)
@@ -90,7 +105,25 @@ class AndroidAuthStoreTest {
         fixture.appPreferences.keys() shouldBe setOf("theme")
     }
 
-    private fun TestScope.fixture(): Fixture {
+    @Test
+    fun `should stay logged out given a logout while the first read is moving the old tokens`() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        val fixture = fixture(gate = gate)
+        fixture.appPreferences.edit { it.putTokens(prefix = "trakt", state = authState) }
+
+        val firstRead = async { fixture.store.get(SyncProviderSource.TRAKT) }
+        runCurrent()
+        val logout = async { fixture.store.clear(SyncProviderSource.TRAKT) }
+        runCurrent()
+        gate.complete(Unit)
+        awaitAll(firstRead, logout)
+
+        fixture.store.get(SyncProviderSource.TRAKT) shouldBe null
+        fixture.deviceLocal.keys() shouldBe emptySet()
+        fixture.appPreferences.keys() shouldBe emptySet()
+    }
+
+    private fun TestScope.fixture(gate: CompletableDeferred<Unit>? = null): Fixture {
         val deviceLocal = dataStore(backgroundScope, "device_local.preferences_pb")
         val appPreferences = dataStore(backgroundScope, "app.preferences_pb")
         return Fixture(
@@ -98,7 +131,7 @@ class AndroidAuthStoreTest {
             appPreferences = appPreferences,
             store = AndroidAuthStore(
                 deviceLocalDataStore = deviceLocal,
-                appPreferencesDataStore = appPreferences,
+                appPreferencesDataStore = gate?.let { GatedDataStore(appPreferences, it) } ?: appPreferences,
             ),
         )
     }
@@ -112,6 +145,34 @@ class AndroidAuthStoreTest {
         )
 
     private suspend fun DataStore<Preferences>.keys(): Set<String> = data.first().asMap().keys.map { it.name }.toSet()
+
+    private fun MutablePreferences.putTokens(prefix: String, state: AuthState) {
+        this[stringPreferencesKey("${prefix}_access_token")] = state.accessToken
+        this[stringPreferencesKey("${prefix}_refresh_token")] = state.refreshToken
+        this[longPreferencesKey("${prefix}_expires_at")] = state.expiresAt!!.toEpochMilliseconds()
+        this[longPreferencesKey("${prefix}_token_lifetime")] = state.tokenLifetimeSeconds!!
+    }
+
+    private fun Preferences.toTokens(prefix: String): AuthState = AuthState(
+        accessToken = this[stringPreferencesKey("${prefix}_access_token")]!!,
+        refreshToken = this[stringPreferencesKey("${prefix}_refresh_token")]!!,
+        expiresAt = this[longPreferencesKey("${prefix}_expires_at")]?.let { Instant.fromEpochMilliseconds(it) },
+        tokenLifetimeSeconds = this[longPreferencesKey("${prefix}_token_lifetime")],
+    )
+
+    private class GatedDataStore(
+        private val delegate: DataStore<Preferences>,
+        private val gate: CompletableDeferred<Unit>,
+    ) : DataStore<Preferences> {
+        override val data: Flow<Preferences> = flow {
+            val snapshot = delegate.data.first()
+            gate.await()
+            emit(snapshot)
+        }
+
+        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences =
+            delegate.updateData(transform)
+    }
 
     private class Fixture(
         val deviceLocal: DataStore<Preferences>,
