@@ -26,7 +26,7 @@ internal const val TIMEOUT_DURATION: Long = 60_000
 
 internal fun tmdbHttpClient(
     isDebug: Boolean = false,
-    tmdbApiKey: String,
+    tmdbAccessToken: String,
     json: Json,
     httpClientEngine: HttpClientEngine,
     kermitLogger: KermitLogger,
@@ -48,13 +48,12 @@ internal fun tmdbHttpClient(
             url {
                 protocol = URLProtocol.HTTPS
                 host = "api.themoviedb.org"
+            }
 
-                parameters.append("api_key", tmdbApiKey)
-
-                headers {
-                    append(HttpHeaders.Accept, "application/vnd.api+json")
-                    append(HttpHeaders.ContentType, "application/vnd.api+json")
-                }
+            headers {
+                append(HttpHeaders.Accept, "application/vnd.api+json")
+                append(HttpHeaders.ContentType, "application/vnd.api+json")
+                append(HttpHeaders.Authorization, "Bearer $tmdbAccessToken")
             }
         }
 

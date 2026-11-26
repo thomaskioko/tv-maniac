@@ -26,7 +26,7 @@ public object FakeAppConfigBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideTmdbConfig(): TmdbConfig = object : TmdbConfig {
-        override val apiKey: String = "fake-tmdb-api-key"
+        override val accessToken: String = "fake-tmdb-access-token"
     }
 
     @Provides

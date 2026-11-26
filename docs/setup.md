@@ -36,7 +36,7 @@ Homebrew is the one macOS prerequisite the script offers to install if missing. 
 `local.properties` is gitignored. The build reads these keys from it, or from environment variables of the same name in CI. A key left at its `your_...` placeholder builds but fails at runtime (for example, a TMDB 401), so fill in every value.
 
 ### TMDB
-[Create a TMDB app](https://www.themoviedb.org/settings/api) to generate `TMDB_API_KEY`.
+[Create a TMDB app](https://www.themoviedb.org/settings/api), then copy its API Read Access Token (not the API Key) into `TMDB_ACCESS_TOKEN`. The app sends it in the `Authorization: Bearer` header.
 
 ### Trakt
 [Create a Trakt app](https://trakt.tv/oauth/applications/new).

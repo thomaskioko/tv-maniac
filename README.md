@@ -47,7 +47,7 @@ The app requires TMDB, Trakt, and Simkl API credentials. See [docs/setup.md](doc
 The setup script below creates `local.properties` from the template. Fill in your keys:
 
 ```properties
-TMDB_API_KEY=your_tmdb_api_key
+TMDB_ACCESS_TOKEN=your_tmdb_access_token
 TRAKT_CLIENT_ID=your_trakt_client_id
 TRAKT_CLIENT_SECRET=your_trakt_client_secret
 TRAKT_REDIRECT_URI=tvmaniac://auth/trakt

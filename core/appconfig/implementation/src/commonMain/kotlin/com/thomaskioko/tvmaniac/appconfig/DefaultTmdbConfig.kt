@@ -8,5 +8,5 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTmdbConfig : TmdbConfig {
-    override val apiKey: String = BuildConfig.TMDB_API_KEY
+    override val accessToken: String = BuildConfig.TMDB_ACCESS_TOKEN
 }

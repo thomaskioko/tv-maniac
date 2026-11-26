@@ -15,7 +15,7 @@ concurrency:
 
 env:
   XCODE_VERSION: 26.5
-  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
   TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
   TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
   TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
