@@ -123,6 +123,28 @@ internal class AndroidAuthStoreTest {
         fixture.appPreferences.keys() shouldBe emptySet()
     }
 
+    @Test
+    fun `should keep the new login given a save while the first read is moving the old tokens`() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        val fixture = fixture(gate = gate)
+        fixture.appPreferences.edit {
+            it[otherKey] = "dark"
+            it.putTokens(prefix = "trakt", state = authState)
+        }
+
+        val firstRead = async { fixture.store.get(SyncProviderSource.TRAKT) }
+        runCurrent()
+        val login = async { fixture.store.save(SyncProviderSource.TRAKT, newAuthState) }
+        runCurrent()
+        gate.complete(Unit)
+        awaitAll(firstRead, login)
+
+        fixture.deviceLocal.data.first().toTokens(prefix = "trakt") shouldBe newAuthState
+        fixture.deviceLocal.keys() shouldBe TRAKT_KEYS
+        fixture.appPreferences.keys() shouldBe setOf("theme")
+        fixture.appPreferences.data.first()[otherKey] shouldBe "dark"
+    }
+
     private fun TestScope.fixture(gate: CompletableDeferred<Unit>? = null): Fixture {
         val deviceLocal = dataStore(backgroundScope, "device_local.preferences_pb")
         val appPreferences = dataStore(backgroundScope, "app.preferences_pb")
