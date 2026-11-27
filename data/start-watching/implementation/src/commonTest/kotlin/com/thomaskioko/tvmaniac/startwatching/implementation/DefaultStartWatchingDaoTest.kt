@@ -56,7 +56,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return followed released show given a one-shot read`() = runTest(testDispatcher) {
+    fun `should return the same followed released show as the observed list`() = runTest(testDispatcher) {
         insertReleasedShow(id = 1, name = "Breaking Bad")
         followShow(1)
 
