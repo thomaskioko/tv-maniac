@@ -38,7 +38,10 @@ kotlin {
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.showdetails.testing)
                 implementation(projects.data.startWatching.testing)
+                implementation(projects.data.watchproviders.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.navigation.testing)
             }

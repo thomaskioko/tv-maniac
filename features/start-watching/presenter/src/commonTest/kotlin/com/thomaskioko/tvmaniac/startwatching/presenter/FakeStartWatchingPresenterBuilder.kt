@@ -5,11 +5,17 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.startwatching.SyncStartWatchingInteractor
+import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.testing.FakeWatchlistPrefsRepository
@@ -36,7 +42,15 @@ class FakeStartWatchingPresenterBuilder {
     private val syncStartWatchingInteractor = SyncStartWatchingInteractor(
         startWatchingRepository = startWatchingRepository,
         watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+        syncShowMetadataInteractor = SyncShowMetadataInteractor(
+            showDetailsRepository = FakeShowDetailsRepository(),
+            seasonDetailsRepository = FakeSeasonDetailsRepository(),
+            watchProviderRepository = FakeWatchProviderRepository(),
+            dispatchers = coroutineDispatcher,
+        ),
+        showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
         dispatchers = coroutineDispatcher,
+        logger = fakeLogger,
     )
 
     fun create(
