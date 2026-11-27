@@ -250,6 +250,11 @@ INNER JOIN season ON episode.season_id = season.id
 WHERE rse.synced_at IS NULL
 ORDER BY rse.id ASC;
 
+countUnsentEpisodes:
+SELECT COUNT(*)
+FROM rewatch_session_episode
+WHERE synced_at IS NULL;
+
 markEpisodeSynced:
 UPDATE rewatch_session_episode
 SET synced_at = :syncedAt

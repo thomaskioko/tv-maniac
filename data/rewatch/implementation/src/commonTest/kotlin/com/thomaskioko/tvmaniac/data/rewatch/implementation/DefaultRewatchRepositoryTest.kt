@@ -493,6 +493,50 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should count an unsent repeat viewing given the active source supports rewatch`() = runTest {
+        val repository = buildRepository()
+        val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
+        rewatchSessionDao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        repository.countPendingRewatches() shouldBe 1L
+    }
+
+    @Test
+    fun `should not count a repeat viewing given it was sent`() = runTest {
+        val repository = buildRepository()
+        val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = REWATCHED_AT,
+        )
+
+        repository.countPendingRewatches() shouldBe 0L
+    }
+
+    @Test
+    fun `should not count an unsent repeat viewing given the active source does not support rewatch`() = runTest {
+        val repository = buildRepository()
+        val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
+        rewatchSessionDao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+        rewatchSyncProviderDataSource.setSupportsRewatch(false)
+
+        repository.countPendingRewatches() shouldBe 0L
+    }
+
+    @Test
+    fun `should not count an unsent repeat viewing given no provider is active`() = runTest {
+        val repository = buildRepository(activeSource = { null })
+        val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
+        rewatchSessionDao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        repository.countPendingRewatches() shouldBe 0L
+    }
+
+    @Test
     fun `should return true given supportsRewatch is called with no active provider`() = runTest {
         val repository = buildRepository(activeSource = { null })
 

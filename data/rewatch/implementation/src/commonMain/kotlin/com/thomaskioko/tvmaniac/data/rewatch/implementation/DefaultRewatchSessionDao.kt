@@ -116,6 +116,8 @@ public class DefaultRewatchSessionDao(
     override fun unsentEpisodes(): List<UnsentRewatchEpisode> =
         queries.unsentEpisodes().executeAsList().map { it.toUnsentRewatchEpisode() }
 
+    override fun countUnsentEpisodes(): Long = queries.countUnsentEpisodes().executeAsOne()
+
     override fun markEpisodeSynced(rowId: Long, syncedAt: Long) {
         queries.markEpisodeSynced(rowId = rowId, syncedAt = syncedAt)
     }

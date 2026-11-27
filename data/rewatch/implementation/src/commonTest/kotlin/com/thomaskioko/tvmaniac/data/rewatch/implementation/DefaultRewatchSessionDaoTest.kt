@@ -198,6 +198,24 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should count an episode given it was never synced`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.countUnsentEpisodes() shouldBe 1L
+    }
+
+    @Test
+    fun `should not count an episode given it was marked synced`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        val rowId = dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.markEpisodeSynced(rowId = rowId, syncedAt = REWATCHED_AT)
+
+        dao.countUnsentEpisodes() shouldBe 0L
+    }
+
+    @Test
     fun `should return null given no open session exists for a show`() = runTest {
         dao.openSessionForShow(showId).shouldBeNull()
     }
