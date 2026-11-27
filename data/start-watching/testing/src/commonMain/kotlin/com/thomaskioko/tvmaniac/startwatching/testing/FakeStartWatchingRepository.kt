@@ -12,9 +12,14 @@ public class FakeStartWatchingRepository : StartWatchingRepository {
 
     private val startWatchingShows = MutableStateFlow<List<StartWatchingShow>>(emptyList())
     private val syncInvocations = mutableListOf<SyncInvocation>()
+    private var startWatchingResult: List<StartWatchingShow> = emptyList()
 
     public fun setStartWatchingShows(shows: List<StartWatchingShow>) {
         startWatchingShows.value = shows
+    }
+
+    public fun setStartWatchingResult(shows: List<StartWatchingShow>) {
+        startWatchingResult = shows
     }
 
     public fun syncInvocations(): List<SyncInvocation> = syncInvocations.toList()
@@ -24,6 +29,8 @@ public class FakeStartWatchingRepository : StartWatchingRepository {
     }
 
     override fun observeStartWatching(): Flow<List<StartWatchingShow>> = startWatchingShows.asStateFlow()
+
+    override suspend fun getStartWatching(): List<StartWatchingShow> = startWatchingResult
 
     override suspend fun syncWatchlist(forceRefresh: Boolean) {
         syncInvocations.add(SyncInvocation(forceRefresh = forceRefresh))

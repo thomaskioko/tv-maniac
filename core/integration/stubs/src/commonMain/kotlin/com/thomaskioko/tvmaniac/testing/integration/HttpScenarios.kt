@@ -117,6 +117,7 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubTmdbShowDetailsPattern()
         mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
 
+        stubShowsFrom(Endpoints.Trakt.UsersMeWatchlistShows.successFixture)
         stubShowsFrom(Endpoints.Trakt.SyncWatchedShows.successFixture)
     }
 
@@ -221,6 +222,7 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
             fixturePath = EMPTY_ARRAY_FIXTURE,
         )
 
+        stubShowsFrom(Endpoints.Trakt.UsersMeWatchlistShows.successFixture)
         stubShowsFrom(Endpoints.Trakt.SyncWatchedShows.successFixture)
         stubShowsFrom(Endpoints.Trakt.SyncProgressUpNextNitro.successFixture)
     }

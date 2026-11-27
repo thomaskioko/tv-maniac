@@ -54,6 +54,8 @@ public const val CANONICAL_SHOW_TMDB_ID: Long = 1396L
 
 private const val MAX_STUBBED_SEASON_NUMBER = 5
 
+private const val MAX_SHOW_ID_IN_STUBBED_EPISODE_ID = 200_000L
+
 /**
  * Registers per-show exact-path stubs for [show] on this [MockEngineHandler]:
  * - Trakt `/shows/{traktId}` returns the canonical `Endpoints.PublicCatalog.ShowDetails` body with ids,
@@ -225,7 +227,7 @@ private fun rewriteTmdbSeasonDetailIds(template: String, show: ShowFixture): Str
         val episodeNumber = episodeObj.getValue("episode_number").jsonPrimitive.int
         JsonObject(
             episodeObj.toMutableMap().apply {
-                this["id"] = JsonPrimitive(perShowSeasonId * 100 + episodeNumber)
+                this["id"] = JsonPrimitive((show.tmdbId % MAX_SHOW_ID_IN_STUBBED_EPISODE_ID * 100 + seasonNumber) * 100 + episodeNumber)
                 this["show_id"] = JsonPrimitive(show.tmdbId)
             },
         )

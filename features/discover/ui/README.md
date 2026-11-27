@@ -325,8 +325,11 @@ graph TB
   :domain:showdetails --> :data:trailers:api
   :domain:showdetails --> :data:watchproviders:api
   :domain:start-watching --> :core:base
+  :domain:start-watching --> :core:logger:api
+  :domain:start-watching --> :core:network-util:api
   :domain:start-watching --> :data:episode:api
   :domain:start-watching --> :data:start-watching:api
+  :domain:start-watching --> :domain:showdetails
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
   :domain:theme --> :i18n:generator
