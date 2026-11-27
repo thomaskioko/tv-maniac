@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
@@ -23,6 +24,7 @@ internal class PendingUploadsWorkerTest {
     private val syncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
     private val listRepository = FakeListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val userRepository = FakeUserRepository()
     private val accountManager = FakeAccountManager()
     private val syncObserver = FakeSyncObserver()
@@ -33,6 +35,7 @@ internal class PendingUploadsWorkerTest {
         syncRepository = syncRepository,
         libraryRepository = libraryRepository,
         listRepository = listRepository,
+        rewatchRepository = rewatchRepository,
         userRepository = userRepository,
         activeProviderFeatures = { providerFeatures },
         accountManager = accountManager,

@@ -6,9 +6,11 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -19,6 +21,7 @@ internal class SyncPendingUploadsInteractorTest {
     private val syncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
     private val listRepository = FakeListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val userRepository = FakeUserRepository()
     private val accountManager = FakeAccountManager()
     private val logger = FakeLogger()
@@ -28,6 +31,7 @@ internal class SyncPendingUploadsInteractorTest {
         syncRepository = syncRepository,
         libraryRepository = libraryRepository,
         listRepository = listRepository,
+        rewatchRepository = rewatchRepository,
         userRepository = userRepository,
         activeProviderFeatures = { providerFeatures },
         accountManager = accountManager,
@@ -35,7 +39,7 @@ internal class SyncPendingUploadsInteractorTest {
     )
 
     @Test
-    fun `should push all three queues given an active account`() = runTest {
+    fun `should push every pending queue given an active account`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         providerFeatures = FakeProviderFeatures(supportsLists = true)
 
@@ -43,6 +47,7 @@ internal class SyncPendingUploadsInteractorTest {
 
         syncRepository.syncPendingCallCount() shouldBe 1
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 1
+        rewatchRepository.hasSentPendingRewatches() shouldBe true
         listRepository.syncPendingListsCalls() shouldBe listOf("test-user")
     }
 
@@ -78,6 +83,19 @@ internal class SyncPendingUploadsInteractorTest {
 
         syncRepository.syncPendingCallCount() shouldBe 0
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 0
+        rewatchRepository.hasSentPendingRewatches() shouldBe false
         listRepository.syncPendingListsCalls().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should throw the error and report no repeat viewings sent given the repeat viewing upload fails`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        val uploadError = RuntimeException("repeat viewing upload failed")
+        rewatchRepository.setSyncException(uploadError)
+
+        val thrown = shouldThrow<RuntimeException> { interactor.executeSync() }
+
+        thrown shouldBe uploadError
+        rewatchRepository.hasSentPendingRewatches() shouldBe false
     }
 }
