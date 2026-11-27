@@ -19,6 +19,18 @@ if ((count > 999)); then
 fi
 
 build=$((base + count))
+store_build="${1-0}"
+if ! [[ "$store_build" =~ ^[0-9]+$ ]]; then
+  echo "error: store build number '${store_build}' is not a number" >&2
+  exit 1
+fi
+if ((store_build >= build)); then
+  build=$((store_build + 1))
+fi
+if ((build - base > 999)); then
+  echo "error: build ${build} exceeds the 999 build-number slots for ${version} — cut a release first" >&2
+  exit 1
+fi
 if ((build <= committed_build)); then
   echo "error: derived build ${build} is not above the last released build ${committed_build} — nothing new to publish" >&2
   exit 1
@@ -28,7 +40,7 @@ sed -i.bak "s/^BUILD_NUMBER.*/BUILD_NUMBER = ${build}/" version.txt
 rm version.txt.bak
 
 sha=$(git rev-parse --short HEAD)
-echo "App version: ${version} (build ${build}, ${count} commits since ${tag}, ${sha})"
+echo "App version: ${version} (build ${build}, ${count} commits since ${tag}, highest store build ${store_build}, ${sha})"
 
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
   {

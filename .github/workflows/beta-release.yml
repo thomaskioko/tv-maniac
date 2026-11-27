@@ -51,7 +51,11 @@ jobs:
 
       - name: Write build number
         id: version
-        run: ./scripts/ci/write-build-number.sh
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android latest_build_number output:"$RUNNER_TEMP/store-build-number"
+          ./scripts/ci/write-build-number.sh "$(cat "$RUNNER_TEMP/store-build-number")"
 
       - name: Build release AAB and APK
         env:
@@ -175,7 +179,13 @@ jobs:
 
       - name: Write build number
         id: version
-        run: ./scripts/ci/write-build-number.sh
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          bundle exec fastlane ios latest_build_number output:"$RUNNER_TEMP/store-build-number"
+          ./scripts/ci/write-build-number.sh "$(cat "$RUNNER_TEMP/store-build-number")"
 
       - name: Build signed IPA
         env:
