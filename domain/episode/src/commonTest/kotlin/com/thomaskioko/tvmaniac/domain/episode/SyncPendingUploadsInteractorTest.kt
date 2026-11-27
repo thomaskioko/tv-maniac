@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -84,5 +85,17 @@ internal class SyncPendingUploadsInteractorTest {
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 0
         rewatchRepository.hasSentPendingRewatches() shouldBe false
         listRepository.syncPendingListsCalls().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should throw the error and report no repeat viewings sent given the repeat viewing upload fails`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        val uploadError = RuntimeException("repeat viewing upload failed")
+        rewatchRepository.setSyncException(uploadError)
+
+        val thrown = shouldThrow<RuntimeException> { interactor.executeSync() }
+
+        thrown shouldBe uploadError
+        rewatchRepository.hasSentPendingRewatches() shouldBe false
     }
 }

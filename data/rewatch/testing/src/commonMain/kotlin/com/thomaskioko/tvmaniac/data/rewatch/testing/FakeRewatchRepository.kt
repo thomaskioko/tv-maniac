@@ -116,8 +116,8 @@ public class FakeRewatchRepository : RewatchRepository {
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 
     override suspend fun syncPendingRewatches() {
-        pendingRewatchesSent = true
         syncException?.let { throw it }
+        pendingRewatchesSent = true
     }
 
     override suspend fun syncRewatchSessions() {
