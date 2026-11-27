@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -371,6 +372,7 @@ class DebugPresenterTest {
                 ),
                 showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                rewatchRepository = FakeRewatchRepository(),
                 showDetailsRepository = FakeShowDetailsRepository(),
                 syncRepository = FakeActivitySyncRepository(),
                 datastoreRepository = datastoreRepository,
