@@ -38,7 +38,7 @@ internal class SyncPendingUploadsInteractorTest {
     )
 
     @Test
-    fun `should send unsent repeat viewings given an active account`() = runTest {
+    fun `should push every pending queue given an active account`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         providerFeatures = FakeProviderFeatures(supportsLists = true)
 
@@ -46,7 +46,7 @@ internal class SyncPendingUploadsInteractorTest {
 
         syncRepository.syncPendingCallCount() shouldBe 1
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 1
-        rewatchRepository.syncPendingRewatchesInvocations() shouldBe 1
+        rewatchRepository.hasSentPendingRewatches() shouldBe true
         listRepository.syncPendingListsCalls() shouldBe listOf("test-user")
     }
 
@@ -82,7 +82,7 @@ internal class SyncPendingUploadsInteractorTest {
 
         syncRepository.syncPendingCallCount() shouldBe 0
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 0
-        rewatchRepository.syncPendingRewatchesInvocations() shouldBe 0
+        rewatchRepository.hasSentPendingRewatches() shouldBe false
         listRepository.syncPendingListsCalls().shouldBeEmpty()
     }
 }

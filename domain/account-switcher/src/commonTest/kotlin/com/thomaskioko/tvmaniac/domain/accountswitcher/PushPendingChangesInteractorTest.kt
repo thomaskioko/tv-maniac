@@ -21,11 +21,11 @@ internal class PushPendingChangesInteractorTest {
     )
 
     @Test
-    fun `should push pending episodes and followed shows and repeat viewings given an account switch`() = runTest {
+    fun `should push pending episodes and followed shows and repeat viewings given the user prepares an account switch`() = runTest {
         interactor.executeSync()
 
         watchedEpisodeSyncRepository.syncPendingCallCount() shouldBe 1
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 1
-        rewatchRepository.syncPendingRewatchesInvocations() shouldBe 1
+        rewatchRepository.hasSentPendingRewatches() shouldBe true
     }
 }
