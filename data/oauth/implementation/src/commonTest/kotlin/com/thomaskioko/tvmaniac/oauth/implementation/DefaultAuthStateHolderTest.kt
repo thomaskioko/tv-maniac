@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import com.thomaskioko.tvmaniac.oauth.api.RefreshTokenResult
+import com.thomaskioko.tvmaniac.oauth.api.TokenRefreshAction
 import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStore
 import com.thomaskioko.tvmaniac.oauth.testing.FakeTokenRefreshAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -19,6 +20,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -26,6 +29,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultAuthStateHolderTest {
@@ -214,6 +218,64 @@ internal class DefaultAuthStateHolderTest {
             holder.isLoggedIn(SyncProviderSource.TRAKT) shouldBe false
         }
 
+    @Test
+    fun `should stay signed out given a sign-out during a token refresh`() = runTest(testDispatcher) {
+        val holder = holder()
+        advanceUntilIdle()
+        holder.saveTokens(
+            provider = SyncProviderSource.TRAKT,
+            accessToken = "old",
+            refreshToken = "old-refresh",
+            expiresAtSeconds = 9_999_999_999L,
+        )
+        val action = GatedTokenRefreshAction(RefreshTokenResult.Success(signedIn("refreshed")))
+
+        val refresh = async { holder.refreshTokens(SyncProviderSource.TRAKT, action) }
+        runCurrent()
+        holder.logout(SyncProviderSource.TRAKT)
+        action.release()
+        advanceUntilIdle()
+
+        refresh.await() shouldBe TokenRefreshResult.NotLoggedIn
+        holder.isLoggedIn(SyncProviderSource.TRAKT) shouldBe false
+        holder.getAuthState(SyncProviderSource.TRAKT).shouldBeNull()
+    }
+
+    @Test
+    fun `should keep the new login given a sign-in during a token refresh that finds the token expired`() =
+        runTest(testDispatcher) {
+            val holder = holder()
+            advanceUntilIdle()
+            holder.saveTokens(
+                provider = SyncProviderSource.TRAKT,
+                accessToken = "old",
+                refreshToken = "old-refresh",
+                expiresAtSeconds = 9_999_999_999L,
+            )
+            val action = GatedTokenRefreshAction(RefreshTokenResult.TokenExpired)
+
+            val refresh = async { holder.refreshTokens(SyncProviderSource.TRAKT, action) }
+            runCurrent()
+            holder.saveTokens(
+                provider = SyncProviderSource.TRAKT,
+                accessToken = "fresh",
+                refreshToken = "fresh-refresh",
+                expiresAtSeconds = 9_999_999_999L,
+            )
+            action.release()
+            advanceUntilIdle()
+
+            val newLogin = AuthState(
+                accessToken = "fresh",
+                refreshToken = "fresh-refresh",
+                isAuthorized = true,
+                expiresAt = Instant.fromEpochSeconds(9_999_999_999L),
+            )
+            refresh.await() shouldBe TokenRefreshResult.Success(newLogin)
+            holder.getAuthState(SyncProviderSource.TRAKT) shouldBe newLogin
+            holder.authError(SyncProviderSource.TRAKT).first().shouldBeNull()
+        }
+
     private fun signedIn(accessToken: String) = AuthState(
         accessToken = accessToken,
         refreshToken = "refresh",
@@ -246,5 +308,18 @@ private class GatedAuthStore(private val delegate: FakeAuthStore) : AuthStore {
 
     override suspend fun clear(provider: SyncProviderSource) {
         delegate.clear(provider)
+    }
+}
+
+private class GatedTokenRefreshAction(private val result: RefreshTokenResult) : TokenRefreshAction {
+    private val gate = CompletableDeferred<Unit>()
+
+    fun release() {
+        gate.complete(Unit)
+    }
+
+    override suspend fun invoke(currentState: AuthState): RefreshTokenResult {
+        gate.await()
+        return result
     }
 }

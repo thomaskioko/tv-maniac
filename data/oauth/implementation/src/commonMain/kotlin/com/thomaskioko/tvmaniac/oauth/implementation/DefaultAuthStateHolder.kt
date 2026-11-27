@@ -45,11 +45,13 @@ public class DefaultAuthStateHolder(
     private val logger: Logger,
 ) : AuthStateHolder {
 
+    private class CachedLogin(val authState: AuthState, val expiry: Instant)
+
     private class ProviderState {
         val authState = MutableStateFlow<AuthState?>(null)
         val authError = MutableStateFlow<AuthError?>(null)
         val loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
-        var expiry: Instant = Instant.DISTANT_PAST
+        var cachedLogin: CachedLogin? = null
         val refreshMutex = Mutex()
         val stateMutex = Mutex()
     }
@@ -87,9 +89,9 @@ public class DefaultAuthStateHolder(
 
     override suspend fun getAuthState(provider: SyncProviderSource): AuthState? {
         val entry = entry(provider)
-        val cached = entry.authState.value
-        if (cached != null && cached.isAuthorized && dateTimeProvider.now() < entry.expiry) {
-            return cached
+        val cached = entry.cachedLogin
+        if (cached != null && dateTimeProvider.now() < cached.expiry) {
+            return cached.authState
         }
         return entry.stateMutex.withLock {
             withContext(dispatchers.io) {
@@ -113,7 +115,7 @@ public class DefaultAuthStateHolder(
             expiresAt = Instant.fromEpochSeconds(expiresAtSeconds),
         )
 
-        updateAuthState(provider, newAuthState, persist = true)
+        updateAuthState(provider, newAuthState)
 
         entry(provider).loginEvents.tryEmit(Unit)
     }
@@ -125,17 +127,19 @@ public class DefaultAuthStateHolder(
             val currentState = getAuthState(provider) ?: return@withLock TokenRefreshResult.NotLoggedIn
 
             when (val result = refresh.invoke(currentState)) {
-                is RefreshTokenResult.Success -> {
-                    entry.authError.value = null
-                    updateAuthState(provider, result.authState)
+                is RefreshTokenResult.Success -> if (writeIfUnchanged(provider, currentState, result.authState, error = null)) {
                     datastoreRepository.setLastTokenRefreshTimestamp(dateTimeProvider.nowMillis())
                     TokenRefreshResult.Success(result.authState)
+                } else {
+                    currentLoginResult(entry)
                 }
-                is RefreshTokenResult.TokenExpired -> {
+                is RefreshTokenResult.TokenExpired -> if (
+                    writeIfUnchanged(provider, currentState, AuthState.Empty, error = AuthError.TokenExpired)
+                ) {
                     logger.warning(LOG_TAG, "Token expired/revoked - clearing auth state")
-                    entry.authError.value = AuthError.TokenExpired
-                    updateAuthState(provider, AuthState.Empty)
                     TokenRefreshResult.TokenRevoked
+                } else {
+                    currentLoginResult(entry)
                 }
                 is RefreshTokenResult.NetworkError -> {
                     logger.warning(LOG_TAG, "Network error during token refresh: ${result.message}")
@@ -163,23 +167,43 @@ public class DefaultAuthStateHolder(
 
     private fun cache(provider: SyncProviderSource, authState: AuthState) {
         val entry = entry(provider)
+        entry.cachedLogin = if (authState.isAuthorized) CachedLogin(authState, dateTimeProvider.now() + 1.hours) else null
         entry.authState.update { authState }
-        entry.expiry = if (authState.isAuthorized) dateTimeProvider.now() + 1.hours else Instant.DISTANT_PAST
     }
 
-    private suspend fun updateAuthState(provider: SyncProviderSource, authState: AuthState, persist: Boolean = true) {
-        entry(provider).stateMutex.withLock {
-            if (persist) {
-                withContext(dispatchers.io) {
-                    if (authState.isAuthorized) {
-                        authStore.save(provider, authState)
-                    } else {
-                        authStore.clear(provider)
-                    }
-                }
+    private suspend fun updateAuthState(provider: SyncProviderSource, authState: AuthState) {
+        entry(provider).stateMutex.withLock { write(provider, authState) }
+    }
+
+    private suspend fun writeIfUnchanged(
+        provider: SyncProviderSource,
+        expected: AuthState,
+        authState: AuthState,
+        error: AuthError?,
+    ): Boolean {
+        val entry = entry(provider)
+        return entry.stateMutex.withLock {
+            val unchanged = entry.cachedLogin?.authState == expected
+            if (unchanged) {
+                entry.authError.value = error
+                write(provider, authState)
             }
-            cache(provider, authState)
+            unchanged
         }
+    }
+
+    private fun currentLoginResult(entry: ProviderState): TokenRefreshResult =
+        entry.cachedLogin?.let { TokenRefreshResult.Success(it.authState) } ?: TokenRefreshResult.NotLoggedIn
+
+    private suspend fun write(provider: SyncProviderSource, authState: AuthState) {
+        withContext(dispatchers.io) {
+            if (authState.isAuthorized) {
+                authStore.save(provider, authState)
+            } else {
+                authStore.clear(provider)
+            }
+        }
+        cache(provider, authState)
     }
 
     private companion object {
