@@ -36,5 +36,5 @@ public interface RewatchRepository {
 
     public suspend fun syncPendingRewatches()
 
-    public suspend fun syncRewatchSessions(showId: Long): List<RemoteRewatchSession>
+    public suspend fun syncRewatchSessions()
 }

@@ -7,6 +7,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.rewatch.api.OpenRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchCoverage
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRestore
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
@@ -46,25 +47,6 @@ public class DefaultRewatchSessionDao(
         )
         queries.lastInsertRowId().executeAsOne()
     }
-
-    override fun addSyncedEpisodeToSession(sessionId: Long, episodeId: Long, watchedAt: Long, syncedAt: Long) {
-        queries.addSyncedEpisodeToSession(
-            sessionId = sessionId,
-            episodeId = Id(episodeId),
-            watchedAt = watchedAt,
-            syncedAt = syncedAt,
-        )
-    }
-
-    override fun episodeIdForNumber(showId: Long, seasonNumber: Long, episodeNumber: Long): Long? =
-        queries.episodeIdForNumber(
-            showId = Id(showId),
-            seasonNumber = seasonNumber,
-            episodeNumber = episodeNumber,
-        ).executeAsOneOrNull()?.id
-
-    override fun episodeRewatchCount(episodeId: Long): Long =
-        queries.episodeRewatchCount(Id(episodeId)).executeAsOne()
 
     override fun closeSession(sessionId: Long, closedAt: Long) {
         queries.closeSession(sessionId = sessionId, closedAt = closedAt)
@@ -118,11 +100,17 @@ public class DefaultRewatchSessionDao(
             .mapToOne(dispatchers.databaseRead)
 
     override fun removeEpisodeRewatches(episodeId: Long) {
-        queries.removeEpisodeRewatches(Id(episodeId))
+        queries.transaction {
+            queries.removeEpisodeRestores(Id(episodeId))
+            queries.removeEpisodeRewatches(Id(episodeId))
+        }
     }
 
     override fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
-        queries.removeSeasonRewatches(showId = Id(showId), seasonNumber = seasonNumber)
+        queries.transaction {
+            queries.removeSeasonRestores(showId = Id(showId), seasonNumber = seasonNumber)
+            queries.removeSeasonRewatches(showId = Id(showId), seasonNumber = seasonNumber)
+        }
     }
 
     override fun unsentEpisodes(): List<UnsentRewatchEpisode> =
@@ -166,8 +154,29 @@ public class DefaultRewatchSessionDao(
         }
     }
 
+    override fun replaceRestores(showId: Long, restores: List<RewatchRestore>) {
+        queries.transaction {
+            queries.clearRestoresForShow(Id(showId))
+            for (restore in restores) {
+                queries.insertRestore(
+                    showId = Id(showId),
+                    seasonNumber = restore.seasonNumber,
+                    episodeNumber = restore.episodeNumber,
+                    sessionId = restore.sessionId,
+                    watchedAt = restore.watchedAt,
+                    ordinal = restore.ordinal,
+                )
+            }
+        }
+    }
+
+    override fun restoreMissingViewings(showId: Long, syncedAt: Long) {
+        queries.restoreMissingViewings(showId = Id(showId), syncedAt = syncedAt)
+    }
+
     override fun clearAll() {
         queries.transaction {
+            queries.clearAllRestores()
             queries.clearAllSessionEpisodes()
             queries.clearAllSessions()
         }

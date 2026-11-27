@@ -13,7 +13,7 @@ public class FakeRewatchSyncProviderDataSource(
 ) : RewatchSyncProviderDataSource {
 
     private var supportsRewatchValue: Boolean = true
-    private var readResponse: ApiResponse<List<RemoteRewatchSession>> = ApiResponse.Success(emptyList())
+    private var readResponse: ApiResponse<Map<Long, List<RemoteRewatchSession>>> = ApiResponse.Success(emptyMap())
     private var writeResponse: ApiResponse<RemoteRewatchWriteResult> = ApiResponse.Success(RemoteRewatchWriteResult())
     private var writeHandler: ((RemoteRewatchWrite) -> ApiResponse<RemoteRewatchWriteResult>)? = null
     private var readException: Throwable? = null
@@ -31,7 +31,7 @@ public class FakeRewatchSyncProviderDataSource(
         supportsRewatchValue = value
     }
 
-    public fun setReadRewatchSessionsResponse(response: ApiResponse<List<RemoteRewatchSession>>) {
+    public fun setReadRewatchSessionsResponse(response: ApiResponse<Map<Long, List<RemoteRewatchSession>>>) {
         readResponse = response
     }
 
@@ -61,7 +61,7 @@ public class FakeRewatchSyncProviderDataSource(
 
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 
-    override suspend fun readRewatchSessions(providerShowId: Long): ApiResponse<List<RemoteRewatchSession>> {
+    override suspend fun readRewatchSessions(): ApiResponse<Map<Long, List<RemoteRewatchSession>>> {
         readException?.let { throw it }
         return readResponse
     }

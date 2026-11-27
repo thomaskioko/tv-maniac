@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.data.rewatch.testing
 
-import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
@@ -19,7 +18,7 @@ public class FakeRewatchRepository : RewatchRepository {
     private val totals = MutableStateFlow(RewatchTotals())
     private val removedSeasons = mutableListOf<Pair<Long, Long>>()
     private var supportsRewatchValue: Boolean = true
-    private var remoteSessionsByShow: Map<Long, List<RemoteRewatchSession>> = emptyMap()
+    private var rewatchSessionsSynced: Boolean = false
     private var syncException: Throwable? = null
 
     public var lastAddEpisodeSessionId: Long? = null
@@ -49,9 +48,7 @@ public class FakeRewatchRepository : RewatchRepository {
         supportsRewatchValue = value
     }
 
-    public fun setRemoteSessionsForShow(showId: Long, sessions: List<RemoteRewatchSession>) {
-        remoteSessionsByShow += (showId to sessions)
-    }
+    public fun hasSyncedRewatchSessions(): Boolean = rewatchSessionsSynced
 
     public fun setSyncException(exception: Throwable) {
         syncException = exception
@@ -119,6 +116,7 @@ public class FakeRewatchRepository : RewatchRepository {
         syncException?.let { throw it }
     }
 
-    override suspend fun syncRewatchSessions(showId: Long): List<RemoteRewatchSession> =
-        remoteSessionsByShow[showId].orEmpty()
+    override suspend fun syncRewatchSessions() {
+        rewatchSessionsSynced = true
+    }
 }

@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRestore
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
@@ -137,22 +138,24 @@ public class DefaultRewatchRepository(
         syncMutex.withLock { drainUnsentEpisodes() }
     }
 
-    override suspend fun syncRewatchSessions(showId: Long): List<RemoteRewatchSession> = syncMutex.withLock {
-        val source = activeSource() ?: return@withLock emptyList()
-        try {
-            when (val response = source.readRewatchSessions(showId)) {
-                is ApiResponse.Success -> response.body.also { backfillSessions(showId = showId, sessions = it) }
-                is ApiResponse.Unauthenticated -> emptyList()
-                is ApiResponse.Error -> {
-                    syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = response.toThrowable()))
-                    emptyList()
+    override suspend fun syncRewatchSessions() {
+        syncMutex.withLock {
+            val source = activeSource() ?: return@withLock
+            try {
+                when (val response = source.readRewatchSessions()) {
+                    is ApiResponse.Success -> for ((showId, sessions) in response.body) {
+                        backfillSessions(showId = showId, sessions = sessions)
+                    }
+                    is ApiResponse.Unauthenticated -> Unit
+                    is ApiResponse.Error -> syncObserver.log(
+                        SyncError.BackgroundSyncFailed(operationId = TAG, cause = response.toThrowable()),
+                    )
                 }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = throwable))
             }
-        } catch (cancellation: CancellationException) {
-            throw cancellation
-        } catch (throwable: Throwable) {
-            syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = throwable))
-            emptyList()
         }
     }
 
@@ -163,9 +166,10 @@ public class DefaultRewatchRepository(
         }
     }
 
-    private fun backfillSessions(showId: Long, sessions: List<RemoteRewatchSession>) {
+    private suspend fun backfillSessions(showId: Long, sessions: List<RemoteRewatchSession>) {
         val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
-        val restored = mutableMapOf<Long, RestoredEpisode>()
+        val restores = mutableListOf<RewatchRestore>()
+        val viewingsByEpisode = mutableMapOf<Pair<Long, Long>, Long>()
 
         for (session in sessions) {
             val startedAt = session.startedAt ?: session.lastWatchedAt ?: continue
@@ -181,31 +185,23 @@ public class DefaultRewatchRepository(
             )
 
             for (episode in session.episodes) {
-                val episodeId = rewatchSessionDao.episodeIdForNumber(
-                    showId = localShowId,
-                    seasonNumber = episode.seasonNumber,
-                    episodeNumber = episode.episodeNumber,
-                ) ?: continue
-
-                restored[episodeId] = RestoredEpisode(
-                    sessionId = localSessionId,
-                    watchedAt = episode.watchedAt ?: startedAt,
-                    viewings = (restored[episodeId]?.viewings ?: 0) + episode.viewings,
-                )
+                val key = episode.seasonNumber to episode.episodeNumber
+                val reported = viewingsByEpisode[key] ?: 0L
+                for (viewing in 1..episode.viewings) {
+                    restores += RewatchRestore(
+                        sessionId = localSessionId,
+                        seasonNumber = episode.seasonNumber,
+                        episodeNumber = episode.episodeNumber,
+                        watchedAt = episode.watchedAt ?: startedAt,
+                        ordinal = reported + viewing,
+                    )
+                }
+                viewingsByEpisode[key] = reported + episode.viewings
             }
         }
 
-        for ((episodeId, episode) in restored) {
-            val missing = episode.viewings - rewatchSessionDao.episodeRewatchCount(episodeId)
-            repeat(missing.coerceAtLeast(0).toInt()) {
-                rewatchSessionDao.addSyncedEpisodeToSession(
-                    sessionId = episode.sessionId,
-                    episodeId = episodeId,
-                    watchedAt = episode.watchedAt,
-                    syncedAt = dateTimeProvider.nowMillis(),
-                )
-            }
-        }
+        rewatchSessionDao.replaceRestores(showId = localShowId, restores = restores)
+        rewatchSessionDao.restoreMissingViewings(showId = localShowId, syncedAt = dateTimeProvider.nowMillis())
     }
 
     private suspend fun drainUnsentEpisodes() {
@@ -274,12 +270,6 @@ public class DefaultRewatchRepository(
         is ApiResponse.Error.NetworkFailure -> Throwable("Network failure: $kind", cause)
         is ApiResponse.Error.OfflineError -> Throwable(errorMessage)
     }
-
-    private data class RestoredEpisode(
-        val sessionId: Long,
-        val watchedAt: Long,
-        val viewings: Long,
-    )
 
     private companion object {
         private const val TAG = "rewatch_sync"

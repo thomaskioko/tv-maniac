@@ -173,7 +173,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 0)))),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.first().episodes.shouldBeEmpty()
     }
@@ -202,7 +202,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ),
         )
 
-        val episodes = source.readRewatchSessions(providerShowId = 1396L).getOrThrow().first().episodes
+        val episodes = source.readRewatchSessions().getOrThrow()[1396L].orEmpty().first().episodes
 
         episodes.map { it.episodeNumber } shouldBe listOf(1L, 2L)
         episodes.first().seasonNumber shouldBe 1L
@@ -217,7 +217,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.first().providerSessionId shouldBe 9001L
     }
@@ -235,10 +235,30 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.size shouldBe 1
         sessions.first().providerSessionId shouldBe 3003L
+    }
+
+    @Test
+    fun `should return the sessions of every show given the account holds several rewatched shows`() = runTest {
+        rewatchRemoteDataSource.setRewatchSessionsResponse(
+            ApiResponse.Success(
+                SimklRewatchItemsResponse(
+                    shows = listOf(
+                        rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5, rewatchId = 3003L),
+                        rewatchShow(tmdbId = "555", watchedEpisodesCount = 3, rewatchId = 4004L),
+                    ),
+                ),
+            ),
+        )
+
+        val sessions = source.readRewatchSessions().getOrThrow()
+
+        sessions.keys shouldBe setOf(1396L, 555L)
+        sessions.getValue(1396L).single().providerSessionId shouldBe 3003L
+        sessions.getValue(555L).single().providerSessionId shouldBe 4004L
     }
 
     @Test
@@ -247,7 +267,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5)))),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 555L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[555L].orEmpty()
 
         sessions shouldBe emptyList()
     }
@@ -294,7 +314,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.first().status shouldBe RemoteRewatchSessionStatus.COMPLETED
     }
@@ -323,7 +343,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.first().startedAt shouldBe Instant.parse("2026-01-15T00:00:00Z").toEpochMilliseconds()
     }
@@ -334,7 +354,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5)))),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.first().startedAt.shouldBeNull()
     }

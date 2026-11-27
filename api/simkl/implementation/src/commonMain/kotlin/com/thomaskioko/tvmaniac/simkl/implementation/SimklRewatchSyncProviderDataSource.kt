@@ -42,11 +42,12 @@ public class SimklRewatchSyncProviderDataSource(
         return response is ApiResponse.Success && response.body == SimklAccountTier.PREMIUM
     }
 
-    override suspend fun readRewatchSessions(providerShowId: Long): ApiResponse<List<RemoteRewatchSession>> =
+    override suspend fun readRewatchSessions(): ApiResponse<Map<Long, List<RemoteRewatchSession>>> =
         rewatchRemoteDataSource.getRewatchSessions().map { response ->
             response.shows
-                .filter { it.isRewatch && it.show.ids.tmdb?.toLongOrNull() == providerShowId }
-                .map { it.toRemoteRewatchSession() }
+                .filter { it.isRewatch }
+                .mapNotNull { show -> show.show.ids.tmdb?.toLongOrNull()?.let { tmdbId -> tmdbId to show.toRemoteRewatchSession() } }
+                .groupBy({ it.first }, { it.second })
         }
 
     override suspend fun writeRewatch(write: RemoteRewatchWrite): ApiResponse<RemoteRewatchWriteResult> {

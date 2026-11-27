@@ -34,9 +34,12 @@ public class TraktRewatchSyncProviderDataSource(
 
     override suspend fun supportsRewatch(): Boolean = true
 
-    override suspend fun readRewatchSessions(providerShowId: Long): ApiResponse<List<RemoteRewatchSession>> =
+    override suspend fun readRewatchSessions(): ApiResponse<Map<Long, List<RemoteRewatchSession>>> =
         syncRemoteDataSource.getWatchedShows(extended = "progress").map { shows ->
-            shows.firstOrNull { it.show.ids.tmdb == providerShowId }?.toRemoteRewatchSessions().orEmpty()
+            shows.mapNotNull { show ->
+                val tmdbId = show.show.ids.tmdb ?: return@mapNotNull null
+                tmdbId to show.toRemoteRewatchSessions()
+            }.toMap()
         }
 
     override suspend fun writeRewatch(write: RemoteRewatchWrite): ApiResponse<RemoteRewatchWriteResult> =
