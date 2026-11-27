@@ -66,7 +66,7 @@ internal class SyncStartWatchingInteractorTest {
 
     @Test
     fun `should sync metadata for a show with no metadata given default param`() = runTest(testDispatcher) {
-        repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L)))
+        repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L)))
 
         interactor.executeSync(SyncStartWatchingInteractor.Param())
 
@@ -79,7 +79,7 @@ internal class SyncStartWatchingInteractorTest {
     fun `should refresh latest season for a continuing show with incomplete episodes given default param`() =
         runTest(testDispatcher) {
             seasonDetailsRepository.setShowSeasonSyncExpired(true)
-            repository.setStartWatchingShows(listOf(startWatchingShow(showId = 99L)))
+            repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 99L)))
             episodeRepository.setShowMetadataSyncInfo(
                 showId = 99L,
                 info = ShowMetadataSyncInfo(status = "Returning Series", metadataEpisodeCount = 10, localEpisodeCount = 8),
@@ -94,7 +94,7 @@ internal class SyncStartWatchingInteractorTest {
 
     @Test
     fun `should skip metadata for an ended show with complete episodes given default param`() = runTest(testDispatcher) {
-        repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
+        repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
         episodeRepository.setShowMetadataSyncInfo(
             showId = 42L,
             info = ShowMetadataSyncInfo(status = "Ended", metadataEpisodeCount = 10, localEpisodeCount = 10),
@@ -120,7 +120,7 @@ internal class SyncStartWatchingInteractorTest {
 
     @Test
     fun `should sync metadata only for shows that need it given force refresh param`() = runTest(testDispatcher) {
-        repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
+        repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
         episodeRepository.setShowMetadataSyncInfo(
             showId = 42L,
             info = ShowMetadataSyncInfo(status = "Ended", metadataEpisodeCount = 10, localEpisodeCount = 10),
@@ -137,7 +137,7 @@ internal class SyncStartWatchingInteractorTest {
     fun `should sync metadata for a show added by the watchlist sync given the replayed list is stale`() =
         runTest(testDispatcher) {
             repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L)))
-            repository.setShowsWrittenBySync(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
+            repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
 
             interactor.executeSync(SyncStartWatchingInteractor.Param())
 
@@ -146,7 +146,7 @@ internal class SyncStartWatchingInteractorTest {
 
     @Test
     fun `should continue with the next show given a show metadata sync fails`() = runTest(testDispatcher) {
-        repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
+        repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
         showDetailsRepository.setFetchError(IllegalStateException("boom"))
 
         interactor.executeSync(SyncStartWatchingInteractor.Param())
@@ -156,7 +156,7 @@ internal class SyncStartWatchingInteractorTest {
 
     @Test
     fun `should stop the metadata pass given a retryable failure`() = runTest(testDispatcher) {
-        repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
+        repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
         showDetailsRepository.setFetchError(SyncException(SyncError.Retryable.RateLimited()))
 
         interactor.executeSync(SyncStartWatchingInteractor.Param())
@@ -166,7 +166,7 @@ internal class SyncStartWatchingInteractorTest {
 
     @Test
     fun `should propagate cancellation given the metadata pass is cancelled`() = runTest(testDispatcher) {
-        repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L)))
+        repository.setStartWatchingSnapshot(listOf(startWatchingShow(showId = 42L)))
         showDetailsRepository.setFetchError(CancellationException("cancelled"))
 
         shouldThrow<CancellationException> {
