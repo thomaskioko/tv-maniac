@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
@@ -19,6 +20,7 @@ internal class SyncPendingUploadsInteractorTest {
     private val syncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
     private val listRepository = FakeListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val userRepository = FakeUserRepository()
     private val accountManager = FakeAccountManager()
     private val logger = FakeLogger()
@@ -28,6 +30,7 @@ internal class SyncPendingUploadsInteractorTest {
         syncRepository = syncRepository,
         libraryRepository = libraryRepository,
         listRepository = listRepository,
+        rewatchRepository = rewatchRepository,
         userRepository = userRepository,
         activeProviderFeatures = { providerFeatures },
         accountManager = accountManager,
@@ -35,7 +38,7 @@ internal class SyncPendingUploadsInteractorTest {
     )
 
     @Test
-    fun `should push all three queues given an active account`() = runTest {
+    fun `should send unsent repeat viewings given an active account`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         providerFeatures = FakeProviderFeatures(supportsLists = true)
 
@@ -43,6 +46,7 @@ internal class SyncPendingUploadsInteractorTest {
 
         syncRepository.syncPendingCallCount() shouldBe 1
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 1
+        rewatchRepository.syncPendingRewatchesInvocations() shouldBe 1
         listRepository.syncPendingListsCalls() shouldBe listOf("test-user")
     }
 
@@ -78,6 +82,7 @@ internal class SyncPendingUploadsInteractorTest {
 
         syncRepository.syncPendingCallCount() shouldBe 0
         libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 0
+        rewatchRepository.syncPendingRewatchesInvocations() shouldBe 0
         listRepository.syncPendingListsCalls().shouldBeEmpty()
     }
 }

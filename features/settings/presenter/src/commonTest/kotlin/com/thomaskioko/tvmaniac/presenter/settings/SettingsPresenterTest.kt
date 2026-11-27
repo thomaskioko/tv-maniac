@@ -186,6 +186,7 @@ class SettingsPresenterTest {
                 pushPendingChangesInteractor = PushPendingChangesInteractor(
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                     libraryRepository = libraryRepository,
+                    rewatchRepository = FakeRewatchRepository(),
                 ),
                 countUnsavedChanges = CountUnsavedChanges(
                     libraryRepository = libraryRepository,

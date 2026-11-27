@@ -932,6 +932,7 @@ graph TB
   :domain:account-switcher --> :data:library:api
   :domain:account-switcher --> :data:lists:api
   :domain:account-switcher --> :data:logout:api
+  :domain:account-switcher --> :data:rewatch:api
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user

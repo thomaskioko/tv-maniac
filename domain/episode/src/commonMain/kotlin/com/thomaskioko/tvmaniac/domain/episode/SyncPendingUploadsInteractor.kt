@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.lists.api.ListRepository
@@ -20,6 +21,7 @@ public class SyncPendingUploadsInteractor(
     private val syncRepository: WatchedEpisodeSyncRepository,
     private val libraryRepository: LibraryRepository,
     private val listRepository: ListRepository,
+    private val rewatchRepository: RewatchRepository,
     private val userRepository: UserRepository,
     private val activeProviderFeatures: () -> ProviderFeatures,
     private val accountManager: AccountManager,
@@ -37,6 +39,7 @@ public class SyncPendingUploadsInteractor(
         pushMutex.withLock {
             syncRepository.syncPendingEpisodes()
             libraryRepository.syncPendingFollowedShows()
+            rewatchRepository.syncPendingRewatches()
             syncPendingLists()
         }
     }
