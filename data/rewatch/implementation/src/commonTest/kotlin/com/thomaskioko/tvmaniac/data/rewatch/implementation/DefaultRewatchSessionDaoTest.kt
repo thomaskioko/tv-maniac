@@ -296,7 +296,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should clear the viewings of a show the account omits given the account reports 250000 other shows`() = runTest {
+    fun `should clear the viewings of a show the account omits given the account reports 250001 shows`() = runTest {
         val omittedShowSessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
         dao.replaceRestores(
             showId = showId,
