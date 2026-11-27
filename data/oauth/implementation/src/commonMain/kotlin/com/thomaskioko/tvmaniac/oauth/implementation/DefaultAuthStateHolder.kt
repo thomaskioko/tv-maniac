@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlin.concurrent.Volatile
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
@@ -51,6 +52,8 @@ public class DefaultAuthStateHolder(
         val authState = MutableStateFlow<AuthState?>(null)
         val authError = MutableStateFlow<AuthError?>(null)
         val loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
+
+        @Volatile
         var cachedLogin: CachedLogin? = null
         val refreshMutex = Mutex()
         val stateMutex = Mutex()
@@ -126,30 +129,32 @@ public class DefaultAuthStateHolder(
             val refresh = action ?: return@withLock TokenRefreshResult.NotLoggedIn
             val currentState = getAuthState(provider) ?: return@withLock TokenRefreshResult.NotLoggedIn
 
-            when (val result = refresh.invoke(currentState)) {
-                is RefreshTokenResult.Success -> if (writeIfUnchanged(provider, currentState, result.authState, error = null)) {
-                    datastoreRepository.setLastTokenRefreshTimestamp(dateTimeProvider.nowMillis())
-                    TokenRefreshResult.Success(result.authState)
-                } else {
-                    currentLoginResult(entry)
-                }
-                is RefreshTokenResult.TokenExpired -> if (
-                    writeIfUnchanged(provider, currentState, AuthState.Empty, error = AuthError.TokenExpired)
-                ) {
-                    logger.warning(LOG_TAG, "Token expired/revoked - clearing auth state")
-                    TokenRefreshResult.TokenRevoked
-                } else {
-                    currentLoginResult(entry)
-                }
-                is RefreshTokenResult.NetworkError -> {
-                    logger.warning(LOG_TAG, "Network error during token refresh: ${result.message}")
-                    entry.authError.value = AuthError.NetworkError
-                    TokenRefreshResult.NetworkError(result.message)
-                }
-                is RefreshTokenResult.Failed -> {
-                    logger.error(LOG_TAG, "Token refresh failed: ${result.message}")
-                    entry.authError.value = AuthError.Unknown
-                    TokenRefreshResult.Failed(result.message)
+            val result = refresh.invoke(currentState)
+
+            applyIfLoginUnchanged(provider = provider, refreshedLogin = currentState) {
+                when (result) {
+                    is RefreshTokenResult.Success -> {
+                        entry.authError.value = null
+                        write(provider = provider, authState = result.authState)
+                        datastoreRepository.setLastTokenRefreshTimestamp(dateTimeProvider.nowMillis())
+                        TokenRefreshResult.Success(result.authState)
+                    }
+                    is RefreshTokenResult.TokenExpired -> {
+                        logger.warning(LOG_TAG, "Token expired/revoked - clearing auth state")
+                        entry.authError.value = AuthError.TokenExpired
+                        write(provider = provider, authState = AuthState.Empty)
+                        TokenRefreshResult.TokenRevoked
+                    }
+                    is RefreshTokenResult.NetworkError -> {
+                        logger.warning(LOG_TAG, "Network error during token refresh: ${result.message}")
+                        entry.authError.value = AuthError.NetworkError
+                        TokenRefreshResult.NetworkError(result.message)
+                    }
+                    is RefreshTokenResult.Failed -> {
+                        logger.error(LOG_TAG, "Token refresh failed: ${result.message}")
+                        entry.authError.value = AuthError.Unknown
+                        TokenRefreshResult.Failed(result.message)
+                    }
                 }
             }
         }
@@ -175,25 +180,21 @@ public class DefaultAuthStateHolder(
         entry(provider).stateMutex.withLock { write(provider, authState) }
     }
 
-    private suspend fun writeIfUnchanged(
+    private suspend fun applyIfLoginUnchanged(
         provider: SyncProviderSource,
-        expected: AuthState,
-        authState: AuthState,
-        error: AuthError?,
-    ): Boolean {
+        refreshedLogin: AuthState,
+        apply: suspend () -> TokenRefreshResult,
+    ): TokenRefreshResult {
         val entry = entry(provider)
         return entry.stateMutex.withLock {
-            val unchanged = entry.cachedLogin?.authState == expected
-            if (unchanged) {
-                entry.authError.value = error
-                write(provider, authState)
+            val currentLogin = entry.cachedLogin?.authState
+            when (currentLogin) {
+                refreshedLogin -> apply()
+                null -> TokenRefreshResult.NotLoggedIn
+                else -> TokenRefreshResult.Success(currentLogin)
             }
-            unchanged
         }
     }
-
-    private fun currentLoginResult(entry: ProviderState): TokenRefreshResult =
-        entry.cachedLogin?.let { TokenRefreshResult.Success(it.authState) } ?: TokenRefreshResult.NotLoggedIn
 
     private suspend fun write(provider: SyncProviderSource, authState: AuthState) {
         withContext(dispatchers.io) {
