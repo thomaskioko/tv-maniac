@@ -67,7 +67,11 @@ jobs:
 
       - name: Write build number
         id: version
-        run: ./scripts/ci/write-build-number.sh
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android latest_build_number output:"$RUNNER_TEMP/store-build-number"
+          ./scripts/ci/write-build-number.sh "$(cat "$RUNNER_TEMP/store-build-number")"
 
       - name: Build release AAB and APK
         env:

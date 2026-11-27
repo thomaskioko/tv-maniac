@@ -71,6 +71,14 @@ Build signed release IPA
 
 Upload built IPA to TestFlight
 
+### ios latest_build_number
+
+```sh
+[bundle exec] fastlane ios latest_build_number
+```
+
+Write the highest TestFlight build number of the version in version.txt to a file
+
 ### ios distribute_testflight
 
 ```sh
@@ -131,6 +139,14 @@ Check Swift code formatting with SwiftFormat
 
 
 ## Android
+
+### android latest_build_number
+
+```sh
+[bundle exec] fastlane android latest_build_number
+```
+
+Write the highest version code of the Play Store tracks to a file
 
 ### android deploy_play_store
 
