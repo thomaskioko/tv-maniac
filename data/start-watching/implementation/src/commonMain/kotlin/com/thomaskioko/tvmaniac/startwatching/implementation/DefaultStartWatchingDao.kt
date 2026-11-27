@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.startwatching.implementation
 
+import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -14,6 +15,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -24,15 +26,22 @@ public class DefaultStartWatchingDao(
 ) : StartWatchingDao {
 
     override fun observeStartWatchingShows(): Flow<List<StartWatchingShow>> =
-        database.startWatchingQueries
-            .startWatchingShows(
-                nowMillis = dateTimeProvider.nowMillis(),
-                currentYear = dateTimeProvider.currentYear().toLong(),
-            )
+        startWatchingShowsQuery()
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { rows -> rows.map { it.toStartWatchingShow() } }
             .catch { emit(emptyList()) }
+
+    override suspend fun getStartWatchingShows(): List<StartWatchingShow> =
+        withContext(dispatchers.databaseRead) {
+            startWatchingShowsQuery().executeAsList().map { it.toStartWatchingShow() }
+        }
+
+    private fun startWatchingShowsQuery(): Query<StartWatchingShows> =
+        database.startWatchingQueries.startWatchingShows(
+            nowMillis = dateTimeProvider.nowMillis(),
+            currentYear = dateTimeProvider.currentYear().toLong(),
+        )
 }
 
 private fun StartWatchingShows.toStartWatchingShow(): StartWatchingShow =

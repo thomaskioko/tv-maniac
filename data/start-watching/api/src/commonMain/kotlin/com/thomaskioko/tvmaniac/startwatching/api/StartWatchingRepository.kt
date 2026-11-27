@@ -10,6 +10,8 @@ public interface StartWatchingRepository {
      */
     public fun observeStartWatching(): Flow<List<StartWatchingShow>>
 
+    public suspend fun getStartWatching(): List<StartWatchingShow>
+
     /**
      * Re-syncs the Trakt watchlist that backs the Start Watching lane, writing show metadata and
      * posters into the shared followed-shows tables. Pull-only: preserves pending follow/unfollow

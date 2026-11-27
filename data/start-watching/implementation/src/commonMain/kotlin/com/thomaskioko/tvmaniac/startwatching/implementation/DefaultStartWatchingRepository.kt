@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.shareIn
 public class DefaultStartWatchingRepository(
     private val startWatchingStore: StartWatchingWatchlistStore,
     private val accountManager: AccountManager,
-    dao: StartWatchingDao,
+    private val dao: StartWatchingDao,
     @IoCoroutineScope scope: CoroutineScope,
 ) : StartWatchingRepository {
 
@@ -29,6 +29,8 @@ public class DefaultStartWatchingRepository(
             .shareIn(scope, SharingStarted.WhileSubscribed(SHARING_STOP_TIMEOUT_MS), replay = 1)
 
     override fun observeStartWatching(): Flow<List<StartWatchingShow>> = startWatchingShows
+
+    override suspend fun getStartWatching(): List<StartWatchingShow> = dao.getStartWatchingShows()
 
     override suspend fun syncWatchlist(forceRefresh: Boolean) {
         if (accountManager.getActiveProvider() == null) return
