@@ -56,6 +56,14 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should return followed released show given a one-shot read`() = runTest(testDispatcher) {
+        insertReleasedShow(id = 1, name = "Breaking Bad")
+        followShow(1)
+
+        dao.getStartWatchingShows() shouldContainExactly listOf(expectedShow(1, "Breaking Bad"))
+    }
+
+    @Test
     fun `should exclude show with future air date`() = runTest(testDispatcher) {
         insertShow(2, "Unreleased Show", year = "2099-12-31")
         followShow(2)

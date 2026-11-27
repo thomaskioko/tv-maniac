@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncException
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository.FetchInvocation
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
@@ -127,10 +128,21 @@ internal class SyncStartWatchingInteractorTest {
 
         interactor.executeSync(SyncStartWatchingInteractor.Param(forceRefresh = true))
 
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(99L)
+        showDetailsRepository.fetchInvocations() shouldBe listOf(FetchInvocation(id = 99L, forceRefresh = false))
         seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(99L)
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
+
+    @Test
+    fun `should sync metadata for a show added by the watchlist sync given the replayed list is stale`() =
+        runTest(testDispatcher) {
+            repository.setStartWatchingShows(listOf(startWatchingShow(showId = 42L)))
+            repository.setShowsWrittenBySync(listOf(startWatchingShow(showId = 42L), startWatchingShow(showId = 99L)))
+
+            interactor.executeSync(SyncStartWatchingInteractor.Param())
+
+            showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(42L, 99L)
+        }
 
     @Test
     fun `should continue with the next show given a show metadata sync fails`() = runTest(testDispatcher) {
