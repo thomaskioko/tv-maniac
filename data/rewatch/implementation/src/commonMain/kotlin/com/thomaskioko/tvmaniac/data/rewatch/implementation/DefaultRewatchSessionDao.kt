@@ -15,7 +15,6 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchTotals
 import com.thomaskioko.tvmaniac.data.rewatch.api.UnsentRewatchEpisode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Rewatch_session
-import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.UnsentEpisodes
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -172,7 +171,12 @@ public class DefaultRewatchSessionDao(
     }
 
     override fun clearRestoresExcept(showIds: List<Long>) {
-        queries.clearRestoresExceptShows(showIds.map { Id<ShowId>(it) })
+        val reportedShowIds = showIds.toSet()
+        queries.transaction {
+            queries.restoredShowIds().executeAsList()
+                .filterNot { it.id in reportedShowIds }
+                .forEach { queries.clearRestoresForShow(it) }
+        }
     }
 
     override fun restoreMissingViewings(showId: Long, syncedAt: Long) {

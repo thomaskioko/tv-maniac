@@ -1031,7 +1031,75 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should keep removed viewings removed given a sync that read before the removal finishes after it`() = runTest {
+    fun `should write only the later viewing given the provider reports one recorded on the device and a later one in another session`() =
+        runTest {
+            val repository = buildRepository()
+            recordViewingOnDevice(repository, watchedAt = REWATCHED_AT)
+            rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+                reportedSessions(
+                    listOf(
+                        remoteSession(providerSessionId = PROVIDER_SESSION_ID, episodes = listOf(remoteEpisode(watchedAt = REWATCHED_AT))),
+                        remoteSession(
+                            providerSessionId = OTHER_PROVIDER_SESSION_ID,
+                            episodes = listOf(remoteEpisode(watchedAt = SECOND_REWATCHED_AT)),
+                        ),
+                    ),
+                ),
+            )
+
+            repository.syncRewatchSessions()
+            repository.syncRewatchSessions()
+
+            viewingsOf(EPISODE_ID) shouldBe listOf(
+                null to REWATCHED_AT,
+                OTHER_PROVIDER_SESSION_ID to SECOND_REWATCHED_AT,
+            )
+        }
+
+    @Test
+    fun `should write only the later viewing given the provider reports one recorded on the device and a later one in the same session`() =
+        runTest {
+            val repository = buildRepository()
+            recordViewingOnDevice(repository, watchedAt = REWATCHED_AT)
+            rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+                reportedSessions(
+                    listOf(
+                        remoteSession(
+                            providerSessionId = PROVIDER_SESSION_ID,
+                            episodes = listOf(
+                                remoteEpisode(watchedAt = REWATCHED_AT),
+                                remoteEpisode(watchedAt = SECOND_REWATCHED_AT),
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
+            repository.syncRewatchSessions()
+            repository.syncRewatchSessions()
+
+            viewingsOf(EPISODE_ID) shouldBe listOf(
+                null to REWATCHED_AT,
+                PROVIDER_SESSION_ID to SECOND_REWATCHED_AT,
+            )
+        }
+
+    @Test
+    fun `should write one viewing given the provider reports two at the time of one recorded on the device`() = runTest {
+        val repository = buildRepository()
+        recordViewingOnDevice(repository, watchedAt = REWATCHED_AT)
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            reportedSessions(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L, watchedAt = REWATCHED_AT))))),
+        )
+
+        repository.syncRewatchSessions()
+        repository.syncRewatchSessions()
+
+        viewingsOf(EPISODE_ID) shouldBe listOf(null to REWATCHED_AT, PROVIDER_SESSION_ID to REWATCHED_AT)
+    }
+
+    @Test
+    fun `should leave no viewings given the viewings are removed while a sync is reading`() = runTest {
         val repository = buildRepository()
         rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
             reportedSessions(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L))))),
@@ -1051,7 +1119,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should keep removed season viewings removed given a sync that read before the removal finishes after it`() = runTest {
+    fun `should leave no viewings given the season viewings are removed while a sync is reading`() = runTest {
         val repository = buildRepository()
         rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
             reportedSessions(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L))))),
@@ -1083,7 +1151,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
         rewatchSessionDao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
-    private fun viewingsOf(episodeId: Long): List<Pair<Long, Long>> = sqlDriver.executeQuery(
+    private fun viewingsOf(episodeId: Long): List<Pair<Long?, Long>> = sqlDriver.executeQuery(
         identifier = null,
         sql = """
             SELECT rewatch_session.provider_session_id, rewatch_session_episode.watched_at
@@ -1093,14 +1161,26 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
             ORDER BY rewatch_session_episode.id
         """.trimIndent(),
         mapper = { cursor ->
-            val rows = mutableListOf<Pair<Long, Long>>()
+            val rows = mutableListOf<Pair<Long?, Long>>()
             while (cursor.next().value) {
-                rows += checkNotNull(cursor.getLong(0)) to checkNotNull(cursor.getLong(1))
+                rows += cursor.getLong(0) to checkNotNull(cursor.getLong(1))
             }
             QueryResult.Value(rows.toList())
         },
         parameters = 0,
     ).value
+
+    private suspend fun recordViewingOnDevice(repository: DefaultRewatchRepository, watchedAt: Long) {
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = watchedAt,
+        )
+    }
 
     private suspend fun reportLateEpisode(repository: DefaultRewatchRepository, viewings: Long) {
         rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(

@@ -102,6 +102,19 @@ internal class TraktRewatchSyncProviderDataSourceTest {
     }
 
     @Test
+    fun `should keep the shows of the first page given the next page of watched shows is empty`() = runTest {
+        val firstPage = (1L..100L).map { showWithPlays(tmdbId = it, plays = 3L) }
+        syncRemoteDataSource.setWatchedShowsPage(page = 1, response = ApiResponse.Success(firstPage))
+        syncRemoteDataSource.setWatchedShowsPage(page = 2, response = ApiResponse.Success(emptyList()))
+
+        val sessions = source.readRewatchSessions().getOrThrow()
+
+        sessions.size shouldBe 100
+        sessions.getValue(1L).first().episodes.first().viewings shouldBe 2L
+        sessions.getValue(100L).first().episodes.first().viewings shouldBe 2L
+    }
+
+    @Test
     fun `should fail the whole read given a later page of watched shows fails`() = runTest {
         val firstPage = (1L..100L).map { showWithPlays(tmdbId = it, plays = 3L) }
         syncRemoteDataSource.setWatchedShowsPage(page = 1, response = ApiResponse.Success(firstPage))

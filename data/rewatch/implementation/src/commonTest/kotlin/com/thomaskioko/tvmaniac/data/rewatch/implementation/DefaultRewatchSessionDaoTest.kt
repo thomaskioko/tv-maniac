@@ -295,6 +295,34 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         dao.observeEpisodeRewatches(LATE_EPISODE_ID).first() shouldBe 0L
     }
 
+    @Test
+    fun `should clear the viewings of a show the account omits given the account reports 250000 other shows`() = runTest {
+        val omittedShowSessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.replaceRestores(
+            showId = showId,
+            restores = listOf(
+                RewatchRestore(sessionId = omittedShowSessionId, seasonNumber = 1L, episodeNumber = 2L, watchedAt = REWATCHED_AT, ordinal = 1L),
+            ),
+        )
+        val reportedShowId = addShow(tmdbId = OTHER_TMDB_ID)
+        addSeason(seasonId = OTHER_SEASON_ID, showId = reportedShowId)
+        val reportedShowSessionId = dao.openSession(showId = reportedShowId, startedAt = STARTED_AT)
+        dao.replaceRestores(
+            showId = reportedShowId,
+            restores = listOf(
+                RewatchRestore(sessionId = reportedShowSessionId, seasonNumber = 1L, episodeNumber = 2L, watchedAt = REWATCHED_AT, ordinal = 1L),
+            ),
+        )
+        val reportedShowIds = listOf(reportedShowId) + (1L..250_000L).map { it + UNSTORED_SHOW_ID_OFFSET }
+
+        dao.clearRestoresExcept(showIds = reportedShowIds)
+        addEpisode(episodeId = LATE_EPISODE_ID, seasonId = SEASON_ID, showId = showId, episodeNumber = 2L)
+        addEpisode(episodeId = OTHER_LATE_EPISODE_ID, seasonId = OTHER_SEASON_ID, showId = reportedShowId, episodeNumber = 2L)
+
+        dao.observeEpisodeRewatches(LATE_EPISODE_ID).first() shouldBe 0L
+        dao.observeEpisodeRewatches(OTHER_LATE_EPISODE_ID).first() shouldBe 1L
+    }
+
     private fun addShow(tmdbId: Long): Long {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
@@ -381,9 +409,13 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
 
     private companion object {
         private const val TMDB_ID = 555L
+        private const val OTHER_TMDB_ID = 556L
         private const val SEASON_ID = 100L
+        private const val OTHER_SEASON_ID = 101L
         private const val EPISODE_ID = 200L
         private const val LATE_EPISODE_ID = 299L
+        private const val OTHER_LATE_EPISODE_ID = 298L
+        private const val UNSTORED_SHOW_ID_OFFSET = 10_000L
         private const val STARTED_AT = 1_700_000_000_000L
         private const val REWATCHED_AT = 1_750_000_000_000L
         private const val SECOND_REWATCHED_AT = 1_800_000_000_000L
