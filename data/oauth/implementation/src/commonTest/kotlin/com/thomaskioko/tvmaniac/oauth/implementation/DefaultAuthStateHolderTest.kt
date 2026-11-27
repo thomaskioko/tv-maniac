@@ -305,6 +305,71 @@ internal class DefaultAuthStateHolderTest {
         }
 
     @Test
+    fun `should keep the new login and the auth error given a sign-in during a token refresh that fails`() =
+        runTest(testDispatcher) {
+            val holder = holder()
+            advanceUntilIdle()
+            holder.saveTokens(
+                provider = SyncProviderSource.TRAKT,
+                accessToken = "old",
+                refreshToken = "old-refresh",
+                expiresAtSeconds = 9_999_999_999L,
+            )
+            holder.setAuthError(SyncProviderSource.TRAKT, AuthError.NetworkError)
+            val action = GatedTokenRefreshAction(RefreshTokenResult.Failed("server error"))
+
+            val refresh = async { holder.refreshTokens(SyncProviderSource.TRAKT, action) }
+            runCurrent()
+            holder.saveTokens(
+                provider = SyncProviderSource.TRAKT,
+                accessToken = "fresh",
+                refreshToken = "fresh-refresh",
+                expiresAtSeconds = 9_999_999_999L,
+            )
+            action.release()
+            advanceUntilIdle()
+
+            refresh.await() shouldBe TokenRefreshResult.Success(freshLogin())
+            holder.getAuthState(SyncProviderSource.TRAKT) shouldBe freshLogin()
+            holder.authError(SyncProviderSource.TRAKT).first() shouldBe AuthError.NetworkError
+        }
+
+    @Test
+    fun `should apply the refreshed tokens given the same login reloaded with another expiry during a token refresh`() =
+        runTest(testDispatcher) {
+            val holder = holder()
+            advanceUntilIdle()
+            holder.saveTokens(
+                provider = SyncProviderSource.TRAKT,
+                accessToken = "old",
+                refreshToken = "old-refresh",
+                expiresAtSeconds = 9_999_999_999L,
+            )
+            authStore.save(
+                SyncProviderSource.TRAKT,
+                AuthState(
+                    accessToken = "old",
+                    refreshToken = "old-refresh",
+                    isAuthorized = true,
+                    expiresAt = Instant.fromEpochMilliseconds(9_999_999_999_123L),
+                ),
+            )
+            val refreshed = signedIn("refreshed")
+            val action = GatedTokenRefreshAction(RefreshTokenResult.Success(refreshed))
+
+            val refresh = async { holder.refreshTokens(SyncProviderSource.TRAKT, action) }
+            runCurrent()
+            dateTimeProvider.setCurrentTime(dateTimeProvider.now() + 2.hours)
+            holder.getAuthState(SyncProviderSource.TRAKT)
+                .shouldNotBeNull().expiresAt shouldBe Instant.fromEpochMilliseconds(9_999_999_999_123L)
+            action.release()
+            advanceUntilIdle()
+
+            refresh.await() shouldBe TokenRefreshResult.Success(refreshed)
+            holder.getAuthState(SyncProviderSource.TRAKT) shouldBe refreshed
+        }
+
+    @Test
     fun `should keep the new login given a sign-in during a token refresh that finds the token expired`() =
         runTest(testDispatcher) {
             val holder = holder()

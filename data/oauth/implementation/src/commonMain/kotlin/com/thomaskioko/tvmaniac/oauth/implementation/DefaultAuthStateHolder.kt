@@ -188,13 +188,16 @@ public class DefaultAuthStateHolder(
         val entry = entry(provider)
         return entry.stateMutex.withLock {
             val currentLogin = entry.cachedLogin?.authState
-            when (currentLogin) {
-                refreshedLogin -> apply()
-                null -> TokenRefreshResult.NotLoggedIn
+            when {
+                currentLogin == null -> TokenRefreshResult.NotLoggedIn
+                currentLogin.hasSameTokens(refreshedLogin) -> apply()
                 else -> TokenRefreshResult.Success(currentLogin)
             }
         }
     }
+
+    private fun AuthState.hasSameTokens(other: AuthState): Boolean =
+        accessToken == other.accessToken && refreshToken == other.refreshToken
 
     private suspend fun write(provider: SyncProviderSource, authState: AuthState) {
         withContext(dispatchers.io) {
