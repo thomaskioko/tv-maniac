@@ -19,7 +19,7 @@ import kotlin.test.Test
 internal class ShowFixturesTest {
 
     @Test
-    fun `should give every episode of a non canonical show an id that fits in an int`() = runTest {
+    fun `should give episode ids that fit in an int given a show other than breaking bad`() = runTest {
         val handler = MockEngineHandler()
         val client = HttpClient(MockEngine { request -> handler.handle(this, request) })
         val canonicalEpisodeIds = canonicalEpisodeIds()
