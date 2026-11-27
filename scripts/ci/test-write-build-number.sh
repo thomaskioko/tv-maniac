@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -uo pipefail
-script="$(cd "$(dirname "$0")" && pwd)/write-build-number.sh"; repo=$(mktemp -d); cd "$repo"
-git init -q; git config user.email t@t; git config user.name t
+script="$(cd "$(dirname "$0")" && pwd)/write-build-number.sh"; repo=$(mktemp -d); trap 'rm -rf "$repo"' EXIT; cd "$repo"
+unset GITHUB_OUTPUT GITHUB_STEP_SUMMARY
+git init -q; git config user.email t@t; git config user.name t; git config commit.gpgsign false; git config core.hooksPath /dev/null
 printf 'VERSION_NUMBER = 0.1.2\nBUILD_NUMBER = 102000\n' > version.txt
 git add version.txt; git commit -qm base; git tag v0.1.2
 for i in 1 2 3; do git commit -q --allow-empty -m "c$i"; done

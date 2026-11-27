@@ -160,7 +160,7 @@ bundle exec fastlane ios deploy_app_store
 ./gradlew :app:bumpVersion -Ptype=major   # 0.1.2 > 1.0.0, BUILD = 10000000
 ```
 
-`-Ptype=beta` still exists but is legacy: CI derives beta and dev build numbers from git instead. Don't commit beta bumps — a raised `BUILD_NUMBER` floor can block derived builds until enough commits land.
+`-Ptype=beta` still exists but is legacy: CI derives beta and dev build numbers from git and the stores instead. Don't commit beta bumps: a raised `BUILD_NUMBER` floor can stop derived builds until enough commits or uploads pass it.
 
 ---
 
@@ -173,7 +173,7 @@ Beta and dev build numbers are derived, not committed: the higher of `base(versi
 **Example lifecycle:**
 
 ```
-0.1.2 / 102000 released  >  40 commits land   >  dev/beta builds derive 102001…102040
+0.1.2 / 102000 released  >  40 commits land   >  dev/beta builds start at 102001 and rise with each commit and upload
 patch release            >  0.1.3 / 103000     >  derivation continues from v0.1.3
 ```
 
