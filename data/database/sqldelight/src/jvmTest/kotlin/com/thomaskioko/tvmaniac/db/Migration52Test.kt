@@ -60,6 +60,22 @@ class Migration52Test {
     }
 
     @Test
+    fun `should write a viewing for each session given each session reports one after migrating from 52 to 53`() {
+        openSnapshot(version = 52).use { driver ->
+            driver.addEpisode(showId = 1L, seasonId = 10L, episodeId = 100L, episodeNumber = 1L)
+            driver.addSession(sessionId = 1L, showId = 1L)
+            driver.addSession(sessionId = 2L, showId = 1L)
+            migrateToVersion(driver, oldVersion = 52, newVersion = 53)
+            driver.addRestore(showId = 1L, sessionId = 1L, episodeNumber = 2L, ordinal = 1L)
+            driver.addRestore(showId = 1L, sessionId = 2L, episodeNumber = 2L, ordinal = 1L)
+
+            driver.addEpisodeRow(seasonId = 10L, showId = 1L, episodeId = 101L, episodeNumber = 2L)
+
+            driver.viewingCount(episodeId = 101L) shouldBe 2L
+        }
+    }
+
+    @Test
     fun `should leave the viewings unchanged given the same episode is stored again after migrating from 52 to 53`() {
         openSnapshot(version = 52).use { driver ->
             driver.addEpisode(showId = 1L, seasonId = 10L, episodeId = 100L, episodeNumber = 1L)

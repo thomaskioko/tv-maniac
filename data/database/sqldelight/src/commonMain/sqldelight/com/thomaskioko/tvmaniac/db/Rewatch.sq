@@ -50,7 +50,11 @@ BEGIN
     WHERE rr.show_id = new.show_id
       AND rr.season_number = s.season_number
       AND rr.episode_number = new.episode_number
-      AND rr.ordinal > (SELECT COUNT(*) FROM rewatch_session_episode WHERE episode_id = new.id);
+      AND rr.ordinal > (
+          SELECT COUNT(*)
+          FROM rewatch_session_episode
+          WHERE episode_id = new.id AND session_id = rr.session_id
+      );
 END;
 
 openSession:
@@ -163,6 +167,10 @@ clearRestoresForShow:
 DELETE FROM rewatch_restore
 WHERE show_id = :showId;
 
+clearRestoresExceptShows:
+DELETE FROM rewatch_restore
+WHERE show_id NOT IN :showIds;
+
 insertRestore:
 INSERT INTO rewatch_restore(show_id, season_number, episode_number, session_id, watched_at, ordinal)
 VALUES (:showId, :seasonNumber, :episodeNumber, :sessionId, :watchedAt, :ordinal);
@@ -174,7 +182,30 @@ FROM rewatch_restore rr
 INNER JOIN season s ON s.show_id = rr.show_id AND s.season_number = rr.season_number
 INNER JOIN episode e ON e.season_id = s.id AND e.episode_number = rr.episode_number
 WHERE rr.show_id = :showId
-  AND rr.ordinal > (SELECT COUNT(*) FROM rewatch_session_episode WHERE episode_id = e.id);
+  AND rr.ordinal > (
+      SELECT COUNT(*)
+      FROM rewatch_session_episode
+      WHERE episode_id = e.id AND session_id = rr.session_id
+  )
+  AND (
+      SELECT COUNT(*)
+      FROM rewatch_restore other
+      WHERE other.show_id = rr.show_id
+        AND other.season_number = rr.season_number
+        AND other.episode_number = rr.episode_number
+        AND other.id <= rr.id
+        AND other.ordinal > (
+            SELECT COUNT(*)
+            FROM rewatch_session_episode
+            WHERE episode_id = e.id AND session_id = other.session_id
+        )
+  ) <= (
+      SELECT COUNT(*)
+      FROM rewatch_restore reported
+      WHERE reported.show_id = rr.show_id
+        AND reported.season_number = rr.season_number
+        AND reported.episode_number = rr.episode_number
+  ) - (SELECT COUNT(*) FROM rewatch_session_episode WHERE episode_id = e.id);
 
 rewatchTotals:
 SELECT

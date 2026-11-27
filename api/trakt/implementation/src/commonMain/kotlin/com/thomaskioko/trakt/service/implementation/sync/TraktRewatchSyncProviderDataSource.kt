@@ -34,13 +34,21 @@ public class TraktRewatchSyncProviderDataSource(
 
     override suspend fun supportsRewatch(): Boolean = true
 
-    override suspend fun readRewatchSessions(): ApiResponse<Map<Long, List<RemoteRewatchSession>>> =
-        syncRemoteDataSource.getWatchedShows(extended = "progress").map { shows ->
-            shows.mapNotNull { show ->
-                val tmdbId = show.show.ids.tmdb ?: return@mapNotNull null
-                tmdbId to show.toRemoteRewatchSessions()
-            }.toMap()
+    override suspend fun readRewatchSessions(): ApiResponse<Map<Long, List<RemoteRewatchSession>>> {
+        val sessions = mutableMapOf<Long, List<RemoteRewatchSession>>()
+        var page = 1
+        while (true) {
+            val response = syncRemoteDataSource.getWatchedShows(page = page, limit = PAGE_LIMIT, extended = "progress")
+            if (response !is ApiResponse.Success) return response.map { emptyMap() }
+
+            for (show in response.body) {
+                val tmdbId = show.show.ids.tmdb ?: continue
+                sessions[tmdbId] = show.toRemoteRewatchSessions()
+            }
+            if (response.body.size < PAGE_LIMIT) return ApiResponse.Success(sessions)
+            page++
         }
+    }
 
     override suspend fun writeRewatch(write: RemoteRewatchWrite): ApiResponse<RemoteRewatchWriteResult> =
         episodeHistoryRemoteDataSource.addEpisodeWatches(
@@ -66,6 +74,8 @@ public class TraktRewatchSyncProviderDataSource(
 
     override suspend fun closeRewatch(close: RemoteRewatchClose): ApiResponse<Unit> = ApiResponse.Success(Unit)
 }
+
+private const val PAGE_LIMIT = 100
 
 private fun TraktWatchedShowResponse.toRemoteRewatchSessions(): List<RemoteRewatchSession> {
     val episodes = seasons.orEmpty().flatMap { season ->

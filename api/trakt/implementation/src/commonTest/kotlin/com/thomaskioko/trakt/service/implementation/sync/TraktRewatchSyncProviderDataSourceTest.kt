@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedSeasonResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktEpisodeHistoryRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktSyncRemoteDataSource
-import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -73,21 +72,47 @@ internal class TraktRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should return an empty list given the episode was only played once`() = runTest {
+    fun `should list the show with no sessions given the episode was only played once`() = runTest {
         syncRemoteDataSource.setWatchedShows(ApiResponse.Success(listOf(showWithPlays(tmdbId = 1396L, plays = 1L))))
 
-        val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
+        val sessions = source.readRewatchSessions().getOrThrow()
 
-        sessions.shouldBeEmpty()
+        sessions shouldBe mapOf(1396L to emptyList())
     }
 
     @Test
-    fun `should return an empty list given no show matches the requested tmdb id`() = runTest {
+    fun `should not list a show given the account has not watched it`() = runTest {
         syncRemoteDataSource.setWatchedShows(ApiResponse.Success(listOf(showWithPlays(tmdbId = 1396L, plays = 3L))))
 
-        val sessions = source.readRewatchSessions().getOrThrow()[555L].orEmpty()
+        val sessions = source.readRewatchSessions().getOrThrow()
 
-        sessions.shouldBeEmpty()
+        sessions.containsKey(555L) shouldBe false
+    }
+
+    @Test
+    fun `should return the shows of every page given the account has more than one page of watched shows`() = runTest {
+        val firstPage = (1L..100L).map { showWithPlays(tmdbId = it, plays = 1L) }
+        syncRemoteDataSource.setWatchedShowsPage(page = 1, response = ApiResponse.Success(firstPage))
+        syncRemoteDataSource.setWatchedShowsPage(page = 2, response = ApiResponse.Success(listOf(showWithPlays(tmdbId = 9000L, plays = 3L))))
+
+        val sessions = source.readRewatchSessions().getOrThrow()
+
+        sessions.size shouldBe 101
+        sessions.getValue(9000L).first().episodes.first().viewings shouldBe 2L
+    }
+
+    @Test
+    fun `should fail the whole read given a later page of watched shows fails`() = runTest {
+        val firstPage = (1L..100L).map { showWithPlays(tmdbId = it, plays = 3L) }
+        syncRemoteDataSource.setWatchedShowsPage(page = 1, response = ApiResponse.Success(firstPage))
+        syncRemoteDataSource.setWatchedShowsPage(
+            page = 2,
+            response = ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "boom"),
+        )
+
+        val result = source.readRewatchSessions()
+
+        result.shouldBeInstanceOf<ApiResponse.Error.HttpError<*>>()
     }
 
     @Test

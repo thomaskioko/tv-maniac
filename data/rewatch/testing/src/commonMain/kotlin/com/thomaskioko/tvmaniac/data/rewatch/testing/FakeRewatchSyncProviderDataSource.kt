@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSyncProviderDataSource
+import kotlinx.coroutines.CompletableDeferred
 
 public class FakeRewatchSyncProviderDataSource(
     override val provider: SyncProviderSource = SyncProviderSource.TRAKT,
@@ -17,6 +18,7 @@ public class FakeRewatchSyncProviderDataSource(
     private var writeResponse: ApiResponse<RemoteRewatchWriteResult> = ApiResponse.Success(RemoteRewatchWriteResult())
     private var writeHandler: ((RemoteRewatchWrite) -> ApiResponse<RemoteRewatchWriteResult>)? = null
     private var readException: Throwable? = null
+    private var readGate: CompletableDeferred<Unit>? = null
     private var writeException: Throwable? = null
     private var closeResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
     private var closeException: Throwable? = null
@@ -33,6 +35,10 @@ public class FakeRewatchSyncProviderDataSource(
 
     public fun setReadRewatchSessionsResponse(response: ApiResponse<Map<Long, List<RemoteRewatchSession>>>) {
         readResponse = response
+    }
+
+    public fun setReadGate(gate: CompletableDeferred<Unit>) {
+        readGate = gate
     }
 
     public fun setWriteRewatchResponse(response: ApiResponse<RemoteRewatchWriteResult>) {
@@ -63,7 +69,9 @@ public class FakeRewatchSyncProviderDataSource(
 
     override suspend fun readRewatchSessions(): ApiResponse<Map<Long, List<RemoteRewatchSession>>> {
         readException?.let { throw it }
-        return readResponse
+        val response = readResponse
+        readGate?.await()
+        return response
     }
 
     override suspend fun writeRewatch(write: RemoteRewatchWrite): ApiResponse<RemoteRewatchWriteResult> {

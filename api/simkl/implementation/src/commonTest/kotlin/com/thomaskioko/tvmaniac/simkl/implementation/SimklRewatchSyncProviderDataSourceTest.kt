@@ -262,14 +262,14 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should ignore a show whose tmdb id does not match`() = runTest {
+    fun `should not list a show given the account has no rewatch of it`() = runTest {
         rewatchRemoteDataSource.setRewatchSessionsResponse(
             ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5)))),
         )
 
-        val sessions = source.readRewatchSessions().getOrThrow()[555L].orEmpty()
+        val sessions = source.readRewatchSessions().getOrThrow()
 
-        sessions shouldBe emptyList()
+        sessions.containsKey(555L) shouldBe false
     }
 
     @Test

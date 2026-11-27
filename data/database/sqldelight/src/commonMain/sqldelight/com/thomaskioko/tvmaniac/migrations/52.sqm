@@ -22,5 +22,9 @@ BEGIN
     WHERE rr.show_id = new.show_id
       AND rr.season_number = s.season_number
       AND rr.episode_number = new.episode_number
-      AND rr.ordinal > (SELECT COUNT(*) FROM rewatch_session_episode WHERE episode_id = new.id);
+      AND rr.ordinal > (
+          SELECT COUNT(*)
+          FROM rewatch_session_episode
+          WHERE episode_id = new.id AND session_id = rr.session_id
+      );
 END;

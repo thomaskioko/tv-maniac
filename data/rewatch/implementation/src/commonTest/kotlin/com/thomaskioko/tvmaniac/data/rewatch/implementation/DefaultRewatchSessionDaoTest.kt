@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.rewatch.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRestore
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
@@ -278,6 +279,22 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
+    @Test
+    fun `should restore no viewings to an episode stored later given all data is cleared`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.replaceRestores(
+            showId = showId,
+            restores = listOf(
+                RewatchRestore(sessionId = sessionId, seasonNumber = 1L, episodeNumber = 2L, watchedAt = REWATCHED_AT, ordinal = 1L),
+            ),
+        )
+
+        dao.clearAll()
+        addEpisode(episodeId = LATE_EPISODE_ID, seasonId = SEASON_ID, showId = showId, episodeNumber = 2L)
+
+        dao.observeEpisodeRewatches(LATE_EPISODE_ID).first() shouldBe 0L
+    }
+
     private fun addShow(tmdbId: Long): Long {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
@@ -309,7 +326,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         )
     }
 
-    private fun addEpisode(episodeId: Long, seasonId: Long, showId: Long) {
+    private fun addEpisode(episodeId: Long, seasonId: Long, showId: Long, episodeNumber: Long = 1L) {
         database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
@@ -319,7 +336,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
             runtime = 40L,
             vote_count = 10L,
             ratings = 8.0,
-            episode_number = 1L,
+            episode_number = episodeNumber,
             image_url = null,
             first_aired = null,
         )
@@ -366,6 +383,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         private const val TMDB_ID = 555L
         private const val SEASON_ID = 100L
         private const val EPISODE_ID = 200L
+        private const val LATE_EPISODE_ID = 299L
         private const val STARTED_AT = 1_700_000_000_000L
         private const val REWATCHED_AT = 1_750_000_000_000L
         private const val SECOND_REWATCHED_AT = 1_800_000_000_000L

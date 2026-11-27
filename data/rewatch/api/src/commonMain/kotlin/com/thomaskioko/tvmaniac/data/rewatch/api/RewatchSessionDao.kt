@@ -42,6 +42,8 @@ public interface RewatchSessionDao {
 
     public fun replaceRestores(showId: Long, restores: List<RewatchRestore>)
 
+    public fun clearRestoresExcept(showIds: List<Long>)
+
     public fun restoreMissingViewings(showId: Long, syncedAt: Long)
 
     public fun clearAll()

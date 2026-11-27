@@ -124,12 +124,14 @@ public class DefaultRewatchRepository(
     override fun observeRewatchTotals(): Flow<RewatchTotals> = rewatchSessionDao.observeRewatchTotals()
 
     override suspend fun removeEpisodeRewatches(episodeId: Long) {
-        rewatchSessionDao.removeEpisodeRewatches(episodeId)
+        syncMutex.withLock { rewatchSessionDao.removeEpisodeRewatches(episodeId) }
     }
 
     override suspend fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
         val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
-        rewatchSessionDao.removeSeasonRewatches(showId = localShowId, seasonNumber = seasonNumber)
+        syncMutex.withLock {
+            rewatchSessionDao.removeSeasonRewatches(showId = localShowId, seasonNumber = seasonNumber)
+        }
     }
 
     override suspend fun supportsRewatch(): Boolean = activeSource()?.supportsRewatch() ?: true
@@ -143,8 +145,11 @@ public class DefaultRewatchRepository(
             val source = activeSource() ?: return@withLock
             try {
                 when (val response = source.readRewatchSessions()) {
-                    is ApiResponse.Success -> for ((showId, sessions) in response.body) {
-                        backfillSessions(showId = showId, sessions = sessions)
+                    is ApiResponse.Success -> {
+                        val reportedShowIds = response.body.mapNotNull { (showId, sessions) ->
+                            backfillSessions(showId = showId, sessions = sessions)
+                        }
+                        rewatchSessionDao.clearRestoresExcept(reportedShowIds)
                     }
                     is ApiResponse.Unauthenticated -> Unit
                     is ApiResponse.Error -> syncObserver.log(
@@ -166,10 +171,10 @@ public class DefaultRewatchRepository(
         }
     }
 
-    private suspend fun backfillSessions(showId: Long, sessions: List<RemoteRewatchSession>) {
-        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
+    private suspend fun backfillSessions(showId: Long, sessions: List<RemoteRewatchSession>): Long? {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return null
         val restores = mutableListOf<RewatchRestore>()
-        val viewingsByEpisode = mutableMapOf<Pair<Long, Long>, Long>()
+        val viewingsBySessionEpisode = mutableMapOf<Triple<Long, Long, Long>, Long>()
 
         for (session in sessions) {
             val startedAt = session.startedAt ?: session.lastWatchedAt ?: continue
@@ -185,8 +190,8 @@ public class DefaultRewatchRepository(
             )
 
             for (episode in session.episodes) {
-                val key = episode.seasonNumber to episode.episodeNumber
-                val reported = viewingsByEpisode[key] ?: 0L
+                val key = Triple(localSessionId, episode.seasonNumber, episode.episodeNumber)
+                val reported = viewingsBySessionEpisode[key] ?: 0L
                 for (viewing in 1..episode.viewings) {
                     restores += RewatchRestore(
                         sessionId = localSessionId,
@@ -196,12 +201,13 @@ public class DefaultRewatchRepository(
                         ordinal = reported + viewing,
                     )
                 }
-                viewingsByEpisode[key] = reported + episode.viewings
+                viewingsBySessionEpisode[key] = reported + episode.viewings
             }
         }
 
         rewatchSessionDao.replaceRestores(showId = localShowId, restores = restores)
         rewatchSessionDao.restoreMissingViewings(showId = localShowId, syncedAt = dateTimeProvider.nowMillis())
+        return localShowId
     }
 
     private suspend fun drainUnsentEpisodes() {
