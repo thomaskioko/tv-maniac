@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import com.thomaskioko.tvmaniac.oauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStore
 import com.thomaskioko.tvmaniac.oauth.testing.FakeTokenRefreshAction
@@ -16,10 +17,15 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.hours
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultAuthStateHolderTest {
@@ -33,11 +39,12 @@ internal class DefaultAuthStateHolderTest {
         databaseRead = testDispatcher,
     )
     private val authStore = FakeAuthStore()
+    private val dateTimeProvider = FakeDateTimeProvider()
 
-    private fun holder() = DefaultAuthStateHolder(
+    private fun holder(store: AuthStore = authStore) = DefaultAuthStateHolder(
         dispatchers = dispatchers,
-        authStore = authStore,
-        dateTimeProvider = FakeDateTimeProvider(),
+        authStore = store,
+        dateTimeProvider = dateTimeProvider,
         datastoreRepository = FakeDatastoreRepository(),
         requestManagerRepository = FakeRequestManagerRepository(),
         logger = FakeLogger(),
@@ -142,4 +149,102 @@ internal class DefaultAuthStateHolderTest {
             result.shouldBeInstanceOf<TokenRefreshResult.Success>()
             holder.getAuthState(SyncProviderSource.TRAKT).shouldNotBeNull().accessToken shouldBe "new"
         }
+
+    @Test
+    fun `should stay signed out given a sign-out during the start-up read`() = runTest(testDispatcher) {
+        authStore.save(SyncProviderSource.TRAKT, signedIn("stale"))
+        val gatedStore = GatedAuthStore(authStore)
+        gatedStore.hold(SyncProviderSource.TRAKT)
+        val holder = holder(gatedStore)
+        runCurrent()
+
+        val signOut = launch { holder.logout(SyncProviderSource.TRAKT) }
+        runCurrent()
+        gatedStore.release()
+        advanceUntilIdle()
+
+        signOut.isCompleted shouldBe true
+        holder.isLoggedIn(SyncProviderSource.TRAKT) shouldBe false
+        holder.getAuthState(SyncProviderSource.TRAKT).shouldBeNull()
+    }
+
+    @Test
+    fun `should keep the new login given a sign-in during the start-up read`() = runTest(testDispatcher) {
+        authStore.save(SyncProviderSource.TRAKT, signedIn("stale"))
+        val gatedStore = GatedAuthStore(authStore)
+        gatedStore.hold(SyncProviderSource.TRAKT)
+        val holder = holder(gatedStore)
+        runCurrent()
+
+        val signIn = launch {
+            holder.saveTokens(
+                provider = SyncProviderSource.TRAKT,
+                accessToken = "fresh",
+                refreshToken = "fresh-refresh",
+                expiresAtSeconds = 9_999_999_999L,
+            )
+        }
+        runCurrent()
+        gatedStore.release()
+        advanceUntilIdle()
+
+        signIn.isCompleted shouldBe true
+        holder.getAuthState(SyncProviderSource.TRAKT).shouldNotBeNull().accessToken shouldBe "fresh"
+    }
+
+    @Test
+    fun `should stay signed out given a sign-out during a store read after the cached login expired`() =
+        runTest(testDispatcher) {
+            authStore.save(SyncProviderSource.TRAKT, signedIn("stale"))
+            val gatedStore = GatedAuthStore(authStore)
+            val holder = holder(gatedStore)
+            advanceUntilIdle()
+            dateTimeProvider.setCurrentTime(dateTimeProvider.now() + 2.hours)
+            gatedStore.hold(SyncProviderSource.TRAKT)
+
+            val read = launch { holder.getAuthState(SyncProviderSource.TRAKT) }
+            runCurrent()
+            val signOut = launch { holder.logout(SyncProviderSource.TRAKT) }
+            runCurrent()
+            gatedStore.release()
+            advanceUntilIdle()
+
+            read.isCompleted shouldBe true
+            signOut.isCompleted shouldBe true
+            holder.isLoggedIn(SyncProviderSource.TRAKT) shouldBe false
+        }
+
+    private fun signedIn(accessToken: String) = AuthState(
+        accessToken = accessToken,
+        refreshToken = "refresh",
+        isAuthorized = true,
+    )
+}
+
+private class GatedAuthStore(private val delegate: FakeAuthStore) : AuthStore {
+    private var gatedProvider: SyncProviderSource? = null
+    private var gate = CompletableDeferred<Unit>()
+
+    fun hold(provider: SyncProviderSource) {
+        gatedProvider = provider
+        gate = CompletableDeferred()
+    }
+
+    fun release() {
+        gate.complete(Unit)
+    }
+
+    override suspend fun get(provider: SyncProviderSource): AuthState? {
+        val stored = delegate.get(provider)
+        if (provider == gatedProvider) gate.await()
+        return stored
+    }
+
+    override suspend fun save(provider: SyncProviderSource, state: AuthState) {
+        delegate.save(provider, state)
+    }
+
+    override suspend fun clear(provider: SyncProviderSource) {
+        delegate.clear(provider)
+    }
 }

@@ -51,6 +51,7 @@ public class DefaultAuthStateHolder(
         val loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
         var expiry: Instant = Instant.DISTANT_PAST
         val refreshMutex = Mutex()
+        val stateMutex = Mutex()
     }
 
     private val states: Map<SyncProviderSource, ProviderState> =
@@ -60,7 +61,9 @@ public class DefaultAuthStateHolder(
     init {
         scope.launch {
             states.keys.forEach { provider ->
-                authStore.get(provider)?.also { cache(provider, it) }
+                entry(provider).stateMutex.withLock {
+                    authStore.get(provider)?.also { cache(provider, it) }
+                }
             }
         }
     }
@@ -88,9 +91,11 @@ public class DefaultAuthStateHolder(
         if (cached != null && cached.isAuthorized && dateTimeProvider.now() < entry.expiry) {
             return cached
         }
-        return withContext(dispatchers.io) {
-            authStore.get(provider)
-        }?.also { cache(provider, it) }
+        return entry.stateMutex.withLock {
+            withContext(dispatchers.io) {
+                authStore.get(provider)
+            }?.also { cache(provider, it) }
+        }
     }
 
     override suspend fun saveTokens(
@@ -163,16 +168,18 @@ public class DefaultAuthStateHolder(
     }
 
     private suspend fun updateAuthState(provider: SyncProviderSource, authState: AuthState, persist: Boolean = true) {
-        if (persist) {
-            withContext(dispatchers.io) {
-                if (authState.isAuthorized) {
-                    authStore.save(provider, authState)
-                } else {
-                    authStore.clear(provider)
+        entry(provider).stateMutex.withLock {
+            if (persist) {
+                withContext(dispatchers.io) {
+                    if (authState.isAuthorized) {
+                        authStore.save(provider, authState)
+                    } else {
+                        authStore.clear(provider)
+                    }
                 }
             }
+            cache(provider, authState)
         }
-        cache(provider, authState)
     }
 
     private companion object {
