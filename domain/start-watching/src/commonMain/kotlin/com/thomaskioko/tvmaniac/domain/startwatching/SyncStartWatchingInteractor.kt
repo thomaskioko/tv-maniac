@@ -12,9 +12,10 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError as NetworkSyncError
+
+private const val LOG_TAG = "SyncStartWatchingInteractor"
 
 @Inject
 public class SyncStartWatchingInteractor(
@@ -37,8 +38,8 @@ public class SyncStartWatchingInteractor(
     }
 
     private suspend fun syncShowMetadata() {
-        val shows = startWatchingRepository.observeStartWatching().first()
-        logger.debug(TAG, "Syncing metadata for ${shows.size} start watching shows")
+        val shows = startWatchingRepository.getStartWatching()
+        logger.debug(LOG_TAG, "Syncing metadata for ${shows.size} start watching shows")
 
         for (show in shows) {
             currentCoroutineContext().ensureActive()
@@ -53,16 +54,16 @@ public class SyncStartWatchingInteractor(
                         ),
                     )
                 } else {
-                    logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+                    logger.debug(LOG_TAG, "Skipping metadata sync for ended show ${show.showId}")
                 }
             }
             val failure = result.exceptionOrNull() ?: continue
             if (failure is CancellationException) throw failure
 
-            logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
+            logger.warning(LOG_TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
 
             if (failure.toSyncError() is NetworkSyncError.Retryable) {
-                logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
+                logger.warning(LOG_TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
                 break
             }
         }
@@ -71,8 +72,4 @@ public class SyncStartWatchingInteractor(
     public data class Param(
         val forceRefresh: Boolean = false,
     )
-
-    private companion object {
-        private const val TAG = "SyncStartWatchingInteractor"
-    }
 }
