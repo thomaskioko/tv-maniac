@@ -29,6 +29,8 @@ public interface RewatchSessionDao {
 
     public fun unsentEpisodes(): List<UnsentRewatchEpisode>
 
+    public fun countUnsentEpisodes(): Long
+
     public fun markEpisodeSynced(rowId: Long, syncedAt: Long)
 
     public fun sessionCoverage(sessionId: Long): RewatchCoverage?

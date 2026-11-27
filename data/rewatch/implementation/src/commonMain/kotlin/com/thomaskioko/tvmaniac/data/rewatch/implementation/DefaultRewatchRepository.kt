@@ -136,6 +136,12 @@ public class DefaultRewatchRepository(
 
     override suspend fun supportsRewatch(): Boolean = activeSource()?.supportsRewatch() ?: true
 
+    override suspend fun countPendingRewatches(): Long {
+        val source = activeSource() ?: return 0L
+        if (!source.supportsRewatch()) return 0L
+        return rewatchSessionDao.countUnsentEpisodes()
+    }
+
     override suspend fun syncPendingRewatches() {
         syncMutex.withLock { drainUnsentEpisodes() }
     }

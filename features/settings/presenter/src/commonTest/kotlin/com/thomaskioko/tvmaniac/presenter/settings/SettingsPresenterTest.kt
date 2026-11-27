@@ -192,6 +192,7 @@ class SettingsPresenterTest {
                     libraryRepository = libraryRepository,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                     listRepository = listRepository,
+                    rewatchRepository = FakeRewatchRepository(),
                 ),
                 logger = fakeLogger,
             ),

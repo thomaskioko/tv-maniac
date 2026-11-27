@@ -34,6 +34,8 @@ public interface RewatchRepository {
 
     public suspend fun supportsRewatch(): Boolean
 
+    public suspend fun countPendingRewatches(): Long
+
     public suspend fun syncPendingRewatches()
 
     public suspend fun syncRewatchSessions()

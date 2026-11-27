@@ -21,6 +21,7 @@ public class FakeRewatchRepository : RewatchRepository {
     private var rewatchSessionsSynced: Boolean = false
     private var syncException: Throwable? = null
     private var pendingRewatchesSent: Boolean = false
+    private var pendingRewatchesCount: Long = 0L
 
     public var lastAddEpisodeSessionId: Long? = null
     public var lastAddEpisodeWatchedAt: Long? = null
@@ -53,6 +54,10 @@ public class FakeRewatchRepository : RewatchRepository {
 
     public fun setSyncException(exception: Throwable) {
         syncException = exception
+    }
+
+    public fun setPendingRewatchesCount(count: Long) {
+        pendingRewatchesCount = count
     }
 
     public fun hasSentPendingRewatches(): Boolean = pendingRewatchesSent
@@ -114,6 +119,8 @@ public class FakeRewatchRepository : RewatchRepository {
     public fun removedSeasons(): List<Pair<Long, Long>> = removedSeasons.toList()
 
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
+
+    override suspend fun countPendingRewatches(): Long = pendingRewatchesCount
 
     override suspend fun syncPendingRewatches() {
         syncException?.let { throw it }
