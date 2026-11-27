@@ -19,7 +19,7 @@ if ((count > 999)); then
 fi
 
 build=$((base + count))
-store_build="${1:-0}"
+store_build="${1-0}"
 if ! [[ "$store_build" =~ ^[0-9]+$ ]]; then
   echo "error: store build number '${store_build}' is not a number" >&2
   exit 1

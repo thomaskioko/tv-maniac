@@ -87,8 +87,6 @@ gh workflow run beta-release.yml -f skip_ios=true
 2. **Build**: Per-platform build jobs produce the signed artifacts (Android with a `-beta` suffix) and upload them as workflow artifacts.
 3. **Deploy**: Separate jobs publish them — Android to the Play Store open testing track and Firebase App Distribution, iOS to TestFlight.
 
-A beta and a dev build cut from the same commit derive the same build number, and the stores reject the duplicate upload. Land a commit first, or rerun after one lands.
-
 ## Dev Builds
 
 Dev builds run per platform every Monday at 1:00 AM UTC (3:00 AM Berlin in summer, 2:00 AM in winter), and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
@@ -101,7 +99,7 @@ gh workflow run weekly-dev-build-ios.yml
 **What happens:**
 
 1. **Check**: Scheduled runs skip when `main` has no new commits since the last successful dev build. Manual runs always build.
-2. **Version**: `scripts/ci/write-build-number.sh` derives the build number as `base(version) + commits since the release tag` and writes it to `version.txt` in the runner's workspace only — nothing is committed or pushed.
+2. **Version**: `scripts/ci/write-build-number.sh` derives the build number as the higher of `base(version) + commits since the release tag` and the highest store build + 1 (TestFlight builds of the version, Play internal, alpha, beta and production tracks), and writes it to `version.txt` in the runner's workspace only — nothing is committed or pushed.
 3. **Build**: One job builds the signed artifacts with a `-dev` suffix (Android AAB and APK, iOS IPA) and uploads them as workflow artifacts.
 4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track and Firebase App Distribution in parallel, iOS to TestFlight. GitHub Releases are cut by the production release workflow only.
 
@@ -170,7 +168,7 @@ bundle exec fastlane ios deploy_app_store
 
 Beta builds let you upload multiple test versions to Play Store and TestFlight without burning version numbers. This is useful for internal testing before a production release.
 
-Beta and dev build numbers are derived, not committed: `base(version) + commits since the release tag`. The committed `BUILD_NUMBER` in `version.txt` only changes on production releases.
+Beta and dev build numbers are derived, not committed: the higher of `base(version) + commits since the release tag` and the highest store build + 1, so a beta and a dev build of one commit get different numbers. The committed `BUILD_NUMBER` in `version.txt` only changes on production releases.
 
 **Example lifecycle:**
 
