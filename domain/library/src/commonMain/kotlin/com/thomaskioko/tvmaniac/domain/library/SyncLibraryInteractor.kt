@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
@@ -36,6 +37,7 @@ public class SyncLibraryInteractor(
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val showMetadataSyncHelper: ShowMetadataSyncHelper,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
+    private val rewatchRepository: RewatchRepository,
     private val showDetailsRepository: ShowDetailsRepository,
     private val syncRepository: ActivitySyncRepository,
     private val datastoreRepository: DatastoreRepository,
@@ -67,6 +69,7 @@ public class SyncLibraryInteractor(
                 libraryRepository.syncLibrary(params.forceRefresh)
 
                 watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
+                rewatchRepository.syncRewatchSessions()
 
                 val watchlistChanged = params.forceRefresh ||
                     syncRepository.isAheadOf(

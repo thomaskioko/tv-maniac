@@ -163,6 +163,9 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         rewatch_session_episodeAdapter = Rewatch_session_episode.Adapter(
             episode_idAdapter = IdAdapter(),
         ),
+        rewatch_restoreAdapter = Rewatch_restore.Adapter(
+            show_idAdapter = IdAdapter(),
+        ),
         list_showsAdapter = List_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),
         ),

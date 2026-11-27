@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
@@ -208,6 +209,7 @@ internal class LibraryPresenterTest {
                 ),
                 showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                rewatchRepository = FakeRewatchRepository(),
                 showDetailsRepository = showDetailsRepository,
                 syncRepository = FakeActivitySyncRepository(),
                 datastoreRepository = FakeDatastoreRepository(),

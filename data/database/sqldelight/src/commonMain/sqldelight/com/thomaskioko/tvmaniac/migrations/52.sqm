@@ -1,0 +1,30 @@
+CREATE TABLE IF NOT EXISTS rewatch_restore(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    session_id INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    ordinal INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(session_id) REFERENCES rewatch_session(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewatch_restore_show_episode ON rewatch_restore(show_id, season_number, episode_number);
+
+CREATE TRIGGER IF NOT EXISTS restore_rewatches_on_episode_insert
+AFTER INSERT ON episode
+BEGIN
+    INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at, synced_at)
+    SELECT rr.session_id, new.id, rr.watched_at, CAST(strftime('%s', 'now') AS INTEGER) * 1000
+    FROM rewatch_restore rr
+    INNER JOIN season s ON s.id = new.season_id
+    WHERE rr.show_id = new.show_id
+      AND rr.season_number = s.season_number
+      AND rr.episode_number = new.episode_number
+      AND rr.ordinal > (
+          SELECT COUNT(*)
+          FROM rewatch_session_episode
+          WHERE episode_id = new.id AND session_id = rr.session_id
+      );
+END;

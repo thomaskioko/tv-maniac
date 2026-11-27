@@ -236,6 +236,7 @@ graph TB
   :domain:library --> :data:followedshows:api
   :domain:library --> :data:library:api
   :domain:library -.-> :data:request-manager:api
+  :domain:library --> :data:rewatch:api
   :domain:library --> :domain:showdetails
   :domain:library --> :domain:sync-activity
   :domain:notifications --> :core:base

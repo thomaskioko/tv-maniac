@@ -30,6 +30,7 @@ kotlin {
                 api(projects.data.datastore.api)
                 api(projects.data.followedshows.api)
                 api(projects.data.library.api)
+                api(projects.data.rewatch.api)
                 api(projects.domain.showdetails)
                 api(projects.domain.syncActivity)
 
@@ -50,6 +51,7 @@ kotlin {
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.library.testing)
+                implementation(projects.data.rewatch.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.testing)

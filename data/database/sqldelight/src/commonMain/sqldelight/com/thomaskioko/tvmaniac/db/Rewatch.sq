@@ -26,6 +26,37 @@ CREATE TABLE IF NOT EXISTS rewatch_session_episode(
 CREATE INDEX IF NOT EXISTS idx_rewatch_session_episode_session_id ON rewatch_session_episode(session_id);
 CREATE INDEX IF NOT EXISTS idx_rewatch_session_episode_episode_id ON rewatch_session_episode(episode_id);
 
+CREATE TABLE IF NOT EXISTS rewatch_restore(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    session_id INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    ordinal INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(session_id) REFERENCES rewatch_session(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewatch_restore_show_episode ON rewatch_restore(show_id, season_number, episode_number);
+
+CREATE TRIGGER IF NOT EXISTS restore_rewatches_on_episode_insert
+AFTER INSERT ON episode
+BEGIN
+    INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at, synced_at)
+    SELECT rr.session_id, new.id, rr.watched_at, CAST(strftime('%s', 'now') AS INTEGER) * 1000
+    FROM rewatch_restore rr
+    INNER JOIN season s ON s.id = new.season_id
+    WHERE rr.show_id = new.show_id
+      AND rr.season_number = s.season_number
+      AND rr.episode_number = new.episode_number
+      AND rr.ordinal > (
+          SELECT COUNT(*)
+          FROM rewatch_session_episode
+          WHERE episode_id = new.id AND session_id = rr.session_id
+      );
+END;
+
 openSession:
 INSERT INTO rewatch_session(show_id, started_at, closed_at)
 VALUES (:showId, :startedAt, NULL);
@@ -36,24 +67,6 @@ SELECT last_insert_rowid();
 addEpisodeToSession:
 INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at)
 VALUES (:sessionId, :episodeId, :watchedAt);
-
-addSyncedEpisodeToSession:
-INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at, synced_at)
-VALUES (:sessionId, :episodeId, :watchedAt, :syncedAt);
-
-episodeIdForNumber:
-SELECT episode.id
-FROM episode
-INNER JOIN season ON episode.season_id = season.id
-WHERE episode.show_id = :showId
-  AND season.season_number = :seasonNumber
-  AND episode.episode_number = :episodeNumber
-LIMIT 1;
-
-episodeRewatchCount:
-SELECT COUNT(*)
-FROM rewatch_session_episode
-WHERE episode_id = :episodeId;
 
 closeSession:
 UPDATE rewatch_session
@@ -125,6 +138,18 @@ removeEpisodeRewatches:
 DELETE FROM rewatch_session_episode
 WHERE episode_id = :episodeId;
 
+removeEpisodeRestores:
+DELETE FROM rewatch_restore
+WHERE EXISTS (
+    SELECT 1
+    FROM episode
+    INNER JOIN season ON season.id = episode.season_id
+    WHERE episode.id = :episodeId
+      AND episode.show_id = rewatch_restore.show_id
+      AND season.season_number = rewatch_restore.season_number
+      AND episode.episode_number = rewatch_restore.episode_number
+);
+
 removeSeasonRewatches:
 DELETE FROM rewatch_session_episode
 WHERE episode_id IN (
@@ -133,6 +158,73 @@ WHERE episode_id IN (
     INNER JOIN season ON season.id = episode.season_id
     WHERE season.show_id = :showId AND season.season_number = :seasonNumber
 );
+
+removeSeasonRestores:
+DELETE FROM rewatch_restore
+WHERE show_id = :showId AND season_number = :seasonNumber;
+
+clearRestoresForShow:
+DELETE FROM rewatch_restore
+WHERE show_id = :showId;
+
+restoredShowIds:
+SELECT DISTINCT show_id
+FROM rewatch_restore;
+
+insertRestore:
+INSERT INTO rewatch_restore(show_id, season_number, episode_number, session_id, watched_at, ordinal)
+VALUES (:showId, :seasonNumber, :episodeNumber, :sessionId, :watchedAt, :ordinal);
+
+restoreMissingViewings:
+WITH missing AS (
+    SELECT
+        rr.id AS restore_id,
+        rr.session_id,
+        rr.watched_at,
+        e.id AS episode_id,
+        EXISTS (
+            SELECT 1
+            FROM rewatch_session_episode stored
+            WHERE stored.episode_id = e.id
+              AND stored.watched_at = rr.watched_at
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM rewatch_restore reported
+                  WHERE reported.show_id = rr.show_id
+                    AND reported.season_number = rr.season_number
+                    AND reported.episode_number = rr.episode_number
+                    AND reported.session_id = stored.session_id
+              )
+        ) AS has_stored_match,
+        (
+            SELECT COUNT(*)
+            FROM rewatch_restore reported
+            WHERE reported.show_id = rr.show_id
+              AND reported.season_number = rr.season_number
+              AND reported.episode_number = rr.episode_number
+        ) - (SELECT COUNT(*) FROM rewatch_session_episode WHERE episode_id = e.id) AS viewings_to_write
+    FROM rewatch_restore rr
+    INNER JOIN season s ON s.show_id = rr.show_id AND s.season_number = rr.season_number
+    INNER JOIN episode e ON e.season_id = s.id AND e.episode_number = rr.episode_number
+    WHERE rr.show_id = :showId
+      AND rr.ordinal > (
+          SELECT COUNT(*)
+          FROM rewatch_session_episode
+          WHERE episode_id = e.id AND session_id = rr.session_id
+      )
+)
+INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at, synced_at)
+SELECT m.session_id, m.episode_id, m.watched_at, :syncedAt
+FROM missing m
+WHERE (
+    SELECT COUNT(*)
+    FROM missing other
+    WHERE other.episode_id = m.episode_id
+      AND (
+          other.has_stored_match < m.has_stored_match
+          OR (other.has_stored_match = m.has_stored_match AND other.restore_id <= m.restore_id)
+      )
+) <= m.viewings_to_write;
 
 rewatchTotals:
 SELECT
@@ -188,6 +280,9 @@ LEFT JOIN rewatch_session AS open_session
 WHERE tvshow.id = :showId
 ORDER BY open_session.started_at DESC
 LIMIT 1;
+
+clearAllRestores:
+DELETE FROM rewatch_restore;
 
 clearAllSessionEpisodes:
 DELETE FROM rewatch_session_episode;

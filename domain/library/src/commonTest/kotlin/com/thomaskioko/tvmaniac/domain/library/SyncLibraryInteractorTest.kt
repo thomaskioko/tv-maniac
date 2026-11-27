@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -51,6 +52,7 @@ class SyncLibraryInteractorTest {
     private val accountManager = FakeAccountManager().apply { setActiveProvider(SyncProviderSource.TRAKT) }
     private val syncObserver = FakeSyncObserver()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val rewatchRepository = FakeRewatchRepository()
 
     private val interactor = SyncLibraryInteractor(
         accountManager = accountManager,
@@ -68,6 +70,7 @@ class SyncLibraryInteractorTest {
         ),
         showMetadataSyncHelper = ShowMetadataSyncHelper(episodeRepository),
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        rewatchRepository = rewatchRepository,
         showDetailsRepository = showDetailsRepository,
         syncRepository = FakeActivitySyncRepository(),
         datastoreRepository = FakeDatastoreRepository(),
@@ -211,6 +214,31 @@ class SyncLibraryInteractorTest {
         shouldThrow<CancellationException> {
             interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
         }
+    }
+
+    @Test
+    fun `should restore the repeat viewings given the library sync runs`() = runTest(testDispatcher) {
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+        rewatchRepository.hasSyncedRewatchSessions() shouldBe true
+    }
+
+    @Test
+    fun `should not restore the repeat viewings given no active account`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(null)
+
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+        rewatchRepository.hasSyncedRewatchSessions() shouldBe false
+    }
+
+    @Test
+    fun `should not restore the repeat viewings given the watched episode sync fails`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setSyncAllError(IllegalStateException("sync failed"))
+
+        runCatching { interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true)) }
+
+        rewatchRepository.hasSyncedRewatchSessions() shouldBe false
     }
 
     private fun followedShow(showId: Long): FollowedShowEntry = FollowedShowEntry(
