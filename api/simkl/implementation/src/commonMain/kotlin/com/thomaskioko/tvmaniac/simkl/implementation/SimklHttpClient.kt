@@ -25,6 +25,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.isSuccess
@@ -101,6 +102,7 @@ internal fun simklHttpClient(
                     val sentAccessToken = response.call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
                     if (sentAccessToken != currentState.accessToken) {
                         return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
+                            .takeIf { response.call.request.method == HttpMethod.Get }
                     }
 
                     authStateHolder.setAuthError(SyncProviderSource.SIMKL, AuthError.TokenExpired)

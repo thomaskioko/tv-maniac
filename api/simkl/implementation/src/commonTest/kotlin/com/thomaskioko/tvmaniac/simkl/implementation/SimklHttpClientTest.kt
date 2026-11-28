@@ -10,6 +10,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
@@ -81,6 +82,32 @@ internal class SimklHttpClientTest {
 
         response.status shouldBe HttpStatusCode.OK
         authorizationHeaders shouldBe listOf("Bearer token-a", "Bearer token-b")
+        authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
+    }
+
+    @Test
+    fun `should not send a write again given a different account signed in during the request`() = runTest {
+        val authStateHolder = FakeAuthStateHolder()
+        val authorizationHeaders = mutableListOf<String?>()
+        val engine = MockEngine { request ->
+            authorizationHeaders += request.headers[HttpHeaders.Authorization]
+            authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-b", refreshToken = "refresh-b"))
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = simklHttpClient(
+            simklClientId = "client-id",
+            json = Json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            authStateHolder = authStateHolder,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-a", refreshToken = "refresh-a"))
+        val response = client.post("https://api.simkl.com/sync/history")
+
+        response.status shouldBe HttpStatusCode.Unauthorized
+        authorizationHeaders shouldBe listOf("Bearer token-a")
         authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
     }
 
