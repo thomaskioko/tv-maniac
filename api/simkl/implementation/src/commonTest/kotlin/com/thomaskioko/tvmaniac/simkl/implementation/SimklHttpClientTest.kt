@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStateHolder
 import io.kotest.matchers.shouldBe
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
@@ -111,6 +113,30 @@ internal class SimklHttpClientTest {
 
         response.status shouldBe HttpStatusCode.Unauthorized
         authorizationHeaders shouldBe listOf("Bearer token-a")
+        authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
+    }
+
+    @Test
+    fun `should give a write no tokens given another account signed in before its 401`() = runTest {
+        val authStateHolder = FakeAuthStateHolder()
+        val engine = MockEngine {
+            authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-b", refreshToken = "refresh-b"))
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = simklHttpClient(
+            simklClientId = "client-id",
+            json = Json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            authStateHolder = authStateHolder,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-a", refreshToken = "refresh-a"))
+        val response = client.post("https://api.simkl.com/sync/history")
+        val refreshed = requireNotNull(client.authProvider<BearerAuthProvider>()).refreshToken(response)
+
+        refreshed shouldBe false
         authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
     }
 

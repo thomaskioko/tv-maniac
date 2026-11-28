@@ -9,6 +9,8 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
@@ -215,6 +217,33 @@ class TraktHttpClientAuthTest {
         sentAuthorization shouldBe listOf("Bearer token-a")
         repository.getAuthState()?.accessToken shouldBe "token-b"
         repository.authError.first() shouldBe null
+    }
+
+    @Test
+    fun `should give a write no tokens given another account signed in before its 401`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("unused-access", "unused-refresh")),
+        )
+        val engine = MockEngine {
+            repository.setAuthState(authState("token-b", "refresh-b"))
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = traktHttpClient(
+            traktClientId = "test-client-id",
+            json = json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            oAuthRepository = repository,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        val response = client.post("https://api.trakt.tv/sync/history")
+        val refreshed = requireNotNull(client.authProvider<BearerAuthProvider>()).refreshToken(response)
+
+        refreshed shouldBe false
+        repository.getAuthState()?.accessToken shouldBe "token-b"
     }
 
     @Test
