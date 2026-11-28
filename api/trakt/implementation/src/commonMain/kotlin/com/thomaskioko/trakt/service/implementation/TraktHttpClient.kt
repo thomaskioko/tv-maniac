@@ -24,6 +24,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
@@ -88,6 +89,15 @@ internal fun traktHttpClient(
         }
 
         install(Auth) {
+            reAuthorizeOnResponse { response ->
+                when {
+                    response.status != HttpStatusCode.Unauthorized -> false
+                    response.call.request.method == HttpMethod.Get -> true
+                    else -> response.call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ") ==
+                        oAuthRepository.getAuthState()?.accessToken
+                }
+            }
+
             bearer {
                 cacheTokens = false
 
@@ -105,7 +115,11 @@ internal fun traktHttpClient(
 
                     val sentAccessToken = response.call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
                     if (sentAccessToken != currentState.accessToken) {
-                        return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
+                        return@refreshTokens if (response.call.request.method == HttpMethod.Get) {
+                            BearerTokens(currentState.accessToken, currentState.refreshToken)
+                        } else {
+                            null
+                        }
                     }
 
                     val result = oAuthRepository.refreshTokens()

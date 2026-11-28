@@ -10,9 +10,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -180,5 +185,111 @@ class TraktHttpClientAuthTest {
         response.status shouldBe HttpStatusCode.OK
         sentAuthorization shouldBe listOf("Bearer token-a", "Bearer token-b")
         repository.getAuthState()?.accessToken shouldBe "token-b"
+    }
+
+    @Test
+    fun `should not send a write again given a different account signed in during the request`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("unused-access", "unused-refresh")),
+        )
+        val sentAuthorization = mutableListOf<String?>()
+        val engine = MockEngine { request ->
+            sentAuthorization += request.headers[HttpHeaders.Authorization]
+            repository.setAuthState(authState("token-b", "refresh-b"))
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = traktHttpClient(
+            traktClientId = "test-client-id",
+            json = json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            oAuthRepository = repository,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        val response = client.post("https://api.trakt.tv/sync/history")
+
+        response.status shouldBe HttpStatusCode.Unauthorized
+        sentAuthorization shouldBe listOf("Bearer token-a")
+        repository.getAuthState()?.accessToken shouldBe "token-b"
+        repository.authError.first() shouldBe null
+    }
+
+    @Test
+    fun `should not send a write again given a read was sent again with a new token before the write got its 401`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("unused-access", "unused-refresh")),
+        )
+        val postAuthorizations = mutableListOf<String?>()
+        val getAuthorizations = mutableListOf<String?>()
+        val postSent = CompletableDeferred<Unit>()
+        val getFinished = CompletableDeferred<Unit>()
+        val engine = MockEngine { request ->
+            val authorization = request.headers[HttpHeaders.Authorization]
+            if (request.method == HttpMethod.Post) {
+                postAuthorizations += authorization
+                postSent.complete(Unit)
+                getFinished.await()
+                respond(content = "{}", status = HttpStatusCode.Unauthorized)
+            } else {
+                getAuthorizations += authorization
+                if (authorization == "Bearer token-a") {
+                    postSent.await()
+                    repository.setAuthState(authState("token-b", "refresh-b"))
+                    respond(content = "{}", status = HttpStatusCode.Unauthorized)
+                } else {
+                    respond(
+                        content = "{}",
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                }
+            }
+        }
+        val client = traktHttpClient(
+            traktClientId = "test-client-id",
+            json = json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            oAuthRepository = repository,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        val write = async { client.post("https://api.trakt.tv/sync/history") }
+        val read = async { client.get("https://api.trakt.tv/users/me") }
+        read.await().status shouldBe HttpStatusCode.OK
+        getFinished.complete(Unit)
+        val writeResponse = write.await()
+
+        writeResponse.status shouldBe HttpStatusCode.Unauthorized
+        postAuthorizations shouldBe listOf("Bearer token-a")
+        getAuthorizations shouldBe listOf("Bearer token-a", "Bearer token-b")
+        repository.getAuthState()?.accessToken shouldBe "token-b"
+        repository.authError.first() shouldBe null
+    }
+
+    @Test
+    fun `should send a write again with the refreshed token given its token is still the signed in one`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("token-c", "refresh-c")),
+        )
+        val sentAuthorization = mutableListOf<String?>()
+        val client = client(
+            repository = repository,
+            statuses = mutableListOf(HttpStatusCode.Unauthorized, HttpStatusCode.OK),
+            authorizationHeaders = sentAuthorization,
+        )
+
+        val response = client.post("https://api.trakt.tv/sync/history")
+
+        response.status shouldBe HttpStatusCode.OK
+        sentAuthorization shouldBe listOf("Bearer token-a", "Bearer token-c")
+        repository.getAuthState()?.accessToken shouldBe "token-c"
     }
 }
