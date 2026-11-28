@@ -218,7 +218,7 @@ class TraktHttpClientAuthTest {
     }
 
     @Test
-    fun `should not send a write again given a read refreshed the token before the write got its 401`() = runTest {
+    fun `should not send a write again given a read was sent again with a new token before the write got its 401`() = runTest {
         val repository = FakeTraktAuthRepository()
         repository.setAuthState(authState("token-a", "refresh-a"))
         repository.setRefreshOutcome(
@@ -270,5 +270,27 @@ class TraktHttpClientAuthTest {
         getAuthorizations shouldBe listOf("Bearer token-a", "Bearer token-b")
         repository.getAuthState()?.accessToken shouldBe "token-b"
         repository.authError.first() shouldBe null
+    }
+
+    @Test
+    fun `should send a write again with the refreshed token given its token is still the signed in one`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("token-c", "refresh-c")),
+        )
+        val sentAuthorization = mutableListOf<String?>()
+        val client = client(
+            repository = repository,
+            statuses = mutableListOf(HttpStatusCode.Unauthorized, HttpStatusCode.OK),
+            authorizationHeaders = sentAuthorization,
+        )
+
+        val response = client.post("https://api.trakt.tv/sync/history")
+
+        response.status shouldBe HttpStatusCode.OK
+        sentAuthorization shouldBe listOf("Bearer token-a", "Bearer token-c")
+        repository.refreshTokenCallCount() shouldBe 1
+        repository.getAuthState()?.accessToken shouldBe "token-c"
     }
 }

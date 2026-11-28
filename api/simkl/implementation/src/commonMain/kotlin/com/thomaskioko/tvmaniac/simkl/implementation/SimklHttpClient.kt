@@ -110,7 +110,11 @@ internal fun simklHttpClient(
 
                     val sentAccessToken = response.call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
                     if (sentAccessToken != currentState.accessToken) {
-                        return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
+                        return@refreshTokens if (response.call.request.method == HttpMethod.Get) {
+                            BearerTokens(currentState.accessToken, currentState.refreshToken)
+                        } else {
+                            null
+                        }
                     }
 
                     authStateHolder.setAuthError(SyncProviderSource.SIMKL, AuthError.TokenExpired)

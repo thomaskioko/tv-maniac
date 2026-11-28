@@ -115,7 +115,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should not send a write again given a read refreshed the token before the write got its 401`() = runTest {
+    fun `should not send a write again given a read was sent again with a new token before the write got its 401`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val postAuthorizations = mutableListOf<String?>()
         val getAuthorizations = mutableListOf<String?>()
@@ -181,6 +181,31 @@ internal class SimklHttpClientTest {
         authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-a", refreshToken = "refresh-a"))
         client.get("https://api.simkl.com/users/settings")
 
+        authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe AuthError.TokenExpired
+    }
+
+    @Test
+    fun `should report the token as expired and not send a write again given its token is still the signed in one`() = runTest {
+        val authStateHolder = FakeAuthStateHolder()
+        val authorizationHeaders = mutableListOf<String?>()
+        val engine = MockEngine { request ->
+            authorizationHeaders += request.headers[HttpHeaders.Authorization]
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = simklHttpClient(
+            simklClientId = "client-id",
+            json = Json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            authStateHolder = authStateHolder,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-a", refreshToken = "refresh-a"))
+        val response = client.post("https://api.simkl.com/sync/history")
+
+        response.status shouldBe HttpStatusCode.Unauthorized
+        authorizationHeaders shouldBe listOf("Bearer token-a")
         authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe AuthError.TokenExpired
     }
 }
