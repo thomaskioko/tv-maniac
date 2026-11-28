@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 public class FakeAuthStateHolder : AuthStateHolder {
     private val authStates = MutableStateFlow<Map<SyncProviderSource, AuthState>>(emptyMap())
+    private val authErrors = MutableStateFlow<Map<SyncProviderSource, AuthError>>(emptyMap())
     private val loginEvents = MutableSharedFlow<Unit>()
     private var refreshResult: TokenRefreshResult = TokenRefreshResult.NotLoggedIn
 
@@ -33,7 +33,7 @@ public class FakeAuthStateHolder : AuthStateHolder {
 
     override fun authState(provider: SyncProviderSource): Flow<AuthState?> = authStates.map { it[provider] }
 
-    override fun authError(provider: SyncProviderSource): Flow<AuthError?> = flowOf(null)
+    override fun authError(provider: SyncProviderSource): Flow<AuthError?> = authErrors.map { it[provider] }
 
     override fun loginEvents(provider: SyncProviderSource): SharedFlow<Unit> = loginEvents.asSharedFlow()
 
@@ -57,5 +57,6 @@ public class FakeAuthStateHolder : AuthStateHolder {
     }
 
     override suspend fun setAuthError(provider: SyncProviderSource, error: AuthError?) {
+        authErrors.value = if (error == null) authErrors.value - provider else authErrors.value + (provider to error)
     }
 }
