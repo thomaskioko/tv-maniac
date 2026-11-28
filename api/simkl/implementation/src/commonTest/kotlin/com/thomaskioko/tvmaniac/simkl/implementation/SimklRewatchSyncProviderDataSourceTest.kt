@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
@@ -7,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
+import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStateHolder
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAccount
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchEpisode
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryAdded
@@ -35,10 +37,31 @@ internal class SimklRewatchSyncProviderDataSourceTest {
 
     private val rewatchRemoteDataSource = FakeSimklRewatchRemoteDataSource()
     private val userRemoteDataSource = FakeSimklUserRemoteDataSource()
+    private val authStateHolder = FakeAuthStateHolder().apply { setSimklAccessToken("token-a") }
     private val source = SimklRewatchSyncProviderDataSource(
         rewatchRemoteDataSource = rewatchRemoteDataSource,
         userRemoteDataSource = userRemoteDataSource,
+        authStateHolder = authStateHolder,
     )
+
+    @Test
+    fun `should report rewatch as unsupported given a different account signed in on a free tier`() = runTest {
+        userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "vip")))
+        source.supportsRewatch() shouldBe true
+        authStateHolder.setSimklAccessToken("token-b")
+        userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "free")))
+
+        source.supportsRewatch() shouldBe false
+    }
+
+    @Test
+    fun `should keep the tier given the same account is still signed in`() = runTest {
+        userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "vip")))
+        source.supportsRewatch() shouldBe true
+        userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "free")))
+
+        source.supportsRewatch() shouldBe true
+    }
 
     @Test
     fun `should report simkl as its provider`() {
@@ -357,6 +380,10 @@ internal class SimklRewatchSyncProviderDataSourceTest {
         val sessions = source.readRewatchSessions().getOrThrow()[1396L].orEmpty()
 
         sessions.first().startedAt.shouldBeNull()
+    }
+
+    private fun FakeAuthStateHolder.setSimklAccessToken(accessToken: String) {
+        setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = accessToken, refreshToken = "refresh"))
     }
 
     private fun write(providerSessionId: Long?, episodeNumber: Long = 1L): RemoteRewatchWrite = RemoteRewatchWrite(

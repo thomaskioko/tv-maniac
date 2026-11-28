@@ -55,6 +55,7 @@ kotlin {
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.calendar.api)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.data.oauth.testing)
                 implementation(projects.data.rewatch.testing)
             }
         }
