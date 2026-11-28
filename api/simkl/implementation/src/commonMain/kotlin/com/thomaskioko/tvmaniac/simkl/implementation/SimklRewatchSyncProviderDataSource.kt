@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSyncProviderDataSource
+import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import com.thomaskioko.tvmaniac.simkl.api.SimklRewatchRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.SimklUserRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAccountTier
@@ -31,11 +32,12 @@ import kotlin.time.Instant
 public class SimklRewatchSyncProviderDataSource(
     private val rewatchRemoteDataSource: SimklRewatchRemoteDataSource,
     private val userRemoteDataSource: SimklUserRemoteDataSource,
+    private val authStateHolder: AuthStateHolder,
 ) : RewatchSyncProviderDataSource {
 
     override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
-    private var cachedTier: SimklAccountTier? = null
+    private var cachedTier: Pair<String?, SimklAccountTier>? = null
 
     override suspend fun supportsRewatch(): Boolean {
         val response = currentTier()
@@ -98,10 +100,11 @@ public class SimklRewatchSyncProviderDataSource(
     }
 
     private suspend fun currentTier(): ApiResponse<SimklAccountTier> {
-        cachedTier?.let { return ApiResponse.Success(it) }
+        val accessToken = authStateHolder.getAuthState(SyncProviderSource.SIMKL)?.accessToken
+        cachedTier?.takeIf { it.first == accessToken }?.let { return ApiResponse.Success(it.second) }
         return userRemoteDataSource.getUserSettings()
             .map { SimklAccountTier.fromRaw(it.account.type) }
-            .also { response -> if (response is ApiResponse.Success) cachedTier = response.body }
+            .also { response -> if (response is ApiResponse.Success) cachedTier = accessToken to response.body }
     }
 }
 

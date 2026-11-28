@@ -84,6 +84,8 @@ internal fun simklHttpClient(
 
         install(Auth) {
             bearer {
+                cacheTokens = false
+
                 loadTokens {
                     val state = authStateHolder.getAuthState(SyncProviderSource.SIMKL)
                         ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
@@ -96,7 +98,8 @@ internal fun simklHttpClient(
                     val currentState = authStateHolder.getAuthState(SyncProviderSource.SIMKL)
                         ?: return@refreshTokens null
 
-                    if (oldTokens?.accessToken != currentState.accessToken) {
+                    val sentAccessToken = response.call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
+                    if (sentAccessToken != currentState.accessToken) {
                         return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
                     }
 
