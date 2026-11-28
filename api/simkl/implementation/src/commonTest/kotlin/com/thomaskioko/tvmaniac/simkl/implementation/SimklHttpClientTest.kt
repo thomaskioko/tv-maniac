@@ -12,8 +12,11 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -108,6 +111,57 @@ internal class SimklHttpClientTest {
 
         response.status shouldBe HttpStatusCode.Unauthorized
         authorizationHeaders shouldBe listOf("Bearer token-a")
+        authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
+    }
+
+    @Test
+    fun `should not send a write again given a read refreshed the token before the write got its 401`() = runTest {
+        val authStateHolder = FakeAuthStateHolder()
+        val postAuthorizations = mutableListOf<String?>()
+        val getAuthorizations = mutableListOf<String?>()
+        val postSent = CompletableDeferred<Unit>()
+        val getFinished = CompletableDeferred<Unit>()
+        val engine = MockEngine { request ->
+            val authorization = request.headers[HttpHeaders.Authorization]
+            if (request.method == HttpMethod.Post) {
+                postAuthorizations += authorization
+                postSent.complete(Unit)
+                getFinished.await()
+                respond(content = "{}", status = HttpStatusCode.Unauthorized)
+            } else {
+                getAuthorizations += authorization
+                if (authorization == "Bearer token-a") {
+                    postSent.await()
+                    authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-b", refreshToken = "refresh-b"))
+                    respond(content = "{}", status = HttpStatusCode.Unauthorized)
+                } else {
+                    respond(
+                        content = "{}",
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                }
+            }
+        }
+        val client = simklHttpClient(
+            simklClientId = "client-id",
+            json = Json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            authStateHolder = authStateHolder,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-a", refreshToken = "refresh-a"))
+        val write = async { client.post("https://api.simkl.com/sync/history") }
+        val read = async { client.get("https://api.simkl.com/users/settings") }
+        read.await().status shouldBe HttpStatusCode.OK
+        getFinished.complete(Unit)
+        val writeResponse = write.await()
+
+        writeResponse.status shouldBe HttpStatusCode.Unauthorized
+        postAuthorizations shouldBe listOf("Bearer token-a")
+        getAuthorizations shouldBe listOf("Bearer token-a", "Bearer token-b")
         authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
     }
 
