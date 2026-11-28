@@ -223,7 +223,7 @@ internal class WatchDateSelectionPresenterTest {
     }
 
     @Test
-    fun `should dismiss the sheet given the write succeeds`() = runTest {
+    fun `should dismiss the sheet given the watch date is saved`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
 
         val presenter = createPresenter()
@@ -302,7 +302,7 @@ internal class WatchDateSelectionPresenterTest {
     }
 
     @Test
-    fun `should still dismiss the sheet given the write fails`() = runTest {
+    fun `should still dismiss the sheet given the watch date fails to save`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
         episodeRepository.setMarkEpisodeWatchedBehavior { throw IllegalStateException("Disk is full") }
 

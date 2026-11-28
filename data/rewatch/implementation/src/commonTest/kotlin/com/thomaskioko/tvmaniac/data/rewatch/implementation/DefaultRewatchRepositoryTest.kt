@@ -161,7 +161,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should push a write to the active source given an episode is added to a session`() = runTest {
+    fun `should upload the episode to the active provider given it is added to a session`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
 
@@ -184,7 +184,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should persist the provider session id returned by the first write`() = runTest {
+    fun `should save the provider session id returned by the first upload`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         rewatchSyncProviderDataSource.setWriteRewatchResponse(
@@ -204,7 +204,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should pin the persisted provider session id on the next write for the same session`() = runTest {
+    fun `should send the saved provider session id with the next upload for the same session`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         rewatchSyncProviderDataSource.setWriteRewatchResponse(
@@ -233,7 +233,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should leave the episode unsent given the write fails`() = runTest {
+    fun `should leave the episode unsent given the upload fails`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         rewatchSyncProviderDataSource.setWriteRewatchResponse(
@@ -279,7 +279,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should stamp the episode synced given the write succeeds`() = runTest {
+    fun `should mark the episode synced given the upload succeeds`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
 
@@ -296,7 +296,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should not resend an episode whose write already succeeded given pending rewatches are synced`() = runTest {
+    fun `should not upload an episode again given its upload already succeeded and pending rewatches are synced`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         repository.addEpisodeToSession(
@@ -319,7 +319,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should leave the episode unsent given a free-tier write is skipped`() = runTest {
+    fun `should leave the episode unsent given the upload is skipped for a free account`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         rewatchSyncProviderDataSource.setWriteRewatchResponse(ApiResponse.Success(RemoteRewatchWriteResult(skipped = true)))
@@ -435,7 +435,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should not push a write given no provider is active`() = runTest {
+    fun `should not upload the episode given no provider is active`() = runTest {
         val repository = buildRepository(activeSource = { null })
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
 
@@ -452,7 +452,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should log a sync error given the write to the active source fails`() = runTest {
+    fun `should log a sync error given the upload to the active provider fails`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         rewatchSyncProviderDataSource.setWriteRewatchResponse(
@@ -475,7 +475,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should let cancellation through given the write to the active source is cancelled`() = runTest {
+    fun `should throw the cancellation given the upload to the active provider is cancelled`() = runTest {
         val repository = buildRepository()
         val sessionId = checkNotNull(repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT))
         rewatchSyncProviderDataSource.setWriteRewatchException(CancellationException("cancelled"))

@@ -83,7 +83,7 @@ internal class RunAutoBackupInteractorTest {
     }
 
     @Test
-    fun `should keep the location given the write failed for another reason`() = runTest {
+    fun `should keep the location given saving the backup file failed for another reason`() = runTest {
         datastoreRepository.saveBackupFolder(LOCATION)
         backupRepository.setWriteResult(BackupResult.Failed(BackupFailure.WriteFailed))
 

@@ -69,7 +69,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should not send a write given the account tier is free`() = runTest {
+    fun `should not upload the rewatch given the account tier is free`() = runTest {
         userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "free")))
 
         val result = source.writeRewatch(write(providerSessionId = null))
@@ -80,7 +80,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should not send a write given the account tier is unrecognised`() = runTest {
+    fun `should not upload the rewatch given the account tier is unrecognised`() = runTest {
         userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "premium_plus")))
 
         val result = source.writeRewatch(write(providerSessionId = null))
@@ -91,7 +91,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should not send a write given the account tier is missing`() = runTest {
+    fun `should not upload the rewatch given the account tier is missing`() = runTest {
         userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = null)))
 
         val result = source.writeRewatch(write(providerSessionId = null))
@@ -102,7 +102,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should send a write given the account tier is pro`() = runTest {
+    fun `should upload the rewatch given the account tier is pro`() = runTest {
         userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "pro")))
 
         source.writeRewatch(write(providerSessionId = null))
@@ -111,7 +111,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should send a write given the account tier is vip`() = runTest {
+    fun `should upload the rewatch given the account tier is vip`() = runTest {
         userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "vip")))
 
         source.writeRewatch(write(providerSessionId = null))

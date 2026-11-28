@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStateHolder
 import io.kotest.matchers.shouldBe
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
@@ -89,7 +91,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should not send a write again given a different account signed in during the request`() = runTest {
+    fun `should not send a POST request again given another account signed in during the request`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val authorizationHeaders = mutableListOf<String?>()
         val engine = MockEngine { request ->
@@ -115,7 +117,31 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should not send a write again given a read was sent again with a new token before the write got its 401`() = runTest {
+    fun `should give a POST request no tokens given another account signed in before its 401`() = runTest {
+        val authStateHolder = FakeAuthStateHolder()
+        val engine = MockEngine {
+            authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-b", refreshToken = "refresh-b"))
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = simklHttpClient(
+            simklClientId = "client-id",
+            json = Json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            authStateHolder = authStateHolder,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-a", refreshToken = "refresh-a"))
+        val response = client.post("https://api.simkl.com/sync/history")
+        val refreshed = requireNotNull(client.authProvider<BearerAuthProvider>()).refreshToken(response)
+
+        refreshed shouldBe false
+        authStateHolder.authError(SyncProviderSource.SIMKL).first() shouldBe null
+    }
+
+    @Test
+    fun `should not send a POST request again given a GET request was sent again with a new token before its 401`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val postAuthorizations = mutableListOf<String?>()
         val getAuthorizations = mutableListOf<String?>()
@@ -185,7 +211,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should report the token as expired and not send a write again given its token is still the signed in one`() = runTest {
+    fun `should report the token as expired and not send a POST request again given its token is still the signed in one`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val authorizationHeaders = mutableListOf<String?>()
         val engine = MockEngine { request ->

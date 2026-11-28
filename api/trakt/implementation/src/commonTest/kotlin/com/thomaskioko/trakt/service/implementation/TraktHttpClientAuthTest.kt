@@ -9,6 +9,8 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.HttpHeaders
@@ -188,7 +190,7 @@ class TraktHttpClientAuthTest {
     }
 
     @Test
-    fun `should not send a write again given a different account signed in during the request`() = runTest {
+    fun `should not send a POST request again given another account signed in during the request`() = runTest {
         val repository = FakeTraktAuthRepository()
         repository.setAuthState(authState("token-a", "refresh-a"))
         repository.setRefreshOutcome(
@@ -218,7 +220,34 @@ class TraktHttpClientAuthTest {
     }
 
     @Test
-    fun `should not send a write again given a read was sent again with a new token before the write got its 401`() = runTest {
+    fun `should give a POST request no tokens given another account signed in before its 401`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("unused-access", "unused-refresh")),
+        )
+        val engine = MockEngine {
+            repository.setAuthState(authState("token-b", "refresh-b"))
+            respond(content = "{}", status = HttpStatusCode.Unauthorized)
+        }
+        val client = traktHttpClient(
+            traktClientId = "test-client-id",
+            json = json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            oAuthRepository = repository,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        val response = client.post("https://api.trakt.tv/sync/history")
+        val refreshed = requireNotNull(client.authProvider<BearerAuthProvider>()).refreshToken(response)
+
+        refreshed shouldBe false
+        repository.getAuthState()?.accessToken shouldBe "token-b"
+    }
+
+    @Test
+    fun `should not send a POST request again given a GET request was sent again with a new token before its 401`() = runTest {
         val repository = FakeTraktAuthRepository()
         repository.setAuthState(authState("token-a", "refresh-a"))
         repository.setRefreshOutcome(
@@ -273,7 +302,7 @@ class TraktHttpClientAuthTest {
     }
 
     @Test
-    fun `should send a write again with the refreshed token given its token is still the signed in one`() = runTest {
+    fun `should send a POST request again with the refreshed token given its token is still the signed in one`() = runTest {
         val repository = FakeTraktAuthRepository()
         repository.setAuthState(authState("token-a", "refresh-a"))
         repository.setRefreshOutcome(

@@ -115,7 +115,7 @@ internal class TraktRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should fail the whole read given a later page of watched shows fails`() = runTest {
+    fun `should return the error given a later page of watched shows fails`() = runTest {
         val firstPage = (1L..100L).map { showWithPlays(tmdbId = it, plays = 3L) }
         syncRemoteDataSource.setWatchedShowsPage(page = 1, response = ApiResponse.Success(firstPage))
         syncRemoteDataSource.setWatchedShowsPage(
@@ -183,7 +183,7 @@ internal class TraktRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should preserve the http error given the history write fails`() = runTest {
+    fun `should return the http error given the history upload fails`() = runTest {
         episodeHistoryRemoteDataSource.setAddResponse(
             ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "boom"),
         )
