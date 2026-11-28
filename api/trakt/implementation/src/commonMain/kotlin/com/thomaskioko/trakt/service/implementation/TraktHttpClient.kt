@@ -89,6 +89,8 @@ internal fun traktHttpClient(
 
         install(Auth) {
             bearer {
+                cacheTokens = false
+
                 loadTokens {
                     val state = oAuthRepository.getAuthState()
                         ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
@@ -101,7 +103,8 @@ internal fun traktHttpClient(
                     val currentState = oAuthRepository.getAuthState()
                         ?: return@refreshTokens null
 
-                    if (oldTokens?.refreshToken != null && oldTokens?.refreshToken != currentState.refreshToken) {
+                    val sentAccessToken = response.call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
+                    if (sentAccessToken != currentState.accessToken) {
                         return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
                     }
 

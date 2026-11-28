@@ -125,4 +125,60 @@ class TraktHttpClientAuthTest {
         response.status shouldBe HttpStatusCode.Unauthorized
         repository.refreshTokenCallCount() shouldBe 1
     }
+
+    @Test
+    fun `should send the new access token given a different account signed in`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        val sentAuthorization = mutableListOf<String?>()
+        val client = client(
+            repository = repository,
+            statuses = mutableListOf(HttpStatusCode.OK, HttpStatusCode.OK),
+            authorizationHeaders = sentAuthorization,
+        )
+
+        client.get("https://api.trakt.tv/users/me")
+        repository.setAuthState(authState("token-b", "refresh-b"))
+        client.get("https://api.trakt.tv/users/me")
+
+        sentAuthorization shouldBe listOf("Bearer token-a", "Bearer token-b")
+    }
+
+    @Test
+    fun `should send the request again with the new access token given a different account signed in during the request`() = runTest {
+        val repository = FakeTraktAuthRepository()
+        repository.setAuthState(authState("token-a", "refresh-a"))
+        repository.setRefreshOutcome(
+            TokenRefreshResult.Success(authState("unused-access", "unused-refresh")),
+        )
+        val sentAuthorization = mutableListOf<String?>()
+        val engine = MockEngine { request ->
+            val authorization = request.headers[HttpHeaders.Authorization]
+            sentAuthorization += authorization
+            if (authorization == "Bearer token-a") {
+                repository.setAuthState(authState("token-b", "refresh-b"))
+                respond(content = "{}", status = HttpStatusCode.Unauthorized)
+            } else {
+                respond(
+                    content = "{}",
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
+        }
+        val client = traktHttpClient(
+            traktClientId = "test-client-id",
+            json = json,
+            httpClientEngine = engine,
+            kermitLogger = FakeLogger(),
+            oAuthRepository = repository,
+            internetConnectionChecker = FakeInternetConnectionChecker(),
+        )
+
+        val response = client.get("https://api.trakt.tv/users/me")
+
+        response.status shouldBe HttpStatusCode.OK
+        sentAuthorization shouldBe listOf("Bearer token-a", "Bearer token-b")
+        repository.getAuthState()?.accessToken shouldBe "token-b"
+    }
 }

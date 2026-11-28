@@ -67,6 +67,7 @@ public class FakeTraktAuthRepository : OAuthRepository {
 
     override suspend fun refreshTokens(): TokenRefreshResult {
         refreshCount++
+        (refreshOutcome as? TokenRefreshResult.Success)?.let { _authState.value = it.authState }
         return refreshOutcome
     }
 
