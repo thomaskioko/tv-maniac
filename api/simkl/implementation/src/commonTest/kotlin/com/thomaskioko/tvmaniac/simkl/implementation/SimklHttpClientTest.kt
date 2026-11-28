@@ -91,7 +91,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should not send a write again given a different account signed in during the request`() = runTest {
+    fun `should not send a POST request again given another account signed in during the request`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val authorizationHeaders = mutableListOf<String?>()
         val engine = MockEngine { request ->
@@ -117,7 +117,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should give a write no tokens given another account signed in before its 401`() = runTest {
+    fun `should give a POST request no tokens given another account signed in before its 401`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val engine = MockEngine {
             authStateHolder.setAuthState(SyncProviderSource.SIMKL, AuthState(accessToken = "token-b", refreshToken = "refresh-b"))
@@ -141,7 +141,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should not send a write again given a read was sent again with a new token before the write got its 401`() = runTest {
+    fun `should not send a POST request again given a GET request was sent again with a new token before its 401`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val postAuthorizations = mutableListOf<String?>()
         val getAuthorizations = mutableListOf<String?>()
@@ -211,7 +211,7 @@ internal class SimklHttpClientTest {
     }
 
     @Test
-    fun `should report the token as expired and not send a write again given its token is still the signed in one`() = runTest {
+    fun `should report the token as expired and not send a POST request again given its token is still the signed in one`() = runTest {
         val authStateHolder = FakeAuthStateHolder()
         val authorizationHeaders = mutableListOf<String?>()
         val engine = MockEngine { request ->
