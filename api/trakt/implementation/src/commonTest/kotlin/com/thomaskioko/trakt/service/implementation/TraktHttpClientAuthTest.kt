@@ -179,6 +179,6 @@ class TraktHttpClientAuthTest {
 
         response.status shouldBe HttpStatusCode.OK
         sentAuthorization shouldBe listOf("Bearer token-a", "Bearer token-b")
-        repository.refreshTokenCallCount() shouldBe 0
+        repository.getAuthState()?.accessToken shouldBe "token-b"
     }
 }
